@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Projet — Bruno Tanguy</title>
+    <meta name="description" content="Étude de cas product design par Bruno Tanguy.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['"Host Grotesk"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-orange': '#FF8400',
+                        'apple-dark':   '#1d1d1f',
+                        'apple-gray':   '#f5f5f7',
+                        'apple-mid':    '#6e6e73',
+                        'apple-border': '#d2d2d7',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* ===== CURSEUR CUSTOM ===== */
+        body { cursor: none; }
+        a, button, [role="button"] { cursor: none; }
+        #c-cursor {
+            position: fixed; top: 0; left: 0; z-index: 9999;
+            width: 10px; height: 10px;
+            background: #1d1d1f; border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.25s cubic-bezier(0.25,0.46,0.45,0.94),
+                        height 0.25s cubic-bezier(0.25,0.46,0.45,0.94),
+                        background 0.2s ease,
+                        border 0.2s ease,
+                        opacity 0.3s ease;
+        }
+        #c-cursor.hover  { width: 32px; height: 32px; background: transparent; border: 1.5px solid #1d1d1f; }
+        #c-cursor.hidden { opacity: 0; }
+
+        /* ===== DYNAMIC ISLAND HEADER ===== */
+        .dyn-link { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.6); transition: color 0.2s ease; white-space: nowrap; }
+        .dyn-link:hover { color: white; }
+        .dyn-link.active { color: white; }
+
+        /* ===== EYEBROW LABEL ===== */
+        .eyebrow {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #6e6e73;
+            line-height: 1.33;
+        }
+        .eyebrow-dark { color: #86868b; }
+        .eyebrow-accent { color: #FF8400; }
+
+        /* ===== SCROLL REVEALS ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .reveal-img {
+            opacity: 0;
+            transform: scale(1.04);
+            transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .reveal.visible  { opacity: 1; transform: translateY(0); }
+        .reveal-img.visible { opacity: 1; transform: scale(1); }
+        .reveal-d1 { transition-delay: 0.08s; }
+        .reveal-d2 { transition-delay: 0.16s; }
+        .reveal-d3 { transition-delay: 0.24s; }
+        .reveal-d4 { transition-delay: 0.32s; }
+        .reveal-d5 { transition-delay: 0.4s; }
+
+        /* ===== SEPARATEURS ===== */
+        .sep { border-color: #d2d2d7; }
+        .sep-dark { border-color: rgba(255,255,255,0.12); }
+
+        /* ===== BENTO IMG ===== */
+        .bento-img img {
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .bento-img:hover img { transform: scale(1.03); }
+
+        /* ===== SCROLLBAR ===== */
+        body { -ms-overflow-style: none; scrollbar-width: none; }
+        body::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+
+<body class="bg-white text-[#1d1d1f] font-sans w-full overflow-x-hidden selection:bg-brand-orange selection:text-white">
+<div id="c-cursor"></div>
+
+    <!-- ==================== HEADER — DYNAMIC ISLAND ==================== -->
+    <header class="fixed top-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
+        <div id="dyn-pill" class="pointer-events-auto flex items-center bg-black text-white rounded-full px-5 py-[11px] shadow-md">
+            <a href="index.html" class="flex items-center gap-2.5 shrink-0">
+                <svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Logo Bruno Tanguy">
+                    <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16ZM13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="white"/>
+                </svg>
+                <span class="font-bold text-[14px] tracking-tight whitespace-nowrap">Bruno Tanguy</span>
+            </a>
+            <nav class="flex items-center gap-5 ml-[18px]" aria-label="Navigation principale">
+                <div class="w-px h-3.5 bg-white/20 shrink-0"></div>
+                <a href="index.html" class="dyn-link active">Home</a>
+                <a href="resume.html" class="dyn-link">Mon Profil</a>
+                <a href="mailto:bruno.tanguy@icloud.com" class="dyn-link">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ==================== MAIN ==================== -->
+    <div class="w-full">
+
+        <!-- HERO -->
+        <section class="w-full bg-white px-[8px] pt-[64px] pb-[8px]">
+
+            <!-- Image de couverture -->
+            <div class="rounded-[16px] overflow-hidden w-full" style="height: calc(100vh - 340px); min-height: 280px;">
+                <!-- IMAGE — remplacer src par la cover du projet -->
+                <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=1600&auto=format&fit=crop"
+                     alt="Couverture du projet"
+                     class="w-full h-full object-cover">
+            </div>
+
+            <!-- Titre -->
+            <div class="grid grid-cols-3 gap-[16px] mt-6 pb-12">
+
+                <!-- Icône + Titre (même taille) -->
+                <div class="col-span-3 flex items-end gap-[0.18em]" style="font-size: clamp(28px, 7vw, 120px);">
+                    <!-- ICON — remplacer src par l'icône du projet -->
+                    <img src="img/logo.svg" alt="Icône projet"
+                         style="height: 0.82em; width: auto; flex-shrink: 0; margin-bottom: 0.06em;">
+                    <h1 class="font-extrabold tracking-[-0.05em] leading-[0.9] text-[#1d1d1f]">Nom du Projet</h1>
+                </div>
+
+                <!-- Meta ligne -->
+                <div class="col-span-1 text-base md:text-lg font-medium self-end pt-3">Tagline courte du projet</div>
+                <div class="col-span-1"></div>
+                <div class="col-span-1 text-sm md:text-base font-medium text-right self-end pt-3 text-[#6e6e73]">Recherche UX — Interface</div>
+
+            </div>
+        </section>
+
+        <!-- ==================== 01 CONTEXTE ==================== -->
+        <section class="w-full bg-white px-[8px] py-20 md:py-32 border-t border-apple-border">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="eyebrow">01 — Contexte</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-6">
+                    <h2 class="text-[clamp(20px,2.4vw,36px)] font-semibold tracking-[-0.003em] leading-tight">Titre de la section Contexte</h2>
+                    <p class="text-[17px] text-[#6e6e73] leading-relaxed max-w-prose">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                    <p class="text-[17px] text-[#6e6e73] leading-relaxed max-w-prose">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem aperiam.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 02 PROBLÉMATIQUE ==================== -->
+        <section class="w-full bg-white px-[8px] py-20 md:py-32 border-t border-apple-border">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="eyebrow">02 — Problématique</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(20px,2.4vw,36px)] font-semibold tracking-[-0.003em] leading-tight">La question centrale</h2>
+                    <blockquote class="text-[clamp(17px,1.8vw,26px)] font-light italic leading-relaxed text-[#1d1d1f] border-l-2 border-brand-orange pl-6">
+                        " Comment [insérer la question centrale du projet] dans un contexte de [contexte] ? "
+                    </blockquote>
+                    <p class="text-[17px] text-[#6e6e73] leading-relaxed max-w-prose">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 03 ENJEUX ==================== -->
+        <section class="w-full bg-white px-[8px] py-20 md:py-32 border-t border-apple-border">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="eyebrow">03 — Enjeux</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-10">
+                    <h2 class="text-[clamp(20px,2.4vw,36px)] font-semibold tracking-[-0.003em] leading-tight">Les enjeux du projet</h2>
+                    <div class="grid grid-cols-2 gap-x-[16px] gap-y-10">
+                        <div class="flex flex-col gap-2">
+                            <span class="text-[12px] font-bold uppercase tracking-widest text-brand-orange">Enjeu 01</span>
+                            <h3 class="text-[18px] font-semibold tracking-[-0.003em]">Titre enjeu</h3>
+                            <p class="text-[16px] text-[#6e6e73] leading-relaxed">Description de l'enjeu. Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor.</p>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <span class="text-[12px] font-bold uppercase tracking-widest text-brand-orange">Enjeu 02</span>
+                            <h3 class="text-[18px] font-semibold tracking-[-0.003em]">Titre enjeu</h3>
+                            <p class="text-[16px] text-[#6e6e73] leading-relaxed">Description de l'enjeu. Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor.</p>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <span class="text-[12px] font-bold uppercase tracking-widest text-brand-orange">Enjeu 03</span>
+                            <h3 class="text-[18px] font-semibold tracking-[-0.003em]">Titre enjeu</h3>
+                            <p class="text-[16px] text-[#6e6e73] leading-relaxed">Description de l'enjeu. Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor.</p>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <span class="text-[12px] font-bold uppercase tracking-widest text-brand-orange">Enjeu 04</span>
+                            <h3 class="text-[18px] font-semibold tracking-[-0.003em]">Titre enjeu</h3>
+                            <p class="text-[16px] text-[#6e6e73] leading-relaxed">Description de l'enjeu. Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 04 MÉTHODOLOGIE ==================== -->
+        <section class="w-full bg-white px-[8px] py-20 md:py-32 border-t border-apple-border">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="eyebrow">04 — Méthodologie</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-10">
+                    <h2 class="text-[clamp(20px,2.4vw,36px)] font-semibold tracking-[-0.003em] leading-tight">Mon approche</h2>
+                    <div class="flex flex-col gap-8">
+                        <div class="flex gap-6 items-start">
+                            <span class="font-extrabold tracking-[-0.05em] leading-none flex-shrink-0 text-apple-border" style="font-size: clamp(28px,3vw,52px);">01</span>
+                            <div class="flex flex-col gap-1 pt-1">
+                                <h3 class="text-[18px] font-semibold tracking-[-0.003em]">Recherche utilisateur</h3>
+                                <p class="text-[16px] text-[#6e6e73] leading-relaxed">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6 items-start">
+                            <span class="font-extrabold tracking-[-0.05em] leading-none flex-shrink-0 text-apple-border" style="font-size: clamp(28px,3vw,52px);">02</span>
+                            <div class="flex flex-col gap-1 pt-1">
+                                <h3 class="text-[18px] font-semibold tracking-[-0.003em]">Définition & cadrage</h3>
+                                <p class="text-[16px] text-[#6e6e73] leading-relaxed">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6 items-start">
+                            <span class="font-extrabold tracking-[-0.05em] leading-none flex-shrink-0 text-apple-border" style="font-size: clamp(28px,3vw,52px);">03</span>
+                            <div class="flex flex-col gap-1 pt-1">
+                                <h3 class="text-[18px] font-semibold tracking-[-0.003em]">Idéation & conception</h3>
+                                <p class="text-[16px] text-[#6e6e73] leading-relaxed">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6 items-start">
+                            <span class="font-extrabold tracking-[-0.05em] leading-none flex-shrink-0 text-apple-border" style="font-size: clamp(28px,3vw,52px);">04</span>
+                            <div class="flex flex-col gap-1 pt-1">
+                                <h3 class="text-[18px] font-semibold tracking-[-0.003em]">Tests & itérations</h3>
+                                <p class="text-[16px] text-[#6e6e73] leading-relaxed">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 05 SOLUTION UX ==================== -->
+        <section class="w-full bg-white px-[8px] py-20 md:py-32 border-t border-apple-border">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="eyebrow">05 — Solution UX</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-6">
+                    <h2 class="text-[clamp(20px,2.4vw,36px)] font-semibold tracking-[-0.003em] leading-tight">Titre de la solution</h2>
+                    <p class="text-[17px] text-[#6e6e73] leading-relaxed max-w-prose">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <p class="text-[17px] text-[#6e6e73] leading-relaxed max-w-prose">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== GALERIE BENTO ==================== -->
+        <section class="w-full bg-white px-[8px] py-20 md:py-32 border-t border-apple-border">
+
+            <!-- Label -->
+            <div class="grid grid-cols-3 gap-[16px] mb-10">
+                <div class="col-span-1">
+                    <span class="eyebrow">Maquettes finales</span>
+                </div>
+            </div>
+
+            <!-- Bento — 3 colonnes, rythme : 2+1 / 1+1+1 / 1+2 -->
+            <!-- grid-template-rows garantit une hauteur identique pour toutes les cellules d'une même ligne -->
+            <div class="grid grid-cols-3 gap-[16px]"
+                 style="grid-template-rows: clamp(220px, 28vw, 440px) clamp(160px, 18vw, 280px) clamp(220px, 28vw, 440px);">
+
+                <!-- Ligne 1 -->
+                <div class="bento-img col-span-2 rounded-[16px] overflow-hidden bg-[#f0f0f0]">
+                    <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=1200&auto=format&fit=crop"
+                         alt="Maquette 1" class="w-full h-full object-cover" loading="lazy">
+                </div>
+                <div class="bento-img col-span-1 rounded-[16px] overflow-hidden bg-[#f0f0f0]">
+                    <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=600&auto=format&fit=crop"
+                         alt="Maquette 2" class="w-full h-full object-cover" loading="lazy">
+                </div>
+
+                <!-- Ligne 2 -->
+                <div class="bento-img col-span-1 rounded-[16px] overflow-hidden bg-[#f0f0f0]">
+                    <img src="https://images.unsplash.com/photo-1556656793-08538906a9f8?q=80&w=600&auto=format&fit=crop"
+                         alt="Maquette 3" class="w-full h-full object-cover" loading="lazy">
+                </div>
+                <div class="bento-img col-span-1 rounded-[16px] overflow-hidden bg-[#f0f0f0]">
+                    <img src="https://images.unsplash.com/photo-1576091160550-2173ff9e5ee5?q=80&w=600&auto=format&fit=crop"
+                         alt="Maquette 4" class="w-full h-full object-cover" loading="lazy">
+                </div>
+                <div class="bento-img col-span-1 rounded-[16px] overflow-hidden bg-[#f0f0f0]">
+                    <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600&auto=format&fit=crop"
+                         alt="Maquette 5" class="w-full h-full object-cover" loading="lazy">
+                </div>
+
+                <!-- Ligne 3 -->
+                <div class="bento-img col-span-1 rounded-[16px] overflow-hidden bg-[#f0f0f0]">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=600&auto=format&fit=crop"
+                         alt="Maquette 6" class="w-full h-full object-cover" loading="lazy">
+                </div>
+                <div class="bento-img col-span-2 rounded-[16px] overflow-hidden bg-[#f0f0f0]">
+                    <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=1200&auto=format&fit=crop"
+                         alt="Maquette 7" class="w-full h-full object-cover" loading="lazy">
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ==================== FOOTER ==================== -->
+        <footer class="w-full bg-apple-gray border-t border-apple-border overflow-hidden">
+            <div class="max-w-[980px] mx-auto px-6 md:px-10 py-8">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16ZM13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="#6e6e73"/>
+                        </svg>
+                        <span class="text-[12px] text-[#6e6e73] tracking-[-0.01em]">Copyright © 2026 Bruno Tanguy.</span>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <a href="mailto:bruno.tanguy@icloud.com" class="text-[12px] text-[#6e6e73] hover:text-[#1d1d1f] tracking-[-0.01em] transition-colors duration-200">Mail</a>
+                        <a href="#" class="text-[12px] text-[#6e6e73] hover:text-[#1d1d1f] tracking-[-0.01em] transition-colors duration-200">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', (e) => {
+                const target = document.querySelector(a.getAttribute('href'));
+                if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+            });
+        });
+
+        /* === Curseur custom === */
+        const cur = document.getElementById('c-cursor');
+        let cx = -50, cy = -50, tx = -50, ty = -50;
+        document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+        document.addEventListener('mouseleave', () => cur.classList.add('hidden'));
+        document.addEventListener('mouseenter', () => cur.classList.remove('hidden'));
+        (function curLoop() {
+            cx += (tx - cx) * 0.18; cy += (ty - cy) * 0.18;
+            cur.style.left = cx + 'px'; cur.style.top = cy + 'px';
+            requestAnimationFrame(curLoop);
+        })();
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('mouseenter', () => cur.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cur.classList.remove('hover'));
+        });
+    </script>
+</body>
+</html>

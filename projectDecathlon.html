@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Decathlon — Bruno Tanguy</title>
+    <meta name="description" content="Projet Decathlon City Nantes — Optimiser le parcours client. Étude de cas de Bruno Tanguy.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <meta property="og:image" content="/img/decathlon/zones.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['"Host Grotesk"', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-orange': '#FF8400',
+                        'brand-gray': '#E2E1E6',
+                        'text-muted': '#6B6A75',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* ===== SCROLL REVEALS ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-img {
+            opacity: 0;
+            transform: scale(1.04);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-img.visible { opacity: 1; transform: scale(1); }
+        .reveal-d1 { transition-delay: 0.1s; }
+        .reveal-d2 { transition-delay: 0.2s; }
+        .reveal-d3 { transition-delay: 0.3s; }
+        .reveal-d4 { transition-delay: 0.4s; }
+
+        /* ===== DYNAMIC ISLAND HEADER ===== */
+        .dyn-link {
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.6);
+            transition: color 0.2s ease;
+            white-space: nowrap;
+        }
+        .dyn-link:hover { color: white; }
+        .dyn-link.active { color: white; }
+
+        /* ===== CURSEUR CUSTOM ===== */
+        body { cursor: none; }
+        a, button, [role="button"] { cursor: none; }
+        #c-cursor {
+            position: fixed; top: 0; left: 0; z-index: 9999;
+            width: 10px; height: 10px;
+            background: black; border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.25s cubic-bezier(0.16,1,0.3,1),
+                        height 0.25s cubic-bezier(0.16,1,0.3,1),
+                        background 0.2s ease,
+                        border 0.2s ease,
+                        opacity 0.3s ease;
+        }
+        #c-cursor.hover   { width: 32px; height: 32px; background: transparent; border: 1.5px solid black; }
+        #c-cursor.hidden  { opacity: 0; }
+
+        /* ===== SECTION LABEL ===== */
+        .section-label {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #6B6A75;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        .scroll-area { -ms-overflow-style: none; scrollbar-width: none; }
+        .scroll-area::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+
+<body class="bg-white text-black font-sans w-full overflow-x-hidden selection:bg-brand-orange selection:text-white">
+<div id="c-cursor"></div>
+
+    <!-- ==================== HEADER — DYNAMIC ISLAND ==================== -->
+    <header class="fixed top-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
+        <div id="dyn-pill" class="pointer-events-auto flex items-center bg-black text-white rounded-full px-5 py-[11px] shadow-md">
+
+            <!-- Logo + Nom -->
+            <a href="index.html" class="flex items-center gap-2.5 shrink-0">
+                <svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Logo Bruno Tanguy">
+                    <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16ZM13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="white"/>
+                </svg>
+                <span class="font-bold text-[14px] tracking-tight whitespace-nowrap">Bruno Tanguy</span>
+            </a>
+
+            <!-- Nav -->
+            <nav class="flex items-center gap-5 ml-[18px]" aria-label="Navigation principale">
+                <div class="w-px h-3.5 bg-white/20 shrink-0"></div>
+                <a href="index.html" class="dyn-link">Home</a>
+                <a href="resume.html" class="dyn-link">Mon Profil</a>
+                <a href="mailto:bruno.tanguy@icloud.com" class="dyn-link">Contact</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <!-- ==================== MAIN ==================== -->
+    <div class="w-full">
+
+        <!-- HERO -->
+        <section class="w-full min-h-screen p-[8px] flex flex-col justify-end pt-[72px] overflow-hidden">
+            <div class="rounded-2xl overflow-hidden w-full mb-12" style="height: calc(100vh - 360px); min-height: 320px;">
+                <img src="img/decathlon/zones.png"
+                     alt="Plan des zones d'observation Decathlon City Nantes"
+                     class="w-full h-full object-cover reveal-img">
+            </div>
+            <div class="grid grid-cols-3 gap-[16px] pb-[40px] px-[8px]">
+                <div class="col-span-1">
+                    <img src="img/logo.svg" alt="Icône projet" class="w-full max-w-[120px] h-auto">
+                </div>
+                <div class="col-span-1"></div>
+                <div class="col-span-1"></div>
+                <h1 class="col-span-3 text-[clamp(32px,8.5vw,120px)] font-extrabold tracking-[-0.05em] leading-[0.9] text-black pb-2">Decathlon</h1>
+                <div class="col-span-1 text-base md:text-lg font-medium self-end">Optimiser le parcours client</div>
+                <div class="col-span-1"></div>
+                <div class="col-span-1 text-sm md:text-base font-medium text-right self-end text-text-muted">Recherche UX · Retail</div>
+            </div>
+        </section>
+
+        <!-- META -->
+        <section class="w-full py-8 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-4 gap-[16px]">
+                <div class="flex flex-col gap-1 reveal reveal-d1">
+                    <span class="section-label">Rôle</span>
+                    <span class="text-[15px] font-medium mt-2">Recherche UX · Observation terrain</span>
+                </div>
+                <div class="flex flex-col gap-1 reveal reveal-d2">
+                    <span class="section-label">Secteur</span>
+                    <span class="text-[15px] font-medium mt-2">Retail</span>
+                </div>
+                <div class="flex flex-col gap-1 reveal reveal-d3">
+                    <span class="section-label">Année</span>
+                    <span class="text-[15px] font-medium mt-2">2024</span>
+                </div>
+                <div class="flex flex-col gap-1 reveal reveal-d4">
+                    <span class="section-label">Livrables</span>
+                    <span class="text-[15px] font-medium mt-2">Rapport d'observation, Solutions</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 01 CONTEXTE -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">01 — Contexte</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Un projet ancré dans la réalité du terrain</h2>
+                    <div class="flex flex-col gap-6">
+                        <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Dans le cadre d'un partenariat pédagogique, nous avons collaboré avec le Decathlon City du centre-ville de Nantes. L'objectif était de répondre à une problématique réelle posée par le magasin, en intervenant directement sur le terrain.</p>
+                        <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d3">En équipe de 5 étudiants designers, nous avons pris en charge l'intégralité du processus de recherche : de la conception du protocole d'observation jusqu'à la restitution des solutions auprès du client.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 02 PROBLÉMATIQUE -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">02 — Problématique</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Comment faire émerger ce qui reste invisible ?</h2>
+                    <div class="flex flex-col gap-6">
+                        <blockquote class="text-[clamp(18px,2vw,28px)] font-light italic leading-relaxed text-black reveal reveal-d2">" Comment optimiser le parcours client pour garantir l'attractivité de chaque zone de vente au sein d'un Decathlon City ? "</blockquote>
+                        <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d3">Le magasin avait identifié trois points d'attention prioritaires : la caisse automatique, le processus Click &amp; Collect (dont une partie restait invisible), et l'identification des zones chaudes et froides du magasin.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 03 ENJEUX -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">03 — Enjeux</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-10">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Ce que le magasin devait résoudre</h2>
+                    <div class="grid grid-cols-2 gap-x-8 gap-y-12">
+                        <div class="flex flex-col gap-2 reveal reveal-d1">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Enjeu 01</span>
+                            <h3 class="text-[17px] font-bold tracking-tight">Zones chaudes &amp; froides</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Identifier les espaces qui attirent naturellement et ceux qui restent délaissés.</p>
+                        </div>
+                        <div class="flex flex-col gap-2 reveal reveal-d2">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Enjeu 02</span>
+                            <h3 class="text-[17px] font-bold tracking-tight">Click &amp; Collect invisible</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Un service mal signalé, sans guidage ni repères visuels.</p>
+                        </div>
+                        <div class="flex flex-col gap-2 reveal reveal-d3">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Enjeu 03</span>
+                            <h3 class="text-[17px] font-bold tracking-tight">Caisse automatique</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Accompagner l'adoption par les clients face aux habitudes établies.</p>
+                        </div>
+                        <div class="flex flex-col gap-2 reveal reveal-d4">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Enjeu 04</span>
+                            <h3 class="text-[17px] font-bold tracking-tight">Attractivité globale</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Générer de l'intérêt dans chaque zone en espace réduit.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 04 MÉTHODOLOGIE -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">04 — Méthodologie</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-10">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Observer avant de concevoir</h2>
+                    
+                    <div class="flex flex-col gap-12">
+                        <!-- Étape 1 -->
+                        <div class="flex gap-6 items-start reveal reveal-d1">
+                            <span class="font-extrabold text-[48px] leading-none flex-shrink-0 text-brand-gray">01</span>
+                            <div class="flex flex-col gap-4 pt-2">
+                                <h3 class="text-[18px] font-bold tracking-tight">Protocole d'observation</h3>
+                                <p class="text-[16px] text-text-muted leading-relaxed">Deux sessions de 3 heures sur le terrain. Le magasin a été découpé en plusieurs zones, chacune surveillée pour récolter les comportements récurrents.</p>
+                                <div class="rounded-[16px] overflow-hidden w-full mt-2">
+                                    <img src="img/decathlon/zones.png" alt="Découpage du magasin" class="w-full h-auto reveal-img">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Étape 2 -->
+                        <div class="flex gap-6 items-start reveal reveal-d2">
+                            <span class="font-extrabold text-[48px] leading-none flex-shrink-0 text-brand-gray">02</span>
+                            <div class="flex flex-col gap-4 pt-2">
+                                <h3 class="text-[18px] font-bold tracking-tight">Collecte de comportements</h3>
+                                <p class="text-[16px] text-text-muted leading-relaxed">Identifier les frictions : hésitations, demi-tours, erreurs de navigation. Au total : <strong>6h sur place</strong>, environ <strong>150 entrées</strong> observées.</p>
+                            </div>
+                        </div>
+
+                        <!-- Étape 3 -->
+                        <div class="flex gap-6 items-start reveal reveal-d3">
+                            <span class="font-extrabold text-[48px] leading-none flex-shrink-0 text-brand-gray">03</span>
+                            <div class="flex flex-col gap-4 pt-2">
+                                <h3 class="text-[18px] font-bold tracking-tight">30 interviews utilisateurs</h3>
+                                <p class="text-[16px] text-text-muted leading-relaxed">Comprendre les motivations et blocages derrière chaque friction identifiée. Voix réelle des utilisateurs.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 05 KEY INSIGHT -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1"></div>
+                <blockquote class="col-span-2 text-[clamp(20px,2.5vw,30px)] font-light leading-relaxed italic text-black reveal reveal-d1">" Le Click &amp; Collect était invisible. Non pas parce que les clients ne savaient pas chercher — mais parce que rien ne les invitait à regarder. "</blockquote>
+            </div>
+        </section>
+
+        <!-- 06 SOLUTIONS -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">05 — Solutions</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-10">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Rendre visible l'invisible</h2>
+                    
+                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Le Click &amp; Collect concentrait le plus de frictions : absence de guidage dès l'entrée et zone visuellement invisible. Nous avons proposé trois concepts pour rendre ce service évident.</p>
+
+                    <div class="grid grid-cols-3 gap-6">
+                        <div class="flex flex-col gap-3 reveal reveal-d1">
+                            <div class="rounded-[14px] overflow-hidden">
+                                <img src="img/decathlon/solutions_fil_d_ariane.png" alt="Solution 1" class="w-full h-auto reveal-img">
+                            </div>
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange">Solution 01</span>
+                            <h3 class="text-[16px] font-bold tracking-tight">Fil d'Ariane bleu</h3>
+                            <p class="text-[14px] text-text-muted leading-relaxed">Tracé continu du sol pour un guidage naturel vers le fond du magasin.</p>
+                        </div>
+                        <div class="flex flex-col gap-3 reveal reveal-d2">
+                            <div class="rounded-[14px] overflow-hidden">
+                                <img src="img/decathlon/solutions_signalisation.png" alt="Solution 2" class="w-full h-auto reveal-img">
+                            </div>
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange">Solution 02</span>
+                            <h3 class="text-[16px] font-bold tracking-tight">Projections lumineuses</h3>
+                            <p class="text-[14px] text-text-muted leading-relaxed">Signaux dynamiques pour capter l'attention en temps réel.</p>
+                        </div>
+                        <div class="flex flex-col gap-3 reveal reveal-d3">
+                            <div class="rounded-[14px] overflow-hidden">
+                                <img src="img/decathlon/solutions_zone_bleue.png" alt="Solution 3" class="w-full h-auto reveal-img">
+                            </div>
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange">Solution 03</span>
+                            <h3 class="text-[16px] font-bold tracking-tight">Zone 100% bleue</h3>
+                            <p class="text-[14px] text-text-muted leading-relaxed">Espace identifiable immédiatement depuis n'importe quel point.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 07 APPRENTISSAGES -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">Apprentissages</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-6">
+                    <h3 class="text-[17px] font-bold tracking-tight reveal reveal-d1">Ce que ce projet m'a enseigné</h3>
+                    <ul class="flex flex-col gap-4">
+                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d1">
+                            <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                            Les utilisateurs ont toujours le dernier mot : c'est l'observation qui valide ou invalide les hypothèses.
+                        </li>
+                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d2">
+                            <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                            Un protocole doit être flexible pour s'adapter à la réalité du terrain, souvent plus complexe qu'attendu.
+                        </li>
+                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d3">
+                            <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                            Présenter les problèmes avec des anecdotes réelles a plus d'impact qu'un simple rapport de données.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJET SUIVANT -->
+        <section class="w-full border-t border-brand-gray">
+            <a href="projectWePlan.html" class="group flex items-center justify-between px-[8px] py-20 md:py-28">
+                <div class="flex flex-col gap-3">
+                    <span class="section-label">Projet suivant</span>
+                    <h2 class="text-[clamp(28px,5vw,80px)] font-extrabold tracking-[-0.05em] leading-none group-hover:text-brand-orange transition-colors duration-300">WePlan</h2>
+                    <span class="text-[15px] text-text-muted group-hover:text-brand-orange transition-colors duration-300">Architecture UI · Social</span>
+                </div>
+                <span class="text-[clamp(28px,5vw,80px)] font-extrabold leading-none transform group-hover:translate-x-4 group-hover:text-brand-orange transition-all duration-300">→</span>
+            </a>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="w-full border-t border-brand-gray overflow-hidden">
+            <div class="px-[8px] py-12 md:py-16">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-2.5">
+                        <svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16ZM13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="#6B6A75"/>
+                        </svg>
+                        <span class="text-[12px] text-text-muted tracking-[-0.01em]">Copyright © 2026 Bruno Tanguy.</span>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <a href="mailto:bruno.tanguy@icloud.com" class="text-[12px] text-text-muted hover:text-black tracking-[-0.01em] transition-colors duration-200">Mail</a>
+                        <a href="#" class="text-[12px] text-text-muted hover:text-black tracking-[-0.01em] transition-colors duration-200">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        // ===== SCROLL REVEAL =====
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -80px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal, .reveal-img').forEach(el => observer.observe(el));
+
+        // ===== CURSEUR CUSTOM =====
+        const cursor = document.getElementById('c-cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        document.addEventListener('mouseenter', () => cursor.classList.remove('hidden'));
+        document.addEventListener('mouseleave', () => cursor.classList.add('hidden'));
+
+        document.querySelectorAll('a, button, [role="button"]').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+    </script>
+</body>
+</html>

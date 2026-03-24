@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mon Profil — Bruno Tanguy</title>
+    <meta name="description" content="CV de Bruno Tanguy, Product Designer. Étudiant en 3e année Designer Service à l'École de design Nantes Atlantique.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['"Host Grotesk"', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-orange': '#FF8400',
+                        'brand-gray': '#E2E1E6',
+                        'text-muted': '#6B6A75',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* ===== DASH BUTTONS ===== */
+        .btn-dash {
+            display: inline-flex;
+            align-items: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .btn-dash .dash {
+            display: inline-block;
+            height: 2px;
+            flex-shrink: 0;
+            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease;
+        }
+        .btn-foot { font-size: 14px; font-weight: 500; color: #6B6A75; }
+        .btn-foot .dash { width: 10px; margin-right: 8px; background: #D1D0D5; }
+        .btn-foot:hover { color: black; }
+        .btn-foot:hover .dash { width: 18px; background: black; }
+
+        /* ===== DYNAMIC ISLAND HEADER ===== */
+        .dyn-link {
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.6);
+            transition: color 0.2s ease;
+            white-space: nowrap;
+        }
+        .dyn-link:hover { color: white; }
+        .dyn-link.active { color: white; }
+
+        /* ===== CURSEUR CUSTOM ===== */
+        body { cursor: none; }
+        a, button, [role="button"] { cursor: none; }
+        #c-cursor {
+            position: fixed; top: 0; left: 0; z-index: 9999;
+            width: 10px; height: 10px;
+            background: black; border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.25s cubic-bezier(0.16,1,0.3,1),
+                        height 0.25s cubic-bezier(0.16,1,0.3,1),
+                        background 0.2s ease,
+                        border 0.2s ease,
+                        opacity 0.3s ease;
+        }
+        #c-cursor.hover  { width: 32px; height: 32px; background: transparent; border: 1.5px solid black; }
+        #c-cursor.hidden { opacity: 0; }
+
+        /* ===== SECTION LABEL ===== */
+        .section-label {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #6B6A75;
+        }
+
+        /* ===== SKILL TAGS ===== */
+        .skill-tag {
+            display: inline-flex;
+            align-items: center;
+            border: 1.5px solid #E2E1E6;
+            border-radius: 999px;
+            padding: 4px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #6B6A75;
+            transition: border-color 0.2s ease, color 0.2s ease;
+        }
+        .skill-tag:hover { border-color: black; color: black; }
+
+        /* ===== SCROLL REVEALS ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible  { opacity: 1; transform: translateY(0); }
+        .reveal-d1 { transition-delay: 0.1s; }
+        .reveal-d2 { transition-delay: 0.2s; }
+        .reveal-d3 { transition-delay: 0.3s; }
+        .reveal-d4 { transition-delay: 0.4s; }
+
+        /* ===== SCROLLBAR ===== */
+        .scroll-area { -ms-overflow-style: none; scrollbar-width: none; }
+        .scroll-area::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+
+<body class="bg-white text-black font-sans w-full overflow-x-hidden selection:bg-brand-orange selection:text-white">
+<div id="c-cursor"></div>
+
+    <!-- ==================== HEADER — DYNAMIC ISLAND ==================== -->
+    <header class="fixed top-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
+        <div id="dyn-pill" class="pointer-events-auto flex items-center bg-black text-white rounded-full px-5 py-[11px] shadow-md">
+
+            <a href="index.html" class="flex items-center gap-2.5 shrink-0">
+                <svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Logo Bruno Tanguy">
+                    <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16ZM13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="white"/>
+                </svg>
+                <span class="font-bold text-[14px] tracking-tight whitespace-nowrap">Bruno Tanguy</span>
+            </a>
+
+            <nav class="flex items-center gap-5 ml-[18px]" aria-label="Navigation principale">
+                <div class="w-px h-3.5 bg-white/20 shrink-0"></div>
+                <a href="index.html#projets" class="dyn-link">Projets</a>
+                <a href="resume.html" class="dyn-link active">Mon Profil</a>
+                <a href="mailto:bruno.tanguy@icloud.com" class="dyn-link">Contact</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <!-- ==================== MAIN ==================== -->
+    <div class="w-full">
+
+        <!-- HERO -->
+        <section class="w-full pt-[120px] pb-16 px-[8px] overflow-hidden">
+            <div class="grid grid-cols-3 gap-[16px] w-full">
+                <h1 class="col-span-3 text-[clamp(32px,6vw,96px)] font-extrabold tracking-[-0.05em] leading-[0.9] text-black pb-4">Mon Profil</h1>
+                <div class="col-span-1 text-base font-medium self-end text-text-muted">Bruno Tanguy</div>
+                <div class="col-span-1"></div>
+                <div class="col-span-1 text-base font-medium text-right self-end text-text-muted">Designer Service · Bac+5</div>
+            </div>
+        </section>
+
+        <!-- À PROPOS -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">À propos</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Étudiant en 3e année Designer Service à l'École de design Nantes Atlantique.</h2>
+                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Passionné par le design d'interfaces et la recherche utilisateur, je conçois des expériences qui placent l'humain au centre. En recherche d'alternance pour septembre 2026.</p>
+                    <div class="flex flex-wrap gap-x-6 gap-y-2 pt-2 border-t border-brand-gray reveal reveal-d3">
+                        <a href="mailto:bruno.tanguy@icloud.com" class="text-[15px] font-medium text-black hover:text-brand-orange transition-colors duration-200">bruno.tanguy@icloud.com</a>
+                        <span class="text-[15px] font-medium text-text-muted">Nantes (44100)</span>
+                        <span class="text-[15px] font-medium text-text-muted">Permis B &amp; Voiture</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXPÉRIENCES -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">Expériences</span>
+                </div>
+                <div class="col-span-2">
+                    <div class="flex flex-col gap-0">
+
+                        <!-- Lydia -->
+                        <div class="flex gap-5 pb-10 reveal reveal-d1">
+                            <div class="flex flex-col items-center shrink-0 pt-[7px]">
+                                <div class="w-2 h-2 rounded-full bg-brand-gray"></div>
+                                <div class="w-px flex-1 bg-brand-gray mt-2"></div>
+                            </div>
+                            <div class="flex flex-col gap-2 pb-2">
+                                <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-1">
+                                    <h3 class="text-[18px] font-bold tracking-tight">Stage Lydia Solutions (Lydia / Sumeria)</h3>
+                                    <span class="text-[12px] text-text-muted font-medium shrink-0">3 mois · 2025</span>
+                                </div>
+                                <p class="text-[15px] text-text-muted leading-relaxed">Création de User flows, d'interfaces sur Figma.</p>
+                                <p class="text-[15px] text-text-muted leading-relaxed">Collaboration avec des développeurs, PO, Vertical Lead et suivi de projets.</p>
+                                <p class="text-[15px] text-text-muted leading-relaxed">Création de scènes 3D. Participation à des interviews utilisateurs.</p>
+                            </div>
+                        </div>
+
+                        <!-- Hacking Health -->
+                        <div class="flex gap-5 pb-10 reveal reveal-d2">
+                            <div class="flex flex-col items-center shrink-0 pt-[7px]">
+                                <div class="w-2 h-2 rounded-full bg-brand-gray"></div>
+                                <div class="w-px flex-1 bg-brand-gray mt-2"></div>
+                            </div>
+                            <div class="flex flex-col gap-2 pb-2">
+                                <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-1">
+                                    <h3 class="text-[18px] font-bold tracking-tight">Prix concours Hacking Health — Écos soins</h3>
+                                    <span class="text-[12px] text-text-muted font-medium shrink-0">2024</span>
+                                </div>
+                                <p class="text-[15px] text-text-muted leading-relaxed">Prix remis par le Centre Hospitalier de Nantes pour un projet mené avec la CPAM.</p>
+                            </div>
+                        </div>
+
+                        <!-- Maison du Don du Sang -->
+                        <div class="flex gap-5 pb-10 reveal reveal-d3">
+                            <div class="flex flex-col items-center shrink-0 pt-[7px]">
+                                <div class="w-2 h-2 rounded-full bg-brand-gray"></div>
+                                <div class="w-px flex-1 bg-brand-gray mt-2"></div>
+                            </div>
+                            <div class="flex flex-col gap-2 pb-2">
+                                <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-1">
+                                    <h3 class="text-[18px] font-bold tracking-tight">Intérim — Maison du Don du Sang</h3>
+                                    <span class="text-[12px] text-text-muted font-medium shrink-0">3 mois · Saint-Nazaire · 2022</span>
+                                </div>
+                                <p class="text-[15px] text-text-muted leading-relaxed">Formation sur le Don du Sang. Street marketing pour encourager le don.</p>
+                            </div>
+                        </div>
+
+                        <!-- Armor Ventilation -->
+                        <div class="flex gap-5 reveal reveal-d4">
+                            <div class="flex flex-col items-center shrink-0 pt-[7px]">
+                                <div class="w-2 h-2 rounded-full bg-brand-gray"></div>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-1">
+                                    <h3 class="text-[18px] font-bold tracking-tight">Stage Seconde — Armor Ventilation</h3>
+                                    <span class="text-[12px] text-text-muted font-medium shrink-0">1 semaine · Plérin · 2021</span>
+                                </div>
+                                <p class="text-[15px] text-text-muted leading-relaxed">Observation du processus complet de fabrication des installations (conception 3D à l'installation).</p>
+                                <p class="text-[15px] text-text-muted leading-relaxed">Participation à l'organisation d'un entrepôt et au montage des installations.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FORMATION -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">Formation</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+
+                    <!-- École de design -->
+                    <div class="border-b border-brand-gray pb-8 reveal reveal-d1">
+                        <div class="flex flex-col sm:flex-row sm:items-baseline justify-between mb-3">
+                            <h3 class="text-[18px] font-bold tracking-tight">École de design Nantes Atlantique</h3>
+                            <span class="text-[12px] text-text-muted font-medium shrink-0">Bac+5 · 2023 — 2028</span>
+                        </div>
+                        <p class="text-[15px] text-text-muted leading-relaxed">Apprentissages de fondamentaux du design et des méthodes de travail. Projets avec CEGEDIM (aidé par Upgrade), Esprit critique, CPAM.</p>
+                        <span class="inline-block mt-3 text-[11px] font-bold tracking-widest uppercase text-brand-orange">En cours</span>
+                    </div>
+
+                    <!-- Scouts -->
+                    <div class="border-b border-brand-gray pb-8 reveal reveal-d2">
+                        <div class="flex flex-col sm:flex-row sm:items-baseline justify-between mb-3">
+                            <h3 class="text-[18px] font-bold tracking-tight">Scouts et Guides de France</h3>
+                        </div>
+                        <p class="text-[15px] font-bold tracking-tight text-black mb-1">Diplôme Chef de Quart / Patron d'Embarcation</p>
+                        <p class="text-[15px] text-text-muted leading-relaxed">Encadrement de jeunes en navigation, constitution de dossiers pédagogiques et de sécurité. Reconnu par la DDJS.</p>
+                    </div>
+
+                    <!-- Bac -->
+                    <div class="reveal reveal-d3">
+                        <div class="flex flex-col sm:flex-row sm:items-baseline justify-between mb-3">
+                            <h3 class="text-[18px] font-bold tracking-tight">Lycée Saint-Louis — Baccalauréat 2023</h3>
+                        </div>
+                        <p class="text-[15px] text-text-muted leading-relaxed">Spécialités : Maths, Science de l'ingénieur, Physique-Chimie.</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- COMPÉTENCES -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">Compétences</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-10">
+
+                    <div class="reveal reveal-d1">
+                        <h3 class="text-[12px] font-bold uppercase tracking-widest text-text-muted mb-4">Hard skills</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="skill-tag">Conception Wireframe</span>
+                            <span class="skill-tag">Création d'interfaces</span>
+                            <span class="skill-tag">User Flows</span>
+                            <span class="skill-tag">Prototypage interactif</span>
+                            <span class="skill-tag">Veille &amp; Recherches</span>
+                            <span class="skill-tag">HTML, CSS &amp; JS</span>
+                            <span class="skill-tag">IA</span>
+                            <span class="skill-tag">Anglais (intermédiaire)</span>
+                        </div>
+                    </div>
+
+                    <div class="reveal reveal-d2">
+                        <h3 class="text-[12px] font-bold uppercase tracking-widest text-text-muted mb-4">Logiciels</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="skill-tag">Figma</span>
+                            <span class="skill-tag">Figma Deck</span>
+                            <span class="skill-tag">FigJam</span>
+                            <span class="skill-tag">Adobe Illustrator</span>
+                            <span class="skill-tag">Adobe Photoshop</span>
+                            <span class="skill-tag">Adobe Premiere Pro</span>
+                            <span class="skill-tag">Adobe Indesign</span>
+                            <span class="skill-tag">Visual Studio Code</span>
+                            <span class="skill-tag">Notion</span>
+                            <span class="skill-tag">Spline 3D</span>
+                            <span class="skill-tag">Cavalry</span>
+                            <span class="skill-tag">After Effects</span>
+                            <span class="skill-tag">Blender</span>
+                            <span class="skill-tag">Unreal Engine</span>
+                        </div>
+                    </div>
+
+                    <div class="reveal reveal-d3">
+                        <h3 class="text-[12px] font-bold uppercase tracking-widest text-text-muted mb-4">Soft skills</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="skill-tag">Esprit critique</span>
+                            <span class="skill-tag">Curiosité</span>
+                            <span class="skill-tag">Écoute active</span>
+                            <span class="skill-tag">Force de proposition</span>
+                            <span class="skill-tag">Travail en équipe</span>
+                            <span class="skill-tag">Adaptation</span>
+                            <span class="skill-tag">Persévérance</span>
+                            <span class="skill-tag">Autonomie</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- CENTRES D'INTÉRÊTS -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">Centres d'intérêts</span>
+                </div>
+                <div class="col-span-2 grid grid-cols-3 gap-[16px] pt-1">
+                    <div class="col-span-1 flex flex-col gap-3 reveal reveal-d1">
+                        <span class="text-[12px] font-bold uppercase tracking-widest text-brand-orange">01</span>
+                        <h3 class="text-[17px] font-bold tracking-tight">Photographie</h3>
+                        <p class="text-[15px] text-text-muted leading-relaxed">Photographie de mariage, portraits, reportages.</p>
+                    </div>
+                    <div class="col-span-1 flex flex-col gap-3 reveal reveal-d2">
+                        <span class="text-[12px] font-bold uppercase tracking-widest text-brand-orange">02</span>
+                        <h3 class="text-[17px] font-bold tracking-tight">Technologies</h3>
+                        <p class="text-[15px] text-text-muted leading-relaxed">IA, code, nouvelles technologies, veille permanente.</p>
+                    </div>
+                    <div class="col-span-1 flex flex-col gap-3 reveal reveal-d3">
+                        <span class="text-[12px] font-bold uppercase tracking-widest text-brand-orange">03</span>
+                        <h3 class="text-[17px] font-bold tracking-tight">Aventure</h3>
+                        <p class="text-[15px] text-text-muted leading-relaxed">Escalade, navigation (Irlande, Angleterre), randonnée (Alpes, Pyrénées).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT / CTA -->
+        <section class="w-full py-20 md:py-32 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1"></div>
+                <div class="col-span-2 flex flex-col gap-10">
+                    <blockquote class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight text-black reveal reveal-d1">En recherche d'alternance pour septembre 2026.</blockquote>
+                    <a href="mailto:bruno.tanguy@icloud.com" class="btn-dash reveal reveal-d2 w-fit text-[17px] font-bold text-black hover:text-brand-orange transition-colors duration-200">
+                        <div class="dash" style="width:20px; margin-right:10px; background:black; height:2px; flex-shrink:0; transition: width 0.3s cubic-bezier(0.16,1,0.3,1), background 0.2s ease;"></div>
+                        Me contacter
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="w-full text-black py-12 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px] items-center">
+                <div class="col-span-1 flex items-center gap-3">
+                    <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16ZM13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="black"/>
+                    </svg>
+                    <span class="text-text-muted text-[14px] font-medium">© 2026 Bruno Tanguy</span>
+                </div>
+                <div class="col-span-1"></div>
+                <div class="col-span-1 flex gap-6 justify-end">
+                    <a href="mailto:bruno.tanguy@icloud.com" class="btn-dash btn-foot"><div class="dash"></div>Mail</a>
+                    <a href="https://www.linkedin.com/in/brunotanguy" target="_blank" rel="noopener" class="btn-dash btn-foot"><div class="dash"></div>LinkedIn</a>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        /* === Scroll reveals === */
+        const revObs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) { e.target.classList.add('visible'); revObs.unobserve(e.target); }
+            });
+        }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
+        document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+        /* === Curseur custom === */
+        const cur = document.getElementById('c-cursor');
+        let cx = -50, cy = -50, tx = -50, ty = -50;
+
+        document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+        document.addEventListener('mouseleave', () => cur.classList.add('hidden'));
+        document.addEventListener('mouseenter', () => cur.classList.remove('hidden'));
+
+        (function curLoop() {
+            cx += (tx - cx) * 0.18; cy += (ty - cy) * 0.18;
+            cur.style.left = cx + 'px'; cur.style.top = cy + 'px';
+            requestAnimationFrame(curLoop);
+        })();
+
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('mouseenter', () => cur.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cur.classList.remove('hover'));
+        });
+    </script>
+
+    <!-- Lenis smooth scroll -->
+    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+    <script>
+        const lenis = new Lenis({ lerp: 0.08 });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+    </script>
+</body>
+</html>

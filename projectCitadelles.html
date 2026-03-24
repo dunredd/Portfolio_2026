@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Citad'elles — Bruno Tanguy</title>
+    <meta name="description" content="Projet Citad'elles — Repenser l'accueil en structure associative. Étude de cas de Bruno Tanguy.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <meta property="og:image" content="/img/citadelles/citadelles_hero.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['"Host Grotesk"', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-orange': '#FF8400',
+                        'brand-gray': '#E2E1E6',
+                        'text-muted': '#6B6A75',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* ===== SCROLL REVEALS ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-img {
+            opacity: 0;
+            transform: scale(1.04);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-img.visible { opacity: 1; transform: scale(1); }
+        .reveal-d1 { transition-delay: 0.1s; }
+        .reveal-d2 { transition-delay: 0.2s; }
+        .reveal-d3 { transition-delay: 0.3s; }
+        .reveal-d4 { transition-delay: 0.4s; }
+
+        /* ===== DYNAMIC ISLAND HEADER ===== */
+        .dyn-link {
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.6);
+            transition: color 0.2s ease;
+            white-space: nowrap;
+        }
+        .dyn-link:hover { color: white; }
+        .dyn-link.active { color: white; }
+
+        /* ===== CURSEUR CUSTOM ===== */
+        body { cursor: none; }
+        a, button, [role="button"] { cursor: none; }
+        #c-cursor {
+            position: fixed; top: 0; left: 0; z-index: 9999;
+            width: 10px; height: 10px;
+            background: black; border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.25s cubic-bezier(0.16,1,0.3,1),
+                        height 0.25s cubic-bezier(0.16,1,0.3,1),
+                        background 0.2s ease,
+                        border 0.2s ease,
+                        opacity 0.3s ease;
+        }
+        #c-cursor.hover   { width: 32px; height: 32px; background: transparent; border: 1.5px solid black; }
+        #c-cursor.hidden  { opacity: 0; }
+
+        /* ===== SECTION LABEL ===== */
+        .section-label {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #6B6A75;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        .scroll-area { -ms-overflow-style: none; scrollbar-width: none; }
+        .scroll-area::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+
+<body class="bg-white text-black font-sans w-full overflow-x-hidden selection:bg-brand-orange selection:text-white">
+<div id="c-cursor"></div>
+
+    <!-- ==================== HEADER — DYNAMIC ISLAND ==================== -->
+    <header class="fixed top-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
+        <div id="dyn-pill" class="pointer-events-auto flex items-center bg-black text-white rounded-full px-5 py-[11px] shadow-md">
+
+            <!-- Logo + Nom -->
+            <a href="index.html" class="flex items-center gap-2.5 shrink-0">
+                <svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Logo Bruno Tanguy">
+                    <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16ZM13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="white"/>
+                </svg>
+                <span class="font-bold text-[14px] tracking-tight whitespace-nowrap">Bruno Tanguy</span>
+            </a>
+
+            <!-- Nav -->
+            <nav class="flex items-center gap-5 ml-[18px]" aria-label="Navigation principale">
+                <div class="w-px h-3.5 bg-white/20 shrink-0"></div>
+                <a href="index.html" class="dyn-link">Home</a>
+                <a href="resume.html" class="dyn-link">Mon Profil</a>
+                <a href="mailto:bruno.tanguy@icloud.com" class="dyn-link">Contact</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <!-- ==================== MAIN ==================== -->
+    <div class="w-full">
+
+        <!-- HERO -->
+        <section class="w-full min-h-screen p-[8px] flex flex-col justify-end pt-[72px] overflow-hidden">
+            <div class="rounded-2xl overflow-hidden w-full mb-12" style="height: calc(100vh - 360px); min-height: 320px;">
+                <img src="img/citadelles/citadelles_hero.png"
+                     alt="Citad'elles — Design de Service"
+                     class="w-full h-full object-cover reveal-img">
+            </div>
+            <div class="grid grid-cols-3 gap-[16px] pb-[40px] px-[8px]">
+                <div class="col-span-1">
+                    <img src="img/logo.svg" alt="Icône projet" class="w-full max-w-[120px] h-auto">
+                </div>
+                <div class="col-span-1"></div>
+                <div class="col-span-1"></div>
+                <h1 class="col-span-3 text-[clamp(32px,8.5vw,120px)] font-extrabold tracking-[-0.05em] leading-[0.9] text-black pb-2">Citad'elles</h1>
+                <div class="col-span-1 text-base md:text-lg font-medium self-end">Repenser l'accueil en structure associative</div>
+                <div class="col-span-1"></div>
+                <div class="col-span-1 text-sm md:text-base font-medium text-right self-end text-text-muted">Design de Service · Social</div>
+            </div>
+        </section>
+
+        <!-- META -->
+        <section class="w-full py-8 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-4 gap-[16px]">
+                <div class="flex flex-col gap-1 reveal reveal-d1">
+                    <span class="section-label">Rôle</span>
+                    <span class="text-[15px] font-medium mt-2">Design de Service</span>
+                </div>
+                <div class="flex flex-col gap-1 reveal reveal-d2">
+                    <span class="section-label">Secteur</span>
+                    <span class="text-[15px] font-medium mt-2">Associatif / Social</span>
+                </div>
+                <div class="flex flex-col gap-1 reveal reveal-d3">
+                    <span class="section-label">Année</span>
+                    <span class="text-[15px] font-medium mt-2">2024 – 2025</span>
+                </div>
+                <div class="flex flex-col gap-1 reveal reveal-d4">
+                    <span class="section-label">Livrables</span>
+                    <span class="text-[15px] font-medium mt-2">Signalétique, Interface coordination</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 01 CONTEXTE -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">01 — Contexte</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Un projet au cœur du secteur associatif</h2>
+                    <div class="flex flex-col gap-6">
+                        <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Citad'elles est une association qui intervient auprès de publics vulnérables. Dans le cadre d'un projet de design de service, l'objectif n'était pas de créer une application, mais de repenser entièrement l'expérience d'accueil et d'accompagnement au sein de leurs structures physiques.</p>
+                        <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d3">Le défi principal consistait à aligner les processus internes des bénévoles avec les besoins émotionnels et pratiques des bénéficiaires, pour créer un parcours fluide et rassurant dès le premier contact.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 02 PROBLÉMATIQUE -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">02 — Problématique</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">La question centrale</h2>
+                    <blockquote class="text-[clamp(18px,2vw,28px)] font-light italic leading-relaxed text-black reveal reveal-d2">" Comment fluidifier un parcours d'assistance complexe, impliquant de multiples interlocuteurs, pour réduire le stress cognitif des usagers dès leur franchissement de la porte ? "</blockquote>
+                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d3">Les bénéficiaires arrivaient dans un environnement qui leur était inconnu, avec peu de repères visuels et organisationnels. Les bénévoles, de leur côté, manquaient d'outils communs pour synchroniser leurs actions et offrir un accueil cohérent.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 03 ENJEUX -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">03 — Enjeux</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-10">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Les défis à adresser</h2>
+                    <div class="grid grid-cols-2 gap-x-8 gap-y-10">
+                        <div class="flex flex-col gap-2 reveal reveal-d1">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Enjeu 01</span>
+                            <h3 class="text-[17px] font-bold tracking-tight">Stress cognitif à l'entrée</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Réduire la charge mentale des bénéficiaires dès leur arrivée en rendant les étapes du parcours lisibles et prévisibles.</p>
+                        </div>
+                        <div class="flex flex-col gap-2 reveal reveal-d2">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Enjeu 02</span>
+                            <h3 class="text-[17px] font-bold tracking-tight">Coordination des bénévoles</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Synchroniser les actions back-stage (organisation interne) avec le front-stage (accueil visible) pour garantir un service homogène.</p>
+                        </div>
+                        <div class="flex flex-col gap-2 reveal reveal-d3">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Enjeu 03</span>
+                            <h3 class="text-[17px] font-bold tracking-tight">Signalétique &amp; repères visuels</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Créer un système de communication visuelle qui guide sans infantiliser, respectant la dignité des personnes accompagnées.</p>
+                        </div>
+                        <div class="flex flex-col gap-2 reveal reveal-d4">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Enjeu 04</span>
+                            <h3 class="text-[17px] font-bold tracking-tight">Pérennité du service</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Proposer des solutions adoptables par une équipe de bénévoles non-formés au design, avec des ressources associatives limitées.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KEY INSIGHT -->
+        <section class="w-full py-16 md:py-24 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">Insight clé</span>
+                </div>
+                <blockquote class="col-span-2 text-[clamp(20px,2.5vw,30px)] font-light leading-relaxed italic text-black reveal reveal-d1">" Ce qui se passe en coulisse détermine entièrement la qualité de l'accueil visible. "</blockquote>
+            </div>
+        </section>
+
+        <!-- 04 MÉTHODOLOGIE -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">04 — Méthodologie</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-10">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Comprendre avant de transformer</h2>
+
+                    <div class="flex flex-col gap-12">
+
+                        <!-- Étape 1 -->
+                        <div class="flex gap-6 items-start reveal reveal-d1">
+                            <span class="font-extrabold text-[48px] leading-none flex-shrink-0 text-brand-gray">01</span>
+                            <div class="flex flex-col gap-4 pt-2">
+                                <h3 class="text-[18px] font-bold tracking-tight">Immersion &amp; observations terrain</h3>
+                                <p class="text-[16px] text-text-muted leading-relaxed">Des sessions d'observation en situation réelle au sein de la structure pour identifier les frictions visibles et invisibles du parcours d'accueil, du point de vue des bénéficiaires comme des bénévoles.</p>
+                                <div class="rounded-[16px] overflow-hidden w-full mt-2">
+                                    <img src="img/citadelles/citadelles_userflow1.png"
+                                         alt="Cartographie du parcours utilisateur — étape 1"
+                                         class="w-full h-auto reveal-img">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Étape 2 -->
+                        <div class="flex gap-6 items-start reveal reveal-d2">
+                            <span class="font-extrabold text-[48px] leading-none flex-shrink-0 text-brand-gray">02</span>
+                            <div class="flex flex-col gap-4 pt-2">
+                                <h3 class="text-[18px] font-bold tracking-tight">Cartographie du parcours</h3>
+                                <p class="text-[16px] text-text-muted leading-relaxed">Modélisation de l'intégralité du parcours d'accueil via un Service Blueprint : actions visibles (front-stage), processus internes (back-stage), points de contact et moments de tension identifiés.</p>
+                                <div class="rounded-[16px] overflow-hidden w-full mt-2">
+                                    <img src="img/citadelles/citadelles_userflow2.png"
+                                         alt="Service Blueprint — cartographie complète du parcours"
+                                         class="w-full h-auto reveal-img">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Étape 3 -->
+                        <div class="flex gap-6 items-start reveal reveal-d3">
+                            <span class="font-extrabold text-[48px] leading-none flex-shrink-0 text-brand-gray">03</span>
+                            <div class="flex flex-col gap-3 pt-2">
+                                <h3 class="text-[18px] font-bold tracking-tight">Conception des écrans</h3>
+                                <p class="text-[16px] text-text-muted leading-relaxed">Conception des écrans et des illustrations en reprenant la charte graphique de Citadelles, pour assurer une cohérence visuelle avec l'identité existante de l'association.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 05 SOLUTION UX -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">05 — Solution UX</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-10">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Un système visuel pour humaniser l'accueil</h2>
+                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Les solutions ont émergé de l'intersection entre les besoins des bénéficiaires et les capacités opérationnelles de l'association. L'objectif : des réponses concrètes, sobres et implémentables sans budget important.</p>
+
+                    <!-- Solution 1 -->
+                    <div class="flex flex-col gap-5 reveal reveal-d3">
+                        <div class="flex flex-col gap-2">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange">Solution 01</span>
+                            <h3 class="text-[20px] font-bold tracking-tight">Signalétique &amp; affiches d'orientation</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Un système d'affiches conçu pour baliser le parcours dès l'entrée : indiquer les étapes, rassurer sur la suite, et donner des repères visuels clairs à chaque point de contact de la structure.</p>
+                        </div>
+                        <div class="rounded-[16px] overflow-hidden w-full">
+                            <img src="img/citadelles/citadelles_affiches.png"
+                                 alt="Affiches de signalétique Citad'elles"
+                                 class="w-full h-auto reveal-img">
+                        </div>
+                    </div>
+
+                    <!-- Solution 2 -->
+                    <div class="flex flex-col gap-5 pt-10 border-t border-brand-gray reveal reveal-d1">
+                        <div class="flex flex-col gap-2">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange">Solution 02</span>
+                            <h3 class="text-[20px] font-bold tracking-tight">Interface de suivi bénévoles</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Un outil numérique léger pour coordonner les actions des bénévoles en temps réel, synchroniser le back-stage et améliorer la fluidité du service rendu en front-stage.</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="rounded-[16px] overflow-hidden">
+                                <img src="img/citadelles/citadelles_interface.png"
+                                     alt="Interface de coordination — vue principale"
+                                     class="w-full h-auto reveal-img">
+                            </div>
+                            <div class="rounded-[16px] overflow-hidden">
+                                <img src="img/citadelles/citadelles_interface2.png"
+                                     alt="Interface de coordination — vue détail"
+                                     class="w-full h-auto reveal-img">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- APPRENTISSAGES -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">Apprentissages</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-6">
+                    <h3 class="text-[17px] font-bold tracking-tight reveal reveal-d1">Ce que ce projet m'a appris</h3>
+                    <ul class="flex flex-col gap-4">
+                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d1">
+                            <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                            Le design de service exige une lecture simultanée du front-stage et du back-stage : ce qui se passe en coulisse détermine la qualité de l'accueil visible.
+                        </li>
+                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d2">
+                            <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                            Dans un contexte associatif, la co-conception n'est pas une méthode parmi d'autres — c'est la seule façon de produire des solutions réellement adoptées.
+                        </li>
+                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d3">
+                            <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                            Concevoir pour des publics vulnérables demande une attention particulière à la dignité et à l'autonomie : chaque choix graphique et éditorial porte une intention.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJET SUIVANT -->
+        <section class="w-full border-t border-brand-gray">
+            <a href="projectDecathlon.html" class="group flex items-center justify-between px-[8px] py-20 md:py-28">
+                <div class="flex flex-col gap-3">
+                    <span class="section-label">Projet suivant</span>
+                    <h2 class="text-[clamp(28px,5vw,80px)] font-extrabold tracking-[-0.05em] leading-none group-hover:text-brand-orange transition-colors duration-300">Decathlon</h2>
+                    <span class="text-[15px] text-text-muted group-hover:text-brand-orange transition-colors duration-300">Recherche UX · Retail</span>
+                </div>
+                <span class="text-[clamp(28px,5vw,80px)] font-extrabold leading-none transform group-hover:translate-x-4 group-hover:text-brand-orange transition-all duration-300">→</span>
+            </a>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="w-full border-t border-brand-gray overflow-hidden">
+            <div class="px-[8px] py-12 md:py-16">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-2.5">
+                        <svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16ZM13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="#6B6A75"/>
+                        </svg>
+                        <span class="text-[12px] text-text-muted tracking-[-0.01em]">Copyright © 2026 Bruno Tanguy.</span>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <a href="mailto:bruno.tanguy@icloud.com" class="text-[12px] text-text-muted hover:text-black tracking-[-0.01em] transition-colors duration-200">Mail</a>
+                        <a href="#" class="text-[12px] text-text-muted hover:text-black tracking-[-0.01em] transition-colors duration-200">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        // ===== SCROLL REVEAL =====
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -80px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal, .reveal-img').forEach(el => observer.observe(el));
+
+        // ===== CURSEUR CUSTOM =====
+        const cursor = document.getElementById('c-cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        document.addEventListener('mouseenter', () => cursor.classList.remove('hidden'));
+        document.addEventListener('mouseleave', () => cursor.classList.add('hidden'));
+
+        document.querySelectorAll('a, button, [role="button"]').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+    </script>
+
+    <!-- Lenis smooth scroll -->
+    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+    <script>
+        const lenis = new Lenis({ lerp: 0.08 });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+    </script>
+</body>
+</html>
