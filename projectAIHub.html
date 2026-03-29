@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Hub — Bruno Tanguy</title>
+    <meta name="description" content="AI Hub — Interface de gestion d'IA unifiée. Conception UX et design de l'outil par Bruno Tanguy.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <meta property="og:image" content="/img/aihub/aihub_hero.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['"Host Grotesk"', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-orange': '#FF8400',
+                        'brand-gray': '#E2E1E6',
+                        'text-muted': '#6B6A75',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* ===== SCROLL REVEALS ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-img {
+            opacity: 0;
+            transform: scale(1.04);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-img.visible { opacity: 1; transform: scale(1); }
+        .reveal-d1 { transition-delay: 0.1s; }
+        .reveal-d2 { transition-delay: 0.2s; }
+        .reveal-d3 { transition-delay: 0.3s; }
+        .reveal-d4 { transition-delay: 0.4s; }
+
+        /* ===== DYNAMIC ISLAND HEADER ===== */
+        .dyn-link {
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.6);
+            transition: color 0.2s ease;
+            white-space: nowrap;
+        }
+        .dyn-link:hover { color: white; }
+        .dyn-link.active { color: white; }
+
+        /* ===== CURSEUR CUSTOM ===== */
+        body { cursor: none; }
+        a, button, [role="button"] { cursor: none; }
+        #c-cursor {
+            position: fixed; top: 0; left: 0; z-index: 9999;
+            width: 10px; height: 10px;
+            background: black; border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.25s cubic-bezier(0.16,1,0.3,1),
+                        height 0.25s cubic-bezier(0.16,1,0.3,1),
+                        background 0.2s ease,
+                        border 0.2s ease,
+                        opacity 0.3s ease;
+        }
+        #c-cursor.hover   { width: 32px; height: 32px; background: transparent; border: 1.5px solid black; }
+        #c-cursor.hidden  { opacity: 0; }
+
+        /* ===== SECTION LABEL ===== */
+        .section-label {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #6B6A75;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        .scroll-area { -ms-overflow-style: none; scrollbar-width: none; }
+        .scroll-area::-webkit-scrollbar { display: none; }
+
+        /* ===== CTA EXPLORER ===== */
+        .cta-explorer {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: black;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 16px 28px;
+            border-radius: 100px;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+        .cta-explorer:hover {
+            background: #FF8400;
+            transform: translateY(-2px);
+        }
+        .cta-explorer .arrow {
+            transition: transform 0.2s ease;
+        }
+        .cta-explorer:hover .arrow {
+            transform: translateX(4px);
+        }
+    </style>
+</head>
+
+<body class="bg-white text-black font-sans w-full overflow-x-hidden selection:bg-brand-orange selection:text-white">
+<div id="c-cursor"></div>
+
+    <!-- ==================== HEADER — DYNAMIC ISLAND ==================== -->
+    <header class="fixed top-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
+        <div id="dyn-pill" class="pointer-events-auto flex items-center bg-black text-white rounded-full px-5 py-[11px] shadow-md">
+
+            <!-- Logo + Nom -->
+            <a href="index.html" class="flex items-center gap-2.5 shrink-0">
+                <svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Logo Bruno Tanguy">
+                    <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16ZM13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="white"/>
+                </svg>
+                <span class="font-bold text-[14px] tracking-tight whitespace-nowrap">Bruno Tanguy</span>
+            </a>
+
+            <!-- Nav -->
+            <nav class="flex items-center gap-5 ml-[18px]" aria-label="Navigation principale">
+                <div class="w-px h-3.5 bg-white/20 shrink-0"></div>
+                <a href="index.html" class="dyn-link">Home</a>
+                <a href="resume.html" class="dyn-link">Mon Profil</a>
+                <a href="mailto:bruno.tanguy@icloud.com" class="dyn-link">Contact</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <!-- ==================== MAIN ==================== -->
+    <div class="w-full">
+
+        <!-- HERO -->
+        <section class="w-full min-h-screen p-[8px] flex flex-col justify-end pt-[72px] overflow-hidden">
+            <div class="rounded-2xl overflow-hidden w-full mb-12 reveal-img" style="height: calc(100vh - 360px); min-height: 320px;">
+                <img src="img/aihub/aihub_hero.png" alt="AI Hub — Interface" class="w-full h-full object-cover">
+            </div>
+            <div class="grid grid-cols-3 gap-[16px] pb-[40px] px-[8px]">
+                <div class="col-span-1">
+                    <img src="img/logo.svg" alt="Icône projet" class="w-full max-w-[120px] h-auto">
+                </div>
+                <div class="col-span-1"></div>
+                <div class="col-span-1"></div>
+                <h1 class="col-span-3 text-[clamp(32px,8.5vw,120px)] font-extrabold tracking-[-0.05em] leading-[0.9] text-black pb-2">AI Hub</h1>
+                <div class="col-span-1 text-base md:text-lg font-medium self-end">Interface IA unifiée</div>
+                <div class="col-span-1"></div>
+                <div class="col-span-1 text-sm md:text-base font-medium text-right self-end text-text-muted">Product Design · IA / SaaS</div>
+            </div>
+        </section>
+
+        <!-- META -->
+        <section class="w-full py-8 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-4 gap-[16px]">
+                <div class="flex flex-col gap-1 reveal reveal-d1">
+                    <span class="section-label">Rôle</span>
+                    <span class="text-[15px] font-medium mt-2">Product Design · UX</span>
+                </div>
+                <div class="flex flex-col gap-1 reveal reveal-d2">
+                    <span class="section-label">Secteur</span>
+                    <span class="text-[15px] font-medium mt-2">IA / SaaS</span>
+                </div>
+                <div class="flex flex-col gap-1 reveal reveal-d3">
+                    <span class="section-label">Année</span>
+                    <span class="text-[15px] font-medium mt-2">2026</span>
+                </div>
+                <div class="flex flex-col gap-1 reveal reveal-d4">
+                    <span class="section-label">Livrables</span>
+                    <span class="text-[15px] font-medium mt-2">App interactive, Userflows, Specs UX</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 01 CONTEXTE -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">01 — Contexte</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Concevoir une plateforme pour orchestrer l'IA au quotidien</h2>
+                    <div class="flex flex-col gap-6">
+                        <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">AI Hub est un projet personnel conçu pour explorer comment un outil unique pourrait centraliser l'ensemble des interactions avec des modèles d'IA — des conversations simples aux workflows d'automatisation complexes.</p>
+                        <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d3">Toutes les fonctionnalités, les userflows et l'architecture de l'interface ont été définis par mes soins. Le code de l'application a ensuite été généré par Claude (Anthropic), dans une démarche de vibe coding — une approche qui m'a permis de me concentrer entièrement sur l'expérience utilisateur sans contrainte technique.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 02 PROBLÉMATIQUE -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">02 — Problématique</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Comment unifier la puissance de plusieurs modèles IA dans une interface cohérente ?</h2>
+                    <div class="flex flex-col gap-6">
+                        <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Aujourd'hui, utiliser l'IA en production signifie jongler entre ChatGPT, Claude, des outils d'automatisation distincts, des bases de données séparées… Chaque outil a sa propre interface, sa propre logique.</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-x-8 gap-y-10 pt-4">
+                        <div class="flex flex-col gap-2 reveal reveal-d1">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Problème 01</span>
+                            <h3 class="text-[17px] font-bold tracking-tight">Trop d'outils fragmentés</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Chat, automatisation, agents et données vivent dans des interfaces séparées sans cohérence.</p>
+                        </div>
+                        <div class="flex flex-col gap-2 reveal reveal-d2">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Problème 02</span>
+                            <h3 class="text-[17px] font-bold tracking-tight">Perte de contexte</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Sans centralisation, les décisions et les données ne circulent pas entre les outils.</p>
+                        </div>
+                        <div class="flex flex-col gap-2 reveal reveal-d3">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Problème 03</span>
+                            <h3 class="text-[17px] font-bold tracking-tight">Automatisation inaccessible</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Créer des workflows IA complexes reste réservé aux profils techniques.</p>
+                        </div>
+                        <div class="flex flex-col gap-2 reveal reveal-d4">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Problème 04</span>
+                            <h3 class="text-[17px] font-bold tracking-tight">Agents sans supervision</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Monitorer et contrôler des agents autonomes en temps réel est difficile sans dashboard dédié.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 03 FONCTIONNALITÉS -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">03 — Fonctionnalités</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-10">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Quatre modules, un seul espace de travail</h2>
+
+                    <div class="flex flex-col gap-10">
+
+                        <div class="flex flex-col gap-3 reveal reveal-d1">
+                            <div class="flex items-center gap-3">
+                                <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange">01</span>
+                                <h3 class="text-[17px] font-bold tracking-tight">Chat multi-modèles</h3>
+                            </div>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Une interface de conversation unique supportant Claude, GPT-4o et Llama en local. Chaque session est configurable en temps réel : modèle, température, accès internet, base de données connectée. Le panneau droit expose les paramètres actifs sans quitter le fil de conversation.</p>
+                        </div>
+
+                        <div class="border-t border-brand-gray pt-10 flex flex-col gap-3 reveal reveal-d1">
+                            <div class="flex items-center gap-3">
+                                <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange">02</span>
+                                <h3 class="text-[17px] font-bold tracking-tight">Builder d'automatisation visuel</h3>
+                            </div>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Un éditeur de workflows no-code basé sur ReactFlow. Sept types de nœuds — déclencheur, modèle IA, condition, appel API, outil, validation humaine, fin — permettent de construire des pipelines complets par glisser-déposer. Trois workflows d'exemple préconstruits servent de point de départ.</p>
+                        </div>
+
+                        <div class="border-t border-brand-gray pt-10 flex flex-col gap-3 reveal reveal-d1">
+                            <div class="flex items-center gap-3">
+                                <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange">03</span>
+                                <h3 class="text-[17px] font-bold tracking-tight">Agents autonomes avec monitoring</h3>
+                            </div>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Quatre agents préconfigurés — veille académique, revue de code, analyse de données, compte-rendus de réunions — s'exécutent en arrière-plan. Un dashboard dédié expose les logs en temps réel, les outils actifs (internet, fichiers, email…) et la timeline des actions effectuées.</p>
+                        </div>
+
+                        <div class="border-t border-brand-gray pt-10 flex flex-col gap-3 reveal reveal-d1">
+                            <div class="flex items-center gap-3">
+                                <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange">04</span>
+                                <h3 class="text-[17px] font-bold tracking-tight">Bases de connaissances</h3>
+                            </div>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Un gestionnaire de sources de données regroupant tables SQL, documents et stores vectoriels. Chaque base indique son statut (actif, sync, hors ligne), le nombre d'entrées et les agents qui l'utilisent. Accessible directement depuis le chat pour ancrer les réponses dans des données réelles.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 04 DÉMARCHE -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">04 — Démarche</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Vibe coding : designer d'abord, coder ensuite</h2>
+                    <div class="flex flex-col gap-6">
+                        <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Ce projet a été l'occasion d'explorer une nouvelle manière de travailler : définir précisément l'expérience — les userflows, les états d'interface, les interactions — puis déléguer l'implémentation à un modèle de langage.</p>
+                        <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d3">Mon rôle a été de spécifier chaque écran, chaque transition, chaque cas d'usage. Claude a traduit ces specs en code React/TypeScript. Cette approche inverse la relation habituelle entre design et développement et ouvre une vraie question : jusqu'où peut aller un designer qui orchestre plutôt qu'il ne code ?</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-x-8 gap-y-10 pt-4 reveal reveal-d2">
+                        <div class="flex flex-col gap-2">
+                            <h3 class="text-[15px] font-bold tracking-tight">Ce que j'ai fait</h3>
+                            <ul class="flex flex-col gap-3 mt-2">
+                                <li class="flex gap-3 items-start text-[15px] text-text-muted leading-relaxed">
+                                    <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                                    Définition des userflows et de l'architecture de navigation
+                                </li>
+                                <li class="flex gap-3 items-start text-[15px] text-text-muted leading-relaxed">
+                                    <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                                    Spécification de chaque module et de ses états
+                                </li>
+                                <li class="flex gap-3 items-start text-[15px] text-text-muted leading-relaxed">
+                                    <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                                    Choix du système de design (dark, sidebar, tokens)
+                                </li>
+                                <li class="flex gap-3 items-start text-[15px] text-text-muted leading-relaxed">
+                                    <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                                    Itérations et ajustements sur le rendu final
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <h3 class="text-[15px] font-bold tracking-tight">Stack technique (généré)</h3>
+                            <ul class="flex flex-col gap-3 mt-2">
+                                <li class="flex gap-3 items-start text-[15px] text-text-muted leading-relaxed">
+                                    <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                                    React 19 + TypeScript
+                                </li>
+                                <li class="flex gap-3 items-start text-[15px] text-text-muted leading-relaxed">
+                                    <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                                    Tailwind CSS + Framer Motion
+                                </li>
+                                <li class="flex gap-3 items-start text-[15px] text-text-muted leading-relaxed">
+                                    <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                                    ReactFlow pour le builder visuel
+                                </li>
+                                <li class="flex gap-3 items-start text-[15px] text-text-muted leading-relaxed">
+                                    <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                                    Zustand pour la gestion d'état
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA EXPLORER -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">Explorer</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">L'application est interactive</h2>
+                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Navigue dans les quatre modules, teste le builder d'automatisation, explore les agents et les bases de données. Tout est cliquable et fonctionnel.</p>
+                    <div class="reveal reveal-d3">
+                        <a href="/ai-hub/index.html" class="cta-explorer" target="_blank" rel="noopener">
+                            Ouvrir AI Hub
+                            <span class="arrow">→</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- APPRENTISSAGES -->
+        <section class="w-full py-20 md:py-28 px-[8px] overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">Apprentissages</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-6">
+                    <h3 class="text-[17px] font-bold tracking-tight reveal reveal-d1">Ce que ce projet m'a enseigné</h3>
+                    <ul class="flex flex-col gap-4">
+                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d1">
+                            <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                            Spécifier une interface précisément est un vrai travail de design — la qualité du résultat dépend directement de la clarté des specs fournies au modèle.
+                        </li>
+                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d2">
+                            <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                            L'IA amplifie la vitesse d'exécution mais ne remplace pas la réflexion sur les usages, les cas limites et les priorités UX.
+                        </li>
+                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d3">
+                            <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                            Concevoir une interface pour des outils IA oblige à penser la complexité autrement : les états d'un agent en cours d'exécution ou les erreurs d'un workflow ne ressemblent à rien dans les patterns UX classiques.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJET SUIVANT -->
+        <section class="w-full border-t border-brand-gray">
+            <a href="projectDecathlon.html" class="group flex items-center justify-between px-[8px] py-20 md:py-28">
+                <div class="flex flex-col gap-3">
+                    <span class="section-label">Projet suivant</span>
+                    <h2 class="text-[clamp(28px,5vw,80px)] font-extrabold tracking-[-0.05em] leading-none group-hover:text-brand-orange transition-colors duration-300">Decathlon</h2>
+                    <span class="text-[15px] text-text-muted group-hover:text-brand-orange transition-colors duration-300">Recherche UX · Retail</span>
+                </div>
+                <span class="text-[clamp(28px,5vw,80px)] font-extrabold leading-none transform group-hover:translate-x-4 group-hover:text-brand-orange transition-all duration-300">→</span>
+            </a>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="w-full border-t border-brand-gray overflow-hidden">
+            <div class="px-[8px] py-12 md:py-16">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-2.5">
+                        <svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16ZM13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="#6B6A75"/>
+                        </svg>
+                        <span class="text-[12px] text-text-muted tracking-[-0.01em]">Copyright © 2026 Bruno Tanguy.</span>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <a href="mailto:bruno.tanguy@icloud.com" class="text-[12px] text-text-muted hover:text-black tracking-[-0.01em] transition-colors duration-200">Mail</a>
+                        <a href="#" class="text-[12px] text-text-muted hover:text-black tracking-[-0.01em] transition-colors duration-200">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        // ===== SCROLL REVEAL =====
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -80px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal, .reveal-img').forEach(el => observer.observe(el));
+
+        // ===== CURSEUR CUSTOM (RAF-based) =====
+        const cur = document.getElementById('c-cursor');
+        let cx = -50, cy = -50, tx = -50, ty = -50;
+        document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+        document.addEventListener('mouseleave', () => cur.classList.add('hidden'));
+        document.addEventListener('mouseenter', () => cur.classList.remove('hidden'));
+        (function curLoop() {
+            cx += (tx - cx) * 0.18; cy += (ty - cy) * 0.18;
+            cur.style.left = cx + 'px'; cur.style.top = cy + 'px';
+            requestAnimationFrame(curLoop);
+        })();
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('mouseenter', () => cur.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cur.classList.remove('hover'));
+        });
+    </script>
+
+    <!-- Lenis smooth scroll -->
+    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+    <script>
+        const lenis = new Lenis({ lerp: 0.08 });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+    </script>
+</body>
+</html>

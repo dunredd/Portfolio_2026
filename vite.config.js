@@ -14,6 +14,7 @@ export default defineConfig({
                 cegedim:    resolve(__dirname, 'projectCegedim.html'),
                 citadelles: resolve(__dirname, 'projectCitadelles.html'),
                 weplan:     resolve(__dirname, 'projectWePlan.html'),
+                aihub:      resolve(__dirname, 'projectAIHub.html'),
             }
         }
     }
