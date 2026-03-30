@@ -65,7 +65,7 @@
         @keyframes lp2-in { from{opacity:0;transform:translateY(-10px) rotate(40deg)} to{opacity:1;transform:translateY(0) rotate(0deg)} }
 
         /* ===== HERO TEXT ===== */
-        .hl { overflow: hidden; display: block; }
+        .hl { overflow: hidden; display: block; padding-bottom: 0.12em; }
         .hl span { display: block; animation: hup .95s cubic-bezier(.16,1,.3,1) both; }
         .hl span { animation-delay: .48s; }
         .hero-meta { opacity: 0; animation: min .65s ease .8s both; }
@@ -106,11 +106,13 @@
             position: absolute; inset: 0;
             background: linear-gradient(to top, rgba(13,13,13,.82) 0%, rgba(13,13,13,.1) 55%, transparent 80%);
             transition: opacity .4s ease;
+            pointer-events: none;
         }
         .pcard:not(.active) .veil { opacity: .55; }
 
+
         .pcard .info {
-            position: absolute; left: 36px; bottom: 36px; right: 36px;
+            position: absolute; left: 36px; bottom: 36px; right: 36px; z-index: 2;
             display: flex; align-items: flex-end; justify-content: space-between; gap: 20px;
         }
         .pcard .p-num {
@@ -463,6 +465,8 @@ function tick() {
         card.style.transform =
             `translateX(${tx}vw) translateZ(${tz}px) rotateY(${ry + tiltY}deg) scale(${sc})`;
         card.style.opacity = op;
+        card.style.zIndex = i === activeIdx ? 10 : Math.round(5 - Math.abs(dist));
+        card.style.pointerEvents = i === activeIdx ? 'auto' : 'none';
         card.classList.toggle('active', i === activeIdx);
     });
 
@@ -478,6 +482,19 @@ document.getElementById('ps-sticky').addEventListener('mousemove', e => {
 document.getElementById('ps-sticky').addEventListener('mouseleave', () => { mx = 0; });
 
 tick();
+
+
+// ====== CLICK SUR CARDS — navigation via le conteneur sticky ======
+// Le contexte 3D (preserve-3d + rotateY) empêche les clics d'atteindre
+// les cards directement. On écoute le clic sur le conteneur parent.
+document.getElementById('ps-sticky').addEventListener('click', e => {
+    const activeCard = pcards.find(c => c.classList.contains('active'));
+    if (!activeCard) return;
+    // Si le clic est sur le bouton "Voir →", laisser le lien natif agir
+    if (e.target.closest('.p-btn')) return;
+    const link = activeCard.querySelector('.p-btn');
+    if (link) window.location.href = link.href;
+});
 
 
 // ====== REVEALS ======
