@@ -9,7 +9,7 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 index:      resolve(__dirname, 'index.html'),
-                indexOld:   resolve(__dirname, 'indexOld.html'),
+
                 resume:     resolve(__dirname, 'resume.html'),
                 decathlon:  resolve(__dirname, 'projectDecathlon.html'),
                 cegedim:    resolve(__dirname, 'projectCegedim.html'),

@@ -4,16 +4,45 @@
 
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/ai-hub/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <script type="module" crossorigin src="/ai-hub/assets/index-ChbqgAoi.js"></script>
-    <link rel="stylesheet" crossorigin href="/ai-hub/assets/index-DxeDi-Un.css">
+    <script type="module" crossorigin src="./assets/index-ChbqgAoi.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DxeDi-Un.css">
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Fix: Force React Router to remount the Chat component on initial load 
+      // by briefly switching to another route and back. This circumvents the empty state bug.
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const hash = window.location.hash;
+          if (hash === '' || hash === '#/' || hash === '#/chat') {
+            window.location.hash = '#/automation';
+            // Wait enough time for React to render the automation tab
+            setTimeout(() => {
+              window.location.hash = '#/chat';
+              
+              // 2. Fallback: simulate click on the first conversation element after returning to chat
+              setTimeout(() => {
+                const conversations = document.querySelectorAll('div > span.truncate, div > div > h3');
+                for (let el of conversations) {
+                  const clickable = el.closest('button') || el.closest('a') || el.closest('[role="button"]') || el.parentElement;
+                  if (clickable && clickable.getBoundingClientRect().width > 0) {
+                    clickable.click();
+                    break;
+                  }
+                }
+              }, 400);
+
+            }, 200);
+          }
+        }, 300);
+      });
+    </script>
   </body>
 </html>
