@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>r/design — Bruno Tanguy</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    <meta name="description" content="r/design — Jeu multijoueur en temps réel inspiré de r/place. Le téléphone devient manette, l'écran devient terrain de jeu. Workshop d'une semaine.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+
+    <meta property="og:image" content="/img/rdesign/hero.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['"Host Grotesk"', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-red': '#FF4500',
+                        'brand-orange': '#00E5C8', cyan: '#00E5C8', ink: '#0D0D0D',
+                        'brand-gray': '#E2E1E6',
+                        'text-muted': '#6B6A75',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* ===== SCROLL REVEALS ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-img {
+            opacity: 0;
+            transform: scale(1.04);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-img.visible { opacity: 1; transform: scale(1); }
+        .reveal-d1 { transition-delay: 0.1s; }
+        .reveal-d2 { transition-delay: 0.2s; }
+        .reveal-d3 { transition-delay: 0.3s; }
+        .reveal-d4 { transition-delay: 0.4s; }
+
+        /* ===== DYNAMIC ISLAND HEADER ===== */
+        .nav-link {
+            font-size: 13px; font-weight: 500;
+            color: rgba(255,255,255,.5); white-space: nowrap; transition: color .2s;
+        }
+        .nav-link:hover, .nav-link.on { color: white; }
+
+        /* ===== CURSEUR CUSTOM ===== */
+        body { cursor: none; }
+        a, button, [role="button"] { cursor: none; }
+        #c-cursor {
+            position: fixed; top: 0; left: 0; z-index: 9999;
+            width: 10px; height: 10px;
+            background: black; border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.25s cubic-bezier(0.16,1,0.3,1),
+                        height 0.25s cubic-bezier(0.16,1,0.3,1),
+                        background 0.2s ease,
+                        border 0.2s ease,
+                        opacity 0.3s ease;
+        }
+        #c-cursor.hover   { width: 32px; height: 32px; background: transparent; border: 1.5px solid black; }
+        #c-cursor.hidden  { opacity: 0; }
+
+        /* ===== SECTION LABEL ===== */
+        .section-label {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #6B6A75;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        .scroll-area { -ms-overflow-style: none; scrollbar-width: none; }
+        .scroll-area::-webkit-scrollbar { display: none; }
+
+        /* ===== SCREENSHOTS GRID ===== */
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+        .screenshots-grid .span-2 {
+            grid-column: span 2;
+        }
+        .screenshot-card {
+            border-radius: 16px;
+            overflow: hidden;
+            background: #f5f5f5;
+        }
+        .screenshot-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .screenshot-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #6B6A75;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-black font-sans w-full overflow-x-hidden selection:bg-cyan selection:text-black">
+<div id="c-cursor"></div>
+
+    <!-- ==================== HEADER — DYNAMIC ISLAND ==================== -->
+    <header class="fixed top-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
+        <div class="pointer-events-auto flex items-center bg-ink rounded-full px-4 py-[10px] gap-3 shadow-lg">
+            <a href="index.html" class="flex items-center gap-2 shrink-0">
+                <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
+                    <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16Z" fill="white"/>
+                    <path d="M13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="white"/>
+                </svg>
+                <span class="font-bold text-[13px] tracking-tight text-white">Bruno Tanguy</span>
+            </a>
+            <div class="w-px h-3 bg-white/20"></div>
+            <nav class="flex gap-4">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="resume.html" class="nav-link">Mon Profil</a>
+            </nav>
+            <a href="mailto:bruno.tanguy@icloud.com"
+               class="bg-cyan text-ink text-[12px] font-bold rounded-full px-3 py-[5px] hover:opacity-80 transition-opacity shrink-0">
+                Contact <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="8" x2="8" y2="2"/><polyline points="3,2 8,2 8,7"/></svg>
+            </a>
+        </div>
+    </header>
+
+    <!-- ==================== MAIN ==================== -->
+    <div class="w-full">
+
+        <!-- HERO -->
+        <section class="w-full min-h-screen p-[8px] flex flex-col justify-end pt-[72px] overflow-hidden">
+            <div class="rounded-2xl overflow-hidden w-full mb-12" style="height: calc(100vh - 360px); min-height: 320px;">
+                <img src="img/rdesign/hero.png"
+                     alt="r/design — Jeu multijoueur pixel art"
+                     class="w-full h-full object-cover reveal-img">
+            </div>
+            <div class="grid grid-cols-3 gap-[16px] pb-[40px] px-6 md:px-16 lg:px-24">
+                <div class="col-span-1">
+                    <img src="img/logo.svg" alt="Icône projet" class="w-full max-w-[120px] h-auto">
+                </div>
+                <div class="col-span-1"></div>
+                <div class="col-span-1"></div>
+                <h1 class="col-span-3 text-[clamp(32px,8.5vw,120px)] font-extrabold tracking-[-0.05em] leading-[0.9] text-black pb-2">r/design</h1>
+                <div class="col-span-1 text-base md:text-lg font-medium self-end">Le téléphone devient manette, l'écran devient terrain de jeu</div>
+                <div class="col-span-1"></div>
+                <div class="col-span-1 text-sm md:text-base font-medium text-right self-end text-text-muted">Game Design · Vibe Coding / WebSocket</div>
+            </div>
+        </section>
+
+        <!-- META -->
+        <section class="w-full py-8 px-6 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-4 gap-[16px]">
+                <div class="flex flex-col gap-1 reveal reveal-d1">
+                    <span class="section-label">Rôle</span>
+                    <span class="text-[15px] font-medium mt-2">Game Design · UX · Vibe Coding</span>
+                </div>
+                <div class="flex flex-col gap-1 reveal reveal-d2">
+                    <span class="section-label">Format</span>
+                    <span class="text-[15px] font-medium mt-2">Groupe de 6 · Workshop</span>
+                </div>
+                <div class="flex flex-col gap-1 reveal reveal-d3">
+                    <span class="section-label">Durée</span>
+                    <span class="text-[15px] font-medium mt-2">1 semaine</span>
+                </div>
+                <div class="flex flex-col gap-1 reveal reveal-d4">
+                    <span class="section-label">Stack</span>
+                    <span class="text-[15px] font-medium mt-2">Node.js · WebSocket · HTML/CSS/JS</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 01 CONTEXTE -->
+        <section class="w-full py-20 md:py-28 px-6 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">01 — Contexte</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Un jeu multijoueur codé en une semaine</h2>
+                    <div class="flex flex-col gap-6">
+                        <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Dans le cadre d'un workshop d'une semaine, notre groupe de 6 a été challengé de créer un <strong>jeu vibe codé</strong> fonctionnel : un écran partagé affiché sur un projecteur, dans lequel n'importe quel joueur peut rejoindre en temps réel depuis son téléphone en scannant un QR code.</p>
+                        <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d3">L'inspiration : <strong>r/Place</strong>, l'expérience communautaire de Reddit où des millions d'utilisateurs collaborent ou s'opposent pixel par pixel sur un même canvas. Notre version : plus compacte, plus jouable en présentiel, avec une dimension d'équipe et de stratégie.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 02 MON RÔLE -->
+        <section class="w-full py-20 md:py-28 px-6 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">02 — Mon rôle</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-10">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Code, design et mécanique de jeu</h2>
+                    <div class="grid grid-cols-2 gap-x-8 gap-y-10">
+                        <div class="flex flex-col gap-2 reveal reveal-d1">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-red mb-1">Contribution 01</span>
+                            <h3 class="text-[17px] font-bold tracking-tight">Vibe Coding avec Claude</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">J'ai co-développé le jeu en collaboration avec Claude AI — architecture WebSocket, logique serveur, synchronisation en temps réel entre tous les clients.</p>
+                        </div>
+                        <div class="flex flex-col gap-2 reveal reveal-d2">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-red mb-1">Contribution 02</span>
+                            <h3 class="text-[17px] font-bold tracking-tight">Design du système de jeu d'équipe</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">J'ai proposé et conçu la mécanique de coopétition : deux équipes qui s'affrontent sur le même canvas, avec création d'équipe, recrutement de joueurs et coordination collective.</p>
+                        </div>
+                        <div class="flex flex-col gap-2 reveal reveal-d3">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-red mb-1">Contribution 03</span>
+                            <h3 class="text-[17px] font-bold tracking-tight">Onboarding joueur</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Conception d'un onboarding en 3 slides animées pour accompagner chaque nouveau joueur dans la compréhension du canvas, des pouvoirs et du jeu en équipe — sans friction.</p>
+                        </div>
+                        <div class="flex flex-col gap-2 reveal reveal-d4">
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-red mb-1">Contribution 04</span>
+                            <h3 class="text-[17px] font-bold tracking-tight">Système de pouvoirs & templates</h3>
+                            <p class="text-[15px] text-text-muted leading-relaxed">Définition et implémentation des pouvoirs (Bombe, Rafale, Accélération d'équipe, Remplacement couleur) et du système de templates partagés entre membres d'une même équipe.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 03 ONBOARDING — screenshots -->
+        <section class="w-full py-20 md:py-28 px-6 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">03 — Onboarding</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Apprendre en 3 slides, sans lire de règles</h2>
+                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Dès la première connexion, un onboarding animé guide le joueur à travers les 3 piliers du jeu. Chaque slide est auto-suffisante, visuelle et skippable pour ceux qui veulent plonger directement.</p>
+
+                    <div class="screenshots-grid reveal reveal-d2">
+                        <div class="flex flex-col gap-2">
+                            <div class="screenshot-card" style="aspect-ratio: 9/16;">
+                                <img src="img/rdesign/onboarding1.png" alt="Onboarding — Place tes pixels">
+                            </div>
+                            <span class="screenshot-label">Place tes pixels</span>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <div class="screenshot-card" style="aspect-ratio: 9/16;">
+                                <img src="img/rdesign/onboarding2.png" alt="Onboarding — Gagne des pouvoirs">
+                            </div>
+                            <span class="screenshot-label">Gagne des pouvoirs</span>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <div class="screenshot-card" style="aspect-ratio: 9/16;">
+                                <img src="img/rdesign/onboarding3.png" alt="Onboarding — Joue en équipe">
+                            </div>
+                            <span class="screenshot-label">Joue en équipe</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 04 POUVOIRS -->
+        <section class="w-full py-20 md:py-28 px-6 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">04 — Pouvoirs & canvas</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Un économie de jeu built-in</h2>
+                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Chaque pixel posé rapporte <strong>1 ✦</strong>. Accumuler de l'or permet d'acheter des pouvoirs individuels — ou de contribuer aux capacités collectives de son équipe si on est chef.</p>
+
+                    <div class="grid grid-cols-2 gap-4 reveal reveal-d2">
+                        <div class="flex flex-col gap-2">
+                            <div class="screenshot-card" style="aspect-ratio: 9/16;">
+                                <img src="img/rdesign/powers.png" alt="Menu des pouvoirs">
+                            </div>
+                            <span class="screenshot-label">Palette + Pouvoirs individuels</span>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <div class="screenshot-card" style="aspect-ratio: 9/16;">
+                                <img src="img/rdesign/join.png" alt="Écran de connexion">
+                            </div>
+                            <span class="screenshot-label">Rejoindre avec QR code ou ID</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-x-8 gap-y-6 mt-4 reveal reveal-d3">
+                        <div class="flex flex-col gap-1 border border-brand-gray rounded-[14px] p-5">
+                            <span class="text-[28px]">💣</span>
+                            <h3 class="text-[16px] font-bold tracking-tight mt-1">Bombe</h3>
+                            <p class="text-[14px] text-text-muted leading-relaxed">Remplir un carré 5×5 pixels d'un coup. <strong>20 ✦</strong></p>
+                        </div>
+                        <div class="flex flex-col gap-1 border border-brand-gray rounded-[14px] p-5">
+                            <span class="text-[28px]">⚡</span>
+                            <h3 class="text-[16px] font-bold tracking-tight mt-1">Rafale</h3>
+                            <p class="text-[14px] text-text-muted leading-relaxed">Poser 1 pixel/seconde pendant 30s. <strong>40 ✦</strong></p>
+                        </div>
+                        <div class="flex flex-col gap-1 border border-brand-gray rounded-[14px] p-5">
+                            <span class="text-[28px]">🚀</span>
+                            <h3 class="text-[16px] font-bold tracking-tight mt-1">Accélération (chef)</h3>
+                            <p class="text-[14px] text-text-muted leading-relaxed">Cooldown 5s pour toute l'équipe pendant 2 min. <strong>100 ◆</strong></p>
+                        </div>
+                        <div class="flex flex-col gap-1 border border-brand-gray rounded-[14px] p-5">
+                            <span class="text-[28px]">🎨</span>
+                            <h3 class="text-[16px] font-bold tracking-tight mt-1">Remplacement (chef)</h3>
+                            <p class="text-[14px] text-text-muted leading-relaxed">Remplacer une couleur dans une zone 10×10. <strong>150 ◆</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 05 ÉQUIPES & TEMPLATES -->
+        <section class="w-full py-20 md:py-28 px-6 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">05 — Équipes & templates</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">La coordination comme stratégie</h2>
+                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Les joueurs peuvent créer ou rejoindre une équipe, choisir une couleur et un avatar. Le chef d'équipe peut uploader un <strong>template image</strong> visible en overlay sur le canvas — une référence visuelle pour que toute l'équipe travaille dans le même sens.</p>
+
+                    <div class="reveal reveal-d3">
+                        <div class="screenshot-card">
+                            <img src="img/rdesign/teams.png" alt="Onglet équipe — gestion et recherche">
+                        </div>
+                        <span class="screenshot-label mt-3 block">Onglet équipe — profil, création, recherche</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 06 ÉCRAN JEUX (PROJECTEUR) -->
+        <section class="w-full py-20 md:py-28 px-6 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">06 — Écran partagé</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Le terrain de jeu collectif</h2>
+                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">L'écran projeté sert de référence commune : le canvas pixel en temps réel, un leaderboard joueurs/équipes, et le QR code de connexion toujours visible. Les pixels apparaissent instantanément à la pose — synchronisés par WebSocket sans rechargement.</p>
+
+                    <div class="reveal reveal-d3">
+                        <div class="screenshot-card">
+                            <img src="img/rdesign/game.png" alt="Écran jeu — canvas partagé + leaderboard">
+                        </div>
+                        <span class="screenshot-label mt-3 block">Écran projecteur — canvas · leaderboard · QR code</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRINCIPE DIRECTEUR -->
+        <section class="w-full py-16 md:py-24 px-6 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
+            <div class="grid grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">Ce que j'ai appris</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-6">
+                    <blockquote class="text-[clamp(20px,2.5vw,30px)] font-light leading-relaxed italic text-black reveal reveal-d1">" Coder un produit de A à Z en une semaine, c'est prendre des décisions UX à chaque ligne de code. "</blockquote>
+                    <ul class="flex flex-col gap-4 mt-4">
+                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d1">
+                            <span class="text-brand-red font-bold flex-shrink-0 pt-0.5">—</span>
+                            Le vibe coding avec une IA permet d'aller vite, mais les choix de structure restent entièrement humains. J'ai appris à formuler des intentions précises plutôt que du code.
+                        </li>
+                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d2">
+                            <span class="text-brand-red font-bold flex-shrink-0 pt-0.5">—</span>
+                            L'onboarding d'un jeu doit être tellement clair qu'un joueur peut comprendre les règles en 20 secondes, sans avoir à lire une ligne de texte.
+                        </li>
+                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d3">
+                            <span class="text-brand-red font-bold flex-shrink-0 pt-0.5">—</span>
+                            Un bon système d'équipe crée de la coordination spontanée — pas besoin de le forcer si la mécanique est bien pensée en amont.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJET SUIVANT -->
+        <section class="w-full border-t border-brand-gray">
+            <a href="projectDecathlon.html" class="group flex items-center justify-between px-6 md:px-16 lg:px-24 py-20 md:py-28">
+                <div class="flex flex-col gap-3">
+                    <span class="section-label">Projet suivant</span>
+                    <h2 class="text-[clamp(28px,5vw,80px)] font-extrabold tracking-[-0.05em] leading-none group-hover:text-brand-orange transition-colors duration-300">Decathlon</h2>
+                    <span class="text-[15px] text-text-muted group-hover:text-brand-orange transition-colors duration-300">Recherche UX · Retail</span>
+                </div>
+                <span class="text-[clamp(28px,5vw,80px)] font-extrabold leading-none transform group-hover:translate-x-4 group-hover:text-brand-orange transition-all duration-300"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="5.5" x2="10" y2="5.5"/><polyline points="6,1.5 10,5.5 6,9.5"/></svg></span>
+            </a>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="w-full border-t border-brand-gray overflow-hidden">
+            <div class="px-6 md:px-16 lg:px-24 py-12 md:py-16">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-2.5">
+                        <svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16ZM13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="#6B6A75"/>
+                        </svg>
+                        <span class="text-[12px] text-text-muted tracking-[-0.01em]">Copyright © 2026 Bruno Tanguy.</span>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <a href="mailto:bruno.tanguy@icloud.com" class="text-[12px] text-text-muted hover:text-black tracking-[-0.01em] transition-colors duration-200">Mail</a>
+                        <a href="https://www.linkedin.com/in/bruno-tanguy-aa48602a8" target="_blank" rel="noopener" class="text-[12px] text-text-muted hover:text-black tracking-[-0.01em] transition-colors duration-200">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        // ===== SCROLL REVEAL =====
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -80px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal, .reveal-img').forEach(el => observer.observe(el));
+
+        // ===== CURSEUR CUSTOM =====
+        const cursor = document.getElementById('c-cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        document.addEventListener('mouseenter', () => cursor.classList.remove('hidden'));
+        document.addEventListener('mouseleave', () => cursor.classList.add('hidden'));
+
+        document.querySelectorAll('a, button, [role="button"]').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+    </script>
+
+    <!-- Lenis smooth scroll -->
+    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+    <script>
+        const lenis = new Lenis({ lerp: 0.08 });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+    </script>
+</body>
+</html>

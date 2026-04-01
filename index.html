@@ -208,13 +208,20 @@
 
         .pcard {
             position: absolute;
-            width: 58vw;
+            width: 82vw;
             height: 72vh;
             border-radius: 20px;
             overflow: hidden;
             will-change: transform, opacity;
             flex-shrink: 0;
             pointer-events: none;
+        }
+
+        @media (min-width: 640px) {
+            .pcard {
+                width: 58vw;
+                height: 72vh;
+            }
         }
 
         .pcard.active {
@@ -438,16 +445,28 @@
                         d="M13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z"
                         fill="white" />
                 </svg>
-                <span class="font-bold text-[13px] tracking-tight text-white">Bruno Tanguy</span>
+                <span class="hidden sm:inline font-bold text-[13px] tracking-tight text-white">Bruno Tanguy</span>
             </a>
-            <div class="w-px h-3 bg-white/20"></div>
-            <nav class="flex gap-4">
+            <div class="hidden sm:block w-px h-3 bg-white/20"></div>
+            <nav class="hidden sm:flex gap-4">
                 <a href="index.html" class="nav-link on">Home</a>
                 <a href="resume.html" class="nav-link">Mon Profil</a>
             </nav>
+            <!-- Mobile nav -->
+            <nav class="flex sm:hidden gap-3">
+                <a href="index.html" class="nav-link on text-[12px]">Home</a>
+                <a href="resume.html" class="nav-link text-[12px]">Profil</a>
+            </nav>
+            <!-- Contact: icône sur mobile, texte sur desktop -->
             <a href="mailto:bruno.tanguy@icloud.com"
-                class="bg-cyan text-ink text-[12px] font-bold rounded-full px-3 py-[5px] hover:opacity-80 transition-opacity shrink-0">
-                Contact ↗
+                class="bg-cyan text-ink font-bold rounded-full hover:opacity-80 transition-opacity shrink-0 flex items-center justify-center sm:px-3 sm:py-[5px] sm:text-[12px] w-8 h-8 sm:w-auto sm:h-auto">
+                <!-- Icône mail+flèche sur mobile -->
+                <svg class="sm:hidden" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                </svg>
+                <!-- Texte sur desktop -->
+                <span class="hidden sm:inline-flex items-center gap-1.5">Contact <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="8" x2="8" y2="2"/><polyline points="3,2 8,2 8,7"/></svg></span>
             </a>
         </div>
     </header>
@@ -476,7 +495,7 @@
                     <p class="text-[13px] text-muted text-right leading-relaxed">
                         Product Designer<br>École de Design Nantes<br>Alternance sept. 2026
                     </p>
-                    <span class="lbl lbl-m">↓ Scroll</span>
+                    <span class="lbl lbl-m flex items-center gap-1.5"><svg width="10" height="12" viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="1" x2="5" y2="10"/><polyline points="2,7 5,10 8,7"/></svg> Scroll</span>
                 </div>
             </div>
         </div>
@@ -485,7 +504,7 @@
 
     <!-- ===== PROJETS — 3D SCROLL ===== -->
     <!-- Section height = 100vh (sticky) + (N-1)*500px de scroll -->
-    <section id="ps" style="height: calc(100vh + 2200px);">
+    <section id="ps" style="height: calc(100vh + 2700px);">
         <div id="ps-sticky">
 
             <span id="ps-label">Projets sélectionnés</span>
@@ -503,7 +522,7 @@
                             <h2 class="p-title">Decathlon</h2>
                             <p class="p-cat">Recherche UX · Retail</p>
                         </div>
-                        <a href="projectDecathlon.html" class="p-btn">Voir →</a>
+                        <a href="projectDecathlon.html" class="p-btn">Voir <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="5.5" x2="10" y2="5.5"/><polyline points="6,1.5 10,5.5 6,9.5"/></svg></a>
                     </div>
                 </div>
 
@@ -517,7 +536,7 @@
                             <h2 class="p-title">WePlan</h2>
                             <p class="p-cat">Architecture UI · SaaS</p>
                         </div>
-                        <a href="projectWePlan.html" class="p-btn">Voir →</a>
+                        <a href="projectWePlan.html" class="p-btn">Voir <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="5.5" x2="10" y2="5.5"/><polyline points="6,1.5 10,5.5 6,9.5"/></svg></a>
                     </div>
                 </div>
 
@@ -531,7 +550,7 @@
                             <h2 class="p-title">Cegedim</h2>
                             <p class="p-cat">Product Design · Santé / IA</p>
                         </div>
-                        <a href="projectCegedim.html" class="p-btn">Voir →</a>
+                        <a href="projectCegedim.html" class="p-btn">Voir <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="5.5" x2="10" y2="5.5"/><polyline points="6,1.5 10,5.5 6,9.5"/></svg></a>
                     </div>
                 </div>
 
@@ -545,23 +564,37 @@
                             <h2 class="p-title">Citad'elles</h2>
                             <p class="p-cat">Design de Service · Social</p>
                         </div>
-                        <a href="projectCitadelles.html" class="p-btn">Voir →</a>
+                        <a href="projectCitadelles.html" class="p-btn">Voir <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="5.5" x2="10" y2="5.5"/><polyline points="6,1.5 10,5.5 6,9.5"/></svg></a>
                     </div>
                 </div>
 
                 <!-- 05 AI Hub -->
                 <div class="pcard" data-i="4">
                     <img src="img/aihub/aihub_hero.png" alt="AI Hub">
-                    <div class="veil"
-                        style="background:linear-gradient(160deg,rgba(0,71,255,.05) 0%,rgba(0,71,255,.5) 60%,rgba(13,13,13,.92) 100%)">
-                    </div>
+                    <div class="veil"></div>
                     <div class="info">
                         <div>
                             <div class="p-num">Projet</div>
                             <h2 class="p-title">AI Hub</h2>
                             <p class="p-cat">Product Design · IA / SaaS</p>
                         </div>
-                        <a href="projectAIHub.html" class="p-btn">Voir →</a>
+                        <a href="projectAIHub.html" class="p-btn">Voir <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="5.5" x2="10" y2="5.5"/><polyline points="6,1.5 10,5.5 6,9.5"/></svg></a>
+                    </div>
+                </div>
+
+                <!-- 06 R-Design -->
+                <div class="pcard" data-i="5">
+                    <img src="img/rdesign/hero.png" alt="r/design">
+                    <div class="veil"
+                        style="background:linear-gradient(160deg,rgba(255,69,0,.05) 0%,rgba(255,69,0,.5) 60%,rgba(13,13,13,.92) 100%)">
+                    </div>
+                    <div class="info">
+                        <div>
+                            <div class="p-num">Projet</div>
+                            <h2 class="p-title">r/design</h2>
+                            <p class="p-cat">Game Design · Vibe Coding</p>
+                        </div>
+                        <a href="projectRDesign.html" class="p-btn">Voir <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="5.5" x2="10" y2="5.5"/><polyline points="6,1.5 10,5.5 6,9.5"/></svg></a>
                     </div>
                 </div>
 
@@ -574,6 +607,7 @@
                 <div class="psdot" data-i="2"></div>
                 <div class="psdot" data-i="3"></div>
                 <div class="psdot" data-i="4"></div>
+                <div class="psdot" data-i="5"></div>
             </div>
 
         </div>
@@ -582,15 +616,15 @@
 
     <!-- ===== À PROPOS ===== -->
     <section class="w-full bg-white py-24 md:py-32 px-6 md:px-16 lg:px-24 border-t border-ink/8">
-        <div class="grid grid-cols-3 gap-[16px] mb-16">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-[16px] mb-16">
             <div class="col-span-1 reveal"><span class="lbl lbl-m">À propos</span></div>
-            <div class="col-span-2 reveal rd1">
+            <div class="sm:col-span-2 reveal rd1">
                 <h2 class="text-[clamp(26px,3.2vw,46px)] font-extrabold tracking-[-0.02em] leading-tight text-ink">
                     Je veux concevoir des produits dans le temps, cohérent avec mes valeurs.
                 </h2>
             </div>
         </div>
-        <div class="grid grid-cols-3 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div class="ablock reveal">
                 <span class="lbl lbl-m block mb-3">Expérience terrain</span>
                 <p class="text-[15px] leading-relaxed text-muted mt-3">Lors de mes 3 mois chez Lydia Solutions (Sumeria), j'ai modélisé des user flows, conçu des interfaces Figma et réalisé des interviews utilisateurs. Au cœur d'un workflow agile, j'ai pu identifier mes axes d'amélioration en fin de stage pour consolider ma rigueur dans la construction d'interfaces et ma capacité à synthétiser mes idées.</p>
@@ -606,8 +640,7 @@
         </div>
         <div class="flex gap-3 flex-wrap mt-14 reveal">
             <a href="resume.html"
-                class="inline-flex items-center gap-2 bg-ink text-white text-[14px] font-bold rounded-full px-6 py-3 hover:bg-cyan hover:text-ink transition-colors duration-200">Mon
-                profil →</a>
+                class="inline-flex items-center gap-2 bg-ink text-white text-[14px] font-bold rounded-full px-6 py-3 hover:bg-cyan hover:text-ink transition-colors duration-200">Mon profil <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="5.5" x2="10" y2="5.5"/><polyline points="6,1.5 10,5.5 6,9.5"/></svg></a>
             <a href="mailto:bruno.tanguy@icloud.com"
                 class="inline-flex items-center gap-2 border border-ink/15 text-ink text-[14px] font-medium rounded-full px-6 py-3 hover:border-ink/40 hover:bg-ink/5 transition-all duration-200">Me
                 contacter</a>
