@@ -1,0 +1,1927 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bruno Tanguy — Product Designer</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+    <!-- Theme: apply before paint to avoid flash -->
+    <script>
+        (function () {
+            var t = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+    <link rel="stylesheet" href="theme.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Host Grotesk"', 'sans-serif'] },
+                    colors: { accent: '#4d65ff', dark: '#0a0a0a' }
+                }
+            }
+        }
+    </script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <style>
+        * {
+            cursor: none;
+        }
+
+        html {
+            background: #0a0a0a;
+        }
+
+        body {
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        body.no-scroll {
+            overflow: hidden;
+        }
+
+        /* ===== CURSOR ===== */
+        #cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width .22s cubic-bezier(.16, 1, .3, 1),
+                height .22s cubic-bezier(.16, 1, .3, 1),
+                background .15s, border .15s, opacity .25s;
+        }
+
+        #cursor.hover {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: 1.5px solid #fff;
+        }
+
+        #cursor.hidden {
+            opacity: 0;
+        }
+
+        /* ===== PRELOADER ===== */
+        #preloader {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: #0a0a0a;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: clamp(24px, 4vw, 48px) clamp(20px, 4vw, 48px);
+            will-change: transform;
+            overflow: hidden;
+        }
+
+        #preloader-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+        }
+
+        #preloader-brand svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        #preloader-brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.25;
+        }
+
+        #preloader-brand-text strong {
+            font-size: 15px;
+            font-weight: 500;
+            color: #fff;
+            letter-spacing: -0.005em;
+        }
+
+        #preloader-brand-text span {
+            font-size: 14px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.45);
+            letter-spacing: 0.01em;
+        }
+
+        #preloader-bottom {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(16px, 2vw, 24px);
+        }
+
+        #preloader-row {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        #preloader-label {
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: rgba(255, 255, 255, 0.4);
+            opacity: 0;
+        }
+
+        #preloader-counter-wrap {
+            overflow: hidden;
+            line-height: 0.82;
+        }
+
+        #preloader-counter {
+            display: block;
+            font-size: clamp(96px, 18vw, 240px);
+            font-weight: 500;
+            color: #fff;
+            letter-spacing: -0.05em;
+            line-height: 0.82;
+            font-variant-numeric: tabular-nums;
+            transform: translateY(105%);
+        }
+
+        #preloader-bar {
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+            border-radius: 2px;
+            opacity: 0;
+        }
+
+        #preloader-bar-fill {
+            position: absolute;
+            inset: 0;
+            background: #fff;
+            transform: scaleX(0);
+            transform-origin: left center;
+            border-radius: 2px;
+        }
+
+        /* ===== NAV ===== */
+        #nav {
+            transition: background .35s, backdrop-filter .35s;
+        }
+
+        #nav.scrolled {
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        /* Contact dropdown */
+        .contact-dropdown {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 12px);
+            background: rgba(15, 15, 15, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 190px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transform: translateY(-8px);
+            pointer-events: none;
+            transition: all .3s cubic-bezier(.16, 1, .3, 1);
+            z-index: 100;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+
+        /* Pont pour maintenir le hover */
+        .contact-dropdown::before {
+            content: '';
+            position: absolute;
+            top: -24px;
+            left: 0;
+            right: 0;
+            height: 24px;
+            background: transparent;
+        }
+
+        .contact-dropdown.open {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .contact-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.6);
+            border-radius: 10px;
+            transition: all 0.25s cubic-bezier(.16, 1, .3, 1);
+            white-space: nowrap;
+        }
+
+        .contact-dropdown a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            transform: translateX(4px);
+        }
+
+        /* ===== NAV DROPDOWN ===== */
+        .nav-page-item {
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.85);
+            transition: color .2s;
+            display: block;
+            padding: 4px 0;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+        }
+
+        .nav-anchor-dropdown {
+            position: absolute;
+            top: calc(100% + 12px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-6px);
+            background: rgba(15, 15, 15, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 170px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: all .3s cubic-bezier(.16, 1, .3, 1);
+            z-index: 100;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            white-space: nowrap;
+        }
+
+        /* Pont pour maintenir le hover */
+        .nav-anchor-dropdown::before {
+            content: '';
+            position: absolute;
+            top: -24px;
+            left: 0;
+            right: 0;
+            height: 24px;
+            background: transparent;
+        }
+
+        .nav-page-item:hover .nav-anchor-dropdown {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .nav-anchor-dropdown a {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Recentrage du contenu */
+            gap: 10px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            transition: all 0.25s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .nav-anchor-dropdown a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            transform: translateY(-1px); /* Animation plus discrète et centrée */
+        }
+
+        /* ===== HERO ===== */
+        .hero-line {
+            display: block;
+            overflow: hidden;
+            padding-top: 0.15em;
+            padding-bottom: 0.25em;
+            margin-top: -0.15em;
+            margin-bottom: -0.25em;
+        }
+
+        .hero-line-inner {
+            display: block;
+        }
+
+        .hero-word {
+            display: inline-block;
+            margin-right: 0.25em;
+        }
+
+        /* ===== ABOUT ===== */
+        .about-word {
+            display: inline-block;
+            will-change: transform;
+        }
+
+        /* ===== WORKS ===== */
+        .works-panel {
+            position: absolute;
+            inset: 0;
+            will-change: opacity, visibility;
+        }
+
+        .works-panel img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .works-title {
+            transition: color .25s ease;
+        }
+
+        .works-title.active {
+            color: #fff !important;
+        }
+
+        /* Subtitle only visible when parent block is active */
+        .works-title-block .works-sub {
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity .35s ease, transform .35s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .works-title-block.is-active .works-sub {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Line animation on "explore" links */
+        .explore-line {
+            width: 24px;
+            height: 1px;
+            background: #fff;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform .35s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        a:hover .explore-line {
+            transform: scaleX(1);
+        }
+
+        /* ===== MÉTHODE ===== */
+        .pillar-col {
+            --col-accent: #4d65ff;
+            position: relative;
+            padding-top: 24px;
+        }
+
+
+
+        .pillar-icon {
+            color: var(--col-accent);
+            margin-bottom: 22px;
+            transition: transform .55s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .pillar-col:hover .pillar-icon {
+            transform: translateY(-2px);
+        }
+
+        .pillar-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.35);
+            margin-bottom: 14px;
+            transition: color .45s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .pillar-col:hover .pillar-label {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .pillar-title {
+            font-size: clamp(18px, 1.6vw, 22px);
+            font-weight: 500;
+            line-height: 1.25;
+            letter-spacing: -0.015em;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .pillar-desc {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 15px;
+            line-height: 1.6;
+            transition: color .45s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .pillar-col:hover .pillar-desc {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ===== SERVICES ===== */
+        .service-col {
+            --col-accent: #4d65ff;
+            position: relative;
+            padding-top: 24px;
+        }
+
+
+
+        .service-icon {
+            color: var(--col-accent);
+            margin-bottom: 22px;
+            transition: transform .55s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .service-col:hover .service-icon {
+            transform: translateY(-2px);
+        }
+
+        .service-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.35);
+            margin-bottom: 14px;
+            transition: color .45s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .service-col:hover .service-label {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .service-title {
+            font-size: clamp(18px, 1.6vw, 22px);
+            font-weight: 500;
+            line-height: 1.25;
+            letter-spacing: -0.015em;
+            color: #fff;
+            margin-bottom: 14px;
+        }
+
+        .service-desc {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 15px;
+            line-height: 1.65;
+            margin-bottom: 22px;
+            transition: color .45s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .service-col:hover .service-desc {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .service-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .service-list li {
+            position: relative;
+            font-size: 15px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.45);
+            padding: 10px 0 10px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            transition: color .4s cubic-bezier(.16, 1, .3, 1),
+                padding-left .4s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .service-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 6px;
+            height: 1px;
+            background: var(--col-accent);
+            opacity: 0.55;
+            transform: translateY(-50%);
+            transition: width .45s cubic-bezier(.16, 1, .3, 1),
+                opacity .45s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .service-col:hover .service-list li {
+            color: rgba(255, 255, 255, 0.7);
+            padding-left: 20px;
+        }
+
+        .service-col:hover .service-list li::before {
+            width: 10px;
+            opacity: 1;
+        }
+
+        /* ===== MOBILE MENU ===== */
+        #mobile-menu {
+            transition: opacity .45s, backdrop-filter .45s;
+        }
+
+        #mobile-menu.open {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+        }
+
+        .mobile-link {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity .4s, transform .4s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        #mobile-menu.open .mobile-link {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #mobile-menu.open .mobile-link:nth-child(1) {
+            transition-delay: .08s;
+        }
+
+        #mobile-menu.open .mobile-link:nth-child(2) {
+            transition-delay: .14s;
+        }
+
+        #mobile-menu.open .mobile-link:nth-child(3) {
+            transition-delay: .20s;
+        }
+
+        #mobile-menu.open .mobile-link:nth-child(4) {
+            transition-delay: .26s;
+        }
+
+        #mobile-menu.open .mobile-link:nth-child(5) {
+            transition-delay: .32s;
+        }
+
+        /* ===== SCROLL REVEAL ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity .7s cubic-bezier(.16, 1, .3, 1), transform .7s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-d1 {
+            transition-delay: .1s;
+        }
+
+        .reveal-d2 {
+            transition-delay: .2s;
+        }
+
+        .reveal-d3 {
+            transition-delay: .3s;
+        }
+
+        /* ===== WORKS MOBILE ACCORDION ===== */
+        .works-accordion-item {
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .works-accordion-trigger {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            background: none;
+            border: none;
+            color: #fff;
+            text-align: left;
+        }
+
+        .works-accordion-trigger h2 {
+            font-size: clamp(24px, 6vw, 36px);
+            font-weight: 500;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .works-accordion-year {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.3);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .works-accordion-content {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.45s cubic-bezier(.16, 1, .3, 1), opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .works-accordion-content>div {
+            overflow: hidden;
+        }
+
+        .works-accordion-item.is-open .works-accordion-content {
+            grid-template-rows: 1fr;
+            opacity: 1;
+        }
+
+        .works-accordion-item.is-open .works-accordion-trigger h2 {
+            color: #fff;
+        }
+
+        .works-accordion-trigger h2 {
+            color: rgba(255, 255, 255, 0.35);
+            transition: color 0.25s ease;
+        }
+
+        .works-accordion-tag {
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 4px 10px;
+            border-radius: 100px;
+        }
+
+        /* ===== DISABLE CURSOR ON TOUCH DEVICES ===== */
+        @media (hover: none),
+        (pointer: coarse) {
+            * {
+                cursor: auto !important;
+            }
+
+            #cursor,
+            #c-cursor {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-dark text-white font-sans selection:bg-accent/30 selection:text-white no-scroll">
+
+    <!-- ===== CURSOR ===== -->
+    <div id="cursor"></div>
+
+    <!-- ===== PRELOADER ===== -->
+    <div id="preloader">
+        <div id="preloader-brand">
+            <svg viewBox="0 0 32 32" fill="none">
+                <path
+                    d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16Z"
+                    fill="white" />
+                <path
+                    d="M13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z"
+                    fill="white" />
+            </svg>
+            <div id="preloader-brand-text">
+                <strong>Bruno Tanguy</strong>
+                <span>Portfolio · 2026</span>
+            </div>
+        </div>
+
+        <div id="preloader-bottom">
+            <div id="preloader-row">
+                <span id="preloader-label">Chargement</span>
+                <div id="preloader-counter-wrap">
+                    <span id="preloader-counter">0</span>
+                </div>
+            </div>
+            <div id="preloader-bar">
+                <div id="preloader-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MOBILE MENU ===== -->
+    <div id="mobile-menu" class="fixed inset-0 z-[60] bg-dark/95 backdrop-blur-2xl opacity-0 pointer-events-none">
+        <div id="mobile-menu-panel" class="flex flex-col items-end justify-center h-full gap-10 px-8 text-right">
+            <a href="#works" class="mobile-link text-3xl font-medium text-white">Projets</a>
+            <a href="resume.html#experience" class="mobile-link text-3xl font-medium text-white">Expérience</a>
+            <a href="resume.html#competences" class="mobile-link text-3xl font-medium text-white">Compétences</a>
+            <a href="resume.html" class="mobile-link text-3xl font-medium text-white">Mon Profil</a>
+            <a href="mailto:bruno.tanguy@icloud.com"
+                class="mobile-link inline-flex items-center gap-2 border border-white/30 text-white text-[15px] font-medium rounded-full px-5 py-[8px] hover:bg-white hover:text-dark transition-all duration-200 mt-4">
+                Email
+            </a>
+            <a href="https://www.linkedin.com/in/bruno-tanguy-aa48602a8" target="_blank" rel="noopener"
+                class="mobile-link inline-flex items-center gap-2 border border-white/30 text-white text-[15px] font-medium rounded-full px-5 py-[8px] hover:bg-white hover:text-dark transition-all duration-200">
+                LinkedIn
+            </a>
+        </div>
+    </div>
+
+    <!-- ===== NAV ===== -->
+    <nav id="nav" class="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 lg:px-16 py-5">
+        <div class="flex items-center justify-between">
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center gap-3 shrink-0 hero-fade"
+                style="opacity:0;transform:translateY(18px);filter:blur(10px)">
+                <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                    <path
+                        d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16Z"
+                        fill="white" />
+                    <path
+                        d="M13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z"
+                        fill="white" />
+                </svg>
+                <span
+                    class="font-semibold text-[clamp(18px,1.6vw,24px)] tracking-[-0.02em] text-white leading-none">Bruno
+                    Tanguy</span>
+            </a>
+
+            <!-- Center links — pages only, with anchor dropdown on hover -->
+            <div class="hidden lg:flex items-center gap-8 hero-fade"
+                style="opacity:0;transform:translateY(18px);filter:blur(10px)">
+
+                <!-- Page: Index -->
+                <div class="nav-page-item">
+                    <a href="index.html" class="nav-link">Portfolio</a>
+                    <div class="nav-anchor-dropdown">
+                        <a href="#works">Projets</a>
+                        <a href="#method">Méthode</a>
+                        <a href="#services">Ce que je fais</a>
+                    </div>
+                </div>
+
+                <!-- Page: Resume -->
+                <div class="nav-page-item">
+                    <a href="resume.html" class="nav-link">Mon Profil</a>
+                    <div class="nav-anchor-dropdown">
+                        <a href="resume.html#experience">Expérience</a>
+                        <a href="resume.html#competences">Compétences</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right — theme toggle + Contact button -->
+            <div class="flex items-center gap-3">
+                <button id="theme-toggle" class="theme-toggle hero-fade" aria-label="Toggle theme"
+                    style="opacity:0;transform:translateY(18px);filter:blur(10px)">
+                    <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5" />
+                        <line x1="12" y1="1" x2="12" y2="3" />
+                        <line x1="12" y1="21" x2="12" y2="23" />
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                        <line x1="1" y1="12" x2="3" y2="12" />
+                        <line x1="21" y1="12" x2="23" y2="12" />
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                    </svg>
+                    <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
+                </button>
+                <div class="relative hidden md:block hero-fade"
+                    style="opacity:0;transform:translateY(18px);filter:blur(10px)">
+                    <button id="contact-btn"
+                        class="inline-flex items-center gap-2 border border-white/30 text-white text-[15px] font-medium rounded-full px-5 py-[8px] hover:bg-white hover:text-dark transition-all duration-200">Contact</button>
+                    <div id="contact-dropdown" class="contact-dropdown">
+                        <a href="mailto:bruno.tanguy@icloud.com"><svg width="14" height="14" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <rect x="2" y="4" width="20" height="16" rx="2" />
+                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                            </svg>Email</a>
+                        <a href="https://www.linkedin.com/in/bruno-tanguy-aa48602a8" target="_blank" rel="noopener"><svg
+                                width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                                <rect x="2" y="9" width="4" height="12" />
+                                <circle cx="4" cy="4" r="2" />
+                            </svg>LinkedIn</a>
+                    </div>
+                </div>
+                <!-- Hamburger -->
+                <button id="menu-toggle" class="lg:hidden w-8 h-8 flex items-center justify-center text-white">
+                    <svg id="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round">
+                        <line x1="4" y1="7" x2="20" y2="7" />
+                        <line x1="4" y1="17" x2="20" y2="17" />
+                    </svg>
+                    <svg id="close-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" class="hidden">
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                        <line x1="6" y1="18" x2="18" y2="6" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- ===== HERO ===== -->
+    <section id="hero" class="relative h-screen flex flex-col px-6 md:px-12 lg:px-16 pb-8">
+
+        <!-- Row 1 : Philosophy left + Location right (below nav) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-28 md:pt-32 lg:pt-36 shrink-0">
+
+            <!-- Left: philosophy (hidden on mobile to avoid hero overlap) -->
+            <div class="hero-fade hidden md:block" style="opacity:0;transform:translateY(18px);filter:blur(10px)">
+                <p class="text-white/50 text-[16px] leading-relaxed max-w-[320px]">
+                    Le design doit être construit pour les utilisateurs, autour d'une vision produit claire. Pour moi,
+                    c'est ainsi qu'un produit devient impactant.
+                </p>
+            </div>
+
+            <!-- Right: location + status -->
+            <div class="hero-fade flex flex-col items-start md:items-start md:pl-[10%]"
+                style="opacity:0;transform:translateY(18px);filter:blur(10px)">
+                <div class="flex items-center gap-1.5 text-white text-[16px] font-medium">
+                    Paris, FR · <span id="hero-time" class="tabular-nums"></span>
+                </div>
+                <span class="text-white/50 text-[16px] mt-1">École de design Nantes Atlantique</span>
+                <div class="flex items-center gap-2.5 mt-3">
+                    <span class="w-[6px] h-[6px] bg-emerald-400 rounded-full animate-pulse"></span>
+                    <span class="text-white/60 text-[16px]">Disponible pour une alternance à Paris</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 2 : Big headline -->
+        <div class="flex-1 flex items-end py-4 md:py-6 min-h-0">
+            <div class="w-full md:pl-[20%] lg:pl-[30%]">
+                <h1 id="hero-headline"
+                    class="text-[clamp(32px,5.5vw,90px)] font-medium leading-[1.05] tracking-[-0.03em] pb-[0.2em]"
+                    style="visibility:hidden">
+                    Je design pour créer des produits utiles et innovants
+                </h1>
+            </div>
+        </div>
+
+        <!-- Row 3 : Bottom — case study preview left + CTA right -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-end mt-4 shrink-0 hero-fade"
+            style="opacity:0;transform:translateY(18px);filter:blur(10px)">
+
+            <!-- Left: last case preview (primary CTA) -->
+            <a href="projectDecathlon.html" class="group shrink-0">
+                <div class="w-[240px] h-[140px] rounded-lg overflow-hidden">
+                    <img src="img/decathlon/zones.png" alt="Dernier projet"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <span
+                    class="inline-flex items-center gap-2 text-white/50 text-[17px] font-medium hover:text-white transition-colors duration-200 group">
+                    Explorer le dernier projet
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round"
+                        class="group-hover:translate-x-0.5 transition-transform">
+                        <line x1="1" y1="5" x2="9" y2="5" />
+                        <polyline points="5.5,1.5 9,5 5.5,8.5" />
+                    </svg>
+                </span>
+            </a>
+
+            <!-- Right: secondary CTA -->
+            <div class="flex flex-col items-start md:items-start md:pl-[10%]">
+                <span class="text-white/30 text-[14px] uppercase tracking-[0.12em] mb-3">Construisons ensemble !</span>
+                <a href="resume.html"
+                    class="inline-flex items-center gap-2 text-white/50 text-[17px] font-medium hover:text-white transition-colors duration-200 group">
+                    Me découvrir
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round"
+                        class="group-hover:translate-x-0.5 transition-transform">
+                        <line x1="1" y1="5" x2="9" y2="5" />
+                        <polyline points="5.5,1.5 9,5 5.5,8.5" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ===== ABOUT ===== -->
+    <!-- Pin wrapper: gives enough scroll distance for the word reveal -->
+    <div id="about-pin" class="relative border-t border-white/[0.06]">
+        <section id="about" class="px-6 md:px-12 lg:px-16 py-20 md:py-28 flex items-center justify-center min-h-[60vh]">
+            <p id="about-text"
+                class="text-[clamp(22px,3.2vw,44px)] font-medium leading-[1.3] tracking-[-0.015em] max-w-[1000px]">
+                Étudiant en 3e année en UX service à l'École de design Nantes Atlantique, je conçois des expériences et
+                produits numériques simples et centrés
+                sur l'utilisateur. Mon approche mêle curiosité technique, empathie, méthodologie, attention aux détails
+                et passion.
+            </p>
+        </section>
+    </div>
+
+    <!-- ===== MÉTHODE ===== -->
+    <section id="method" class="px-6 md:px-12 lg:px-16 py-20 md:py-28 border-t border-white/[0.06]">
+
+        <div style="background: rgba(255,255,255,0.025); border-radius: 20px; padding: clamp(24px, 4vw, 48px);">
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
+
+            <!-- Label column -->
+            <div class="md:col-span-3">
+                <span
+                    class="text-white/30 text-[14px] uppercase tracking-[0.2em] font-semibold block reveal">Méthode</span>
+            </div>
+
+            <!-- Pillars row -->
+            <div class="md:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
+
+                <div class="pillar-col reveal" style="--col-accent:#7aa2ff">
+                    <div class="pillar-icon" aria-hidden="true">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor"
+                            stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 16C4.5 9.5 9.5 6 16 6s11.5 3.5 14 10c-2.5 6.5-7.5 10-14 10S4.5 22.5 2 16Z" />
+                            <circle cx="16" cy="16" r="4" />
+                        </svg>
+                    </div>
+                    <span class="pillar-label">Observer</span>
+                    <h3 class="pillar-title">Comprendre les usages réels.</h3>
+                    <p class="pillar-desc">Interviews, observation terrain, analyse des frictions invisibles avant toute
+                        décision.</p>
+                </div>
+
+                <div class="pillar-col reveal reveal-d1" style="--col-accent:#f5b754">
+                    <div class="pillar-icon" aria-hidden="true">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor"
+                            stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="7" cy="8" r="2" />
+                            <circle cx="7" cy="24" r="2" />
+                            <circle cx="25" cy="16" r="2" />
+                            <path d="M9 8h6c2 0 3.5 1.5 4 3l3.5 4M9 24h6c2 0 3.5-1.5 4-3l3.5-4" />
+                        </svg>
+                    </div>
+                    <span class="pillar-label">Synthétiser</span>
+                    <h3 class="pillar-title">Clarifier et structurer.</h3>
+                    <p class="pillar-desc">Transformer la recherche en intentions actionnables : parcours, architecture,
+                        priorités.</p>
+                </div>
+
+                <div class="pillar-col reveal reveal-d2" style="--col-accent:#5be0a8">
+                    <div class="pillar-icon" aria-hidden="true">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor"
+                            stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="5" y="5" width="13" height="13" rx="1" />
+                            <circle cx="22" cy="22" r="5" />
+                            <path d="M5 27h6" />
+                        </svg>
+                    </div>
+                    <span class="pillar-label">Concevoir</span>
+                    <h3 class="pillar-title">Donner forme avec intention.</h3>
+                    <p class="pillar-desc">Du wireframe au prototype haute fidélité, chaque détail sert la fonction.</p>
+                </div>
+
+            </div>
+        </div>
+
+        </div>
+    </section>
+
+
+    <!-- ===== WORKS ===== -->
+    <section id="works" class="relative border-t border-white/[0.06]">
+
+        <!-- Section header -->
+        <div class="px-6 md:px-12 lg:px-16 pt-20 pb-4">
+            <span class="text-white/30 text-[14px] uppercase tracking-[0.2em] font-semibold">Projets
+                sélectionnés</span>
+        </div>
+
+        <!-- Two-column layout (desktop only) -->
+        <div class="hidden md:flex md:flex-row">
+
+            <!-- Left: sticky project image -->
+            <div id="works-media" class="hidden md:block md:w-[55%] lg:w-[58%] sticky top-0 h-screen overflow-hidden">
+                <!-- Panels injected by JS -->
+            </div>
+
+            <!-- Right: scrollable titles -->
+            <div
+                class="w-full md:w-[45%] lg:w-[42%] px-6 md:pl-12 lg:pl-16 md:pr-12 lg:pr-16 flex flex-col justify-center py-[40vh]">
+
+                <div class="works-title-block py-2 md:py-3" data-idx="0" data-year="2026">
+                    <h2
+                        class="works-title text-[clamp(32px,4.5vw,72px)] font-medium leading-[1.05] tracking-tight text-white/[0.25] cursor-pointer">
+                        r/design</h2>
+                </div>
+
+                <div class="works-title-block py-2 md:py-3" data-idx="1" data-year="2026">
+                    <h2
+                        class="works-title text-[clamp(32px,4.5vw,72px)] font-medium leading-[1.05] tracking-tight text-white/[0.25] cursor-pointer">
+                        AI Hub</h2>
+                </div>
+
+                <div class="works-title-block py-2 md:py-3" data-idx="2" data-year="2025">
+                    <h2
+                        class="works-title text-[clamp(32px,4.5vw,72px)] font-medium leading-[1.05] tracking-tight text-white/[0.25] cursor-pointer">
+                        Cegedim</h2>
+                </div>
+
+                <div class="works-title-block py-2 md:py-3" data-idx="3" data-year="2025">
+                    <h2
+                        class="works-title text-[clamp(32px,4.5vw,72px)] font-medium leading-[1.05] tracking-tight text-white/[0.25] cursor-pointer">
+                        WePlan</h2>
+                </div>
+
+                <div class="works-title-block py-2 md:py-3" data-idx="4" data-year="2024">
+                    <h2
+                        class="works-title text-[clamp(32px,4.5vw,72px)] font-medium leading-[1.05] tracking-tight text-white/[0.25] cursor-pointer">
+                        Decathlon</h2>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Mobile accordion -->
+        <div class="md:hidden px-6 pb-10" id="works-accordion">
+
+            <div class="works-accordion-item is-open" data-idx="0">
+                <button class="works-accordion-trigger" aria-expanded="true">
+                    <h2>r/design</h2>
+                    <span class="works-accordion-year">2026</span>
+                </button>
+                <div class="works-accordion-content">
+                    <div>
+                        <img src="img/rdesign/hero.png" alt="r/design" class="w-full rounded-lg mb-3">
+                        <div class="flex gap-2 flex-wrap mb-2">
+                            <span class="works-accordion-tag">Game Design</span>
+                            <span class="works-accordion-tag">Vibe Coding</span>
+                        </div>
+                        <p class="text-white/50 text-[16px] leading-relaxed mb-3">Expérimentation ludique mêlant design
+                            et code créatif.</p>
+                        <a href="projectRDesign.html"
+                            class="inline-flex items-center gap-2 text-white/50 text-[17px] font-medium hover:text-white transition-colors duration-200 group mb-5">
+                            Explorer le projet <span class="explore-line"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="works-accordion-item" data-idx="1">
+                <button class="works-accordion-trigger" aria-expanded="false">
+                    <h2>AI Hub</h2>
+                    <span class="works-accordion-year">2026</span>
+                </button>
+                <div class="works-accordion-content">
+                    <div>
+                        <img src="img/aihub/aihub_hero.png" alt="AI Hub" class="w-full rounded-lg mb-3">
+                        <div class="flex gap-2 flex-wrap mb-2">
+                            <span class="works-accordion-tag">Product Design</span>
+                            <span class="works-accordion-tag">IA / Produit digital</span>
+                        </div>
+                        <p class="text-white/50 text-[16px] leading-relaxed mb-3">Plateforme centralisée pour la gestion
+                            d'outils IA en entreprise.</p>
+                        <a href="projectAIHub.html"
+                            class="inline-flex items-center gap-2 text-white/50 text-[17px] font-medium hover:text-white transition-colors duration-200 group mb-5">
+                            Explorer le projet <span class="explore-line"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="works-accordion-item" data-idx="2">
+                <button class="works-accordion-trigger" aria-expanded="false">
+                    <h2>Cegedim</h2>
+                    <span class="works-accordion-year">2025</span>
+                </button>
+                <div class="works-accordion-content">
+                    <div>
+                        <img src="img/cegedim/cegedim_hero.png" alt="Cegedim" class="w-full rounded-lg mb-3">
+                        <div class="flex gap-2 flex-wrap mb-2">
+                            <span class="works-accordion-tag">Product Design</span>
+                            <span class="works-accordion-tag">Santé / IA</span>
+                        </div>
+                        <p class="text-white/50 text-[16px] leading-relaxed mb-3">Design d'un outil IA pour les
+                            professionnels de santé.</p>
+                        <a href="projectCegedim.html"
+                            class="inline-flex items-center gap-2 text-white/50 text-[17px] font-medium hover:text-white transition-colors duration-200 group mb-5">
+                            Explorer le projet <span class="explore-line"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="works-accordion-item" data-idx="3">
+                <button class="works-accordion-trigger" aria-expanded="false">
+                    <h2>WePlan</h2>
+                    <span class="works-accordion-year">2025</span>
+                </button>
+                <div class="works-accordion-content">
+                    <div>
+                        <img src="img/weplan/weplan_hero.png" alt="WePlan" class="w-full rounded-lg mb-3">
+                        <div class="flex gap-2 flex-wrap mb-2">
+                            <span class="works-accordion-tag">Architecture UI</span>
+                            <span class="works-accordion-tag">Produit / Design System</span>
+                        </div>
+                        <p class="text-white/50 text-[16px] leading-relaxed mb-3">Refonte de l'architecture d'une
+                            plateforme de planification collaborative.</p>
+                        <a href="projectWePlan.html"
+                            class="inline-flex items-center gap-2 text-white/50 text-[17px] font-medium hover:text-white transition-colors duration-200 group mb-5">
+                            Explorer le projet <span class="explore-line"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="works-accordion-item" data-idx="4">
+                <button class="works-accordion-trigger" aria-expanded="false">
+                    <h2>Decathlon</h2>
+                    <span class="works-accordion-year">2024</span>
+                </button>
+                <div class="works-accordion-content">
+                    <div>
+                        <img src="img/decathlon/zones.png" alt="Decathlon" class="w-full rounded-lg mb-3">
+                        <div class="flex gap-2 flex-wrap mb-2">
+                            <span class="works-accordion-tag">Recherche UX</span>
+                            <span class="works-accordion-tag">Retail</span>
+                        </div>
+                        <p class="text-white/50 text-[16px] leading-relaxed mb-3">Étude exploratoire sur l'expérience en
+                            magasin et les zones d'interaction client.</p>
+                        <a href="projectDecathlon.html"
+                            class="inline-flex items-center gap-2 text-white/50 text-[17px] font-medium hover:text-white transition-colors duration-200 group mb-5">
+                            Explorer le projet <span class="explore-line"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ===== SERVICES ===== -->
+    <section id="services" class="px-6 md:px-12 lg:px-16 py-20 md:py-28 border-t border-white/[0.06]">
+
+        <div style="background: rgba(255,255,255,0.025); border-radius: 20px; padding: clamp(24px, 4vw, 48px);">
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
+
+            <!-- Label column -->
+            <div class="md:col-span-3">
+                <span class="text-white/30 text-[14px] uppercase tracking-[0.2em] font-semibold block reveal">Ce que je
+                    fais</span>
+            </div>
+
+            <!-- Services row -->
+            <div class="md:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
+
+                <!-- Service 01 -->
+                <div class="service-col reveal" style="--col-accent:#c8a4ff">
+                    <div class="service-icon" aria-hidden="true">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor"
+                            stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="14" cy="14" r="9" />
+                            <line x1="20.5" y1="20.5" x2="27" y2="27" />
+                        </svg>
+                    </div>
+                    <span class="service-label">UX Research</span>
+                    <h3 class="service-title">Comprendre avant de concevoir.</h3>
+                    <p class="service-desc">
+                        Je structure chaque projet autour des usages utilisateur réels : recherche terrain, interviews,
+                        analyse de l'existant. Je veux rendre la vie des utilisateurs la plus simple possible.
+                        Je suis conscient que mon rôle de designer doit servir la stratégie de l'entreprise, mais
+                        également de proposer des idées.
+                    </p>
+                    <ul class="service-list">
+                        <li>Interviews utilisateurs</li>
+                        <li>Participer à la stratégie</li>
+                        <li>Audit UX</li>
+                        <li>Personas &amp; parcours</li>
+                        <li>Architecture d'information</li>
+                    </ul>
+                </div>
+
+                <!-- Service 02 -->
+                <div class="service-col reveal reveal-d1" style="--col-accent:#ff8fb4">
+                    <div class="service-icon" aria-hidden="true">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor"
+                            stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="4" y="4" width="24" height="24" rx="1.5" />
+                            <line x1="4" y1="11" x2="28" y2="11" />
+                            <line x1="11" y1="11" x2="11" y2="28" />
+                        </svg>
+                    </div>
+                    <span class="service-label">UI / Product Design</span>
+                    <h3 class="service-title">Wireframing et Maquettes</h3>
+                    <p class="service-desc">
+                        Je veux créer des interfaces cohérentes, performantes et centrées utilisateur.
+                        J'aime que le produit marche dans sa globalité comme dans les détails,
+                        c'est pour moi ce qui fait un produit pertinent.
+                    </p>
+                    <ul class="service-list">
+                        <li>Wireframing</li>
+                        <li>Design d'interface</li>
+                        <li>Prototypage Figma</li>
+                        <li>Design system</li>
+                        <li>Tests &amp; itérations</li>
+                    </ul>
+                </div>
+
+                <!-- Service 03 -->
+                <div class="service-col reveal reveal-d2" style="--col-accent:#5fd0e0">
+                    <div class="service-icon" aria-hidden="true">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor"
+                            stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="10,9 4,16 10,23" />
+                            <polyline points="22,9 28,16 22,23" />
+                            <line x1="18" y1="6" x2="14" y2="26" />
+                        </svg>
+                    </div>
+                    <span class="service-label">Code &amp; Motion</span>
+                    <h3 class="service-title">Base en prototypage.</h3>
+                    <p class="service-desc">
+                        Au-delà du design, je touche au code et à la 3D / motion. J'intègre l'IA dans mes
+                        méthodes pour accélérer les itérations. Cette curiosité technique me permet de mieux
+                        collaborer avec les développeurs dans des équipes et de mieux comprendre leurs contraintes.
+                    </p>
+                    <ul class="service-list">
+                        <li>HTML / CSS / JavaScript</li>
+                        <li>Blender (3D)</li>
+                        <li>Cavalry (motion)</li>
+                        <li>Workflows IA (Claude, Ollama, ...)</li>
+                        <li>MCP Figma</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        </div>
+    </section>
+
+
+    <!-- ===== CONTACT ===== -->
+    <section id="contact" class="px-6 md:px-12 lg:px-16 py-28 md:py-40 border-t border-white/[0.06] text-center">
+        <span
+            class="text-white/30 text-[14px] uppercase tracking-[0.2em] font-semibold block mb-6 reveal">Contact</span>
+        <h2 class="text-[clamp(28px,4.5vw,64px)] font-medium leading-tight tracking-tight reveal">
+            Me contacter
+        </h2>
+        <p class="text-white/35 text-[16px] max-w-[440px] mx-auto mt-6 leading-relaxed reveal reveal-d1">
+            Disponible pour une alternance à partir de septembre 2026.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10 reveal reveal-d2">
+            <a href="mailto:bruno.tanguy@icloud.com"
+                class="inline-flex items-center gap-2 border border-white/30 text-white text-[15px] font-medium rounded-full px-5 py-[8px] hover:bg-white hover:text-dark transition-all duration-200">
+                Envoyer un mail
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="2" y1="8" x2="8" y2="2" />
+                    <polyline points="3,2 8,2 8,7" />
+                </svg>
+            </a>
+            <a href="https://www.linkedin.com/in/bruno-tanguy-aa48602a8" target="_blank" rel="noopener"
+                class="inline-flex items-center gap-2 border border-white/30 text-white text-[15px] font-medium rounded-full px-5 py-[8px] hover:bg-white hover:text-dark transition-all duration-200">
+                LinkedIn
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="2" y1="8" x2="8" y2="2" />
+                    <polyline points="3,2 8,2 8,7" />
+                </svg>
+            </a>
+        </div>
+    </section>
+
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="border-t border-white/[0.06] px-6 md:px-12 lg:px-16 py-10">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-4">
+
+            <!-- Col 1: Contact -->
+            <div>
+                <span
+                    class="text-white/25 text-[14px] uppercase tracking-[0.15em] font-semibold block mb-3">Contact</span>
+                <a href="mailto:bruno.tanguy@icloud.com"
+                    class="text-white/60 text-[17px] hover:text-white transition-colors">bruno.tanguy@icloud.com</a>
+            </div>
+
+            <!-- Col 2: Social -->
+            <div>
+                <span
+                    class="text-white/25 text-[14px] uppercase tracking-[0.15em] font-semibold block mb-3">Social</span>
+                <div class="flex flex-col gap-1.5">
+                    <a href="https://www.linkedin.com/in/bruno-tanguy-aa48602a8" target="_blank" rel="noopener"
+                        class="text-white/60 text-[17px] hover:text-white transition-colors">LinkedIn</a>
+                </div>
+            </div>
+
+            <!-- Col 3: Nav -->
+            <div>
+                <span
+                    class="text-white/25 text-[14px] uppercase tracking-[0.15em] font-semibold block mb-3">Navigation</span>
+                <div class="flex flex-col gap-1.5">
+                    <a href="#works" class="text-white/60 text-[17px] hover:text-white transition-colors">Projets</a>
+                    <a href="#about" class="text-white/60 text-[17px] hover:text-white transition-colors">À propos</a>
+                    <a href="#services"
+                        class="text-white/60 text-[17px] hover:text-white transition-colors">Compétences</a>
+                    <a href="resume.html" class="text-white/60 text-[17px] hover:text-white transition-colors">Mon
+                        Profil</a>
+                </div>
+            </div>
+
+            <!-- Col 4: Info -->
+            <div>
+                <span
+                    class="text-white/25 text-[14px] uppercase tracking-[0.15em] font-semibold block mb-3">Studio</span>
+                <p class="text-white/30 text-[15px] leading-relaxed">
+                    Ce portfolio rassemble les projets réalisés durant mes études à l'École de design Nantes
+                    Atlantique et mes expériences professionnelles.
+                </p>
+            </div>
+        </div>
+
+        <!-- Bottom bar -->
+        <div
+            class="flex flex-col sm:flex-row items-center justify-between mt-12 pt-6 border-t border-white/[0.04] gap-4">
+            <div class="flex items-center gap-2">
+                <svg width="12" height="12" viewBox="0 0 32 32" fill="none">
+                    <path
+                        d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16Z"
+                        fill="rgba(255,255,255,0.25)" />
+                    <path
+                        d="M13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z"
+                        fill="rgba(255,255,255,0.25)" />
+                </svg>
+                <span class="text-white/25 text-[14px]">&copy; 2026 Bruno Tanguy. All rights reserved.</span>
+            </div>
+            <span class="text-white/15 text-[14px]">Product Designer — Nantes, FR</span>
+        </div>
+    </footer>
+
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+    <script>
+        // ============================
+        // DATA
+        // ============================
+        const projects = [
+            {
+                name: 'r/design', year: '2026',
+                tags: ['Game Design', 'Vibe Coding'],
+                overview: 'Expérimentation ludique mêlant design et code créatif.',
+                img: 'img/rdesign/hero.png',
+                link: 'projectRDesign.html'
+            },
+            {
+                name: 'AI Hub', year: '2026',
+                tags: ['Product Design', 'IA / SaaS'],
+                overview: 'Plateforme centralisée pour la gestion d\'outils IA en entreprise.',
+                img: 'img/aihub/aihub_hero.png',
+                link: 'projectAIHub.html'
+            },
+            {
+                name: 'Cegedim', year: '2025',
+                tags: ['Product Design', 'Santé / IA'],
+                overview: 'Design d\'un outil IA pour les professionnels de santé.',
+                img: 'img/cegedim/cegedim_hero.png',
+                link: 'projectCegedim.html'
+            },
+            {
+                name: 'WePlan', year: '2025',
+                tags: ['Architecture UI', 'SaaS'],
+                overview: 'Refonte de l\'architecture d\'une plateforme de planification collaborative.',
+                img: 'img/weplan/weplan_hero.png',
+                link: 'projectWePlan.html'
+            },
+            {
+                name: 'Decathlon', year: '2024',
+                tags: ['Recherche UX', 'Retail'],
+                overview: 'Étude exploratoire sur l\'expérience en magasin et les zones d\'interaction client.',
+                img: 'img/decathlon/zones.png',
+                link: 'projectDecathlon.html'
+            }
+        ];
+
+
+        // ============================
+        // CURSOR
+        // ============================
+        const cur = document.getElementById('cursor');
+        let cx = -50, cy = -50, tx = -50, ty = -50;
+        document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+        document.addEventListener('mouseleave', () => cur.classList.add('hidden'));
+        document.addEventListener('mouseenter', () => cur.classList.remove('hidden'));
+
+        function cursorLoop() {
+            cx += (tx - cx) * 0.18;
+            cy += (ty - cy) * 0.18;
+            cur.style.left = cx + 'px';
+            cur.style.top = cy + 'px';
+            requestAnimationFrame(cursorLoop);
+        }
+        cursorLoop();
+
+        function bindCursorHovers() {
+            document.querySelectorAll('a, button, .works-title').forEach(el => {
+                el.removeEventListener('mouseenter', curHoverIn);
+                el.removeEventListener('mouseleave', curHoverOut);
+                el.addEventListener('mouseenter', curHoverIn);
+                el.addEventListener('mouseleave', curHoverOut);
+            });
+        }
+        function curHoverIn() { cur.classList.add('hover'); }
+        function curHoverOut() { cur.classList.remove('hover'); }
+        bindCursorHovers();
+
+
+        // ============================
+        // PRELOADER
+        // ============================
+        const preloader = document.getElementById('preloader');
+        const preloaderBrand = document.getElementById('preloader-brand');
+        const preloaderLabel = document.getElementById('preloader-label');
+        const preloaderCounter = document.getElementById('preloader-counter');
+        const preloaderBar = document.getElementById('preloader-bar');
+        const preloaderBarFill = document.getElementById('preloader-bar-fill');
+
+        // Intro: brand + label fade in, counter slides up from below
+        gsap.to(preloaderBrand, { opacity: 1, duration: 0.6, ease: 'power2.out', delay: 0.1 });
+        gsap.to(preloaderLabel, { opacity: 1, duration: 0.6, ease: 'power2.out', delay: 0.15 });
+        gsap.to(preloaderBar, { opacity: 1, duration: 0.6, ease: 'power2.out', delay: 0.2 });
+        gsap.to(preloaderCounter, { yPercent: 0, duration: 0.9, ease: 'expo.out', delay: 0.2 });
+
+        // Smooth count 0 -> 100 via RAF (deterministic, no jank)
+        const PRELOAD_DURATION = 2200;
+        let preloadStart = null;
+        const easeOutQuart = t => 1 - Math.pow(1 - t, 4);
+
+        function tickPreloader(now) {
+            if (preloadStart === null) preloadStart = now;
+            const t = Math.min((now - preloadStart) / PRELOAD_DURATION, 1);
+            const eased = easeOutQuart(t);
+            const value = Math.floor(eased * 100);
+            preloaderCounter.textContent = value;
+            preloaderBarFill.style.transform = `scaleX(${eased})`;
+            if (t < 1) {
+                requestAnimationFrame(tickPreloader);
+            } else {
+                preloaderCounter.textContent = '100';
+                preloaderBarFill.style.transform = 'scaleX(1)';
+                setTimeout(finishPreloader, 380);
+            }
+        }
+        // Start the count after the intro reveal settles
+        setTimeout(() => requestAnimationFrame(tickPreloader), 450);
+
+        function finishPreloader() {
+            // Clean fade out — no intermediate panel slide
+            gsap.to(preloader, {
+                opacity: 0,
+                duration: 0.6,
+                ease: 'power2.inOut',
+                delay: 0.2,
+                onComplete: () => {
+                    preloader.style.pointerEvents = 'none';
+                    preloader.style.zIndex = '-1';
+                    document.body.classList.remove('no-scroll');
+                    animateHero();
+                }
+            });
+        }
+
+
+        // ============================
+        // HERO TIME
+        // ============================
+        function updateTime() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const el = document.getElementById('hero-time');
+            if (el) el.textContent = h + ':' + m;
+        }
+        updateTime();
+        // Sync interval to the next minute boundary so the clock stays accurate
+        (function scheduleTimeUpdate() {
+            const now = new Date();
+            const msUntilNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+            setTimeout(() => {
+                updateTime();
+                setInterval(updateTime, 60000);
+            }, msUntilNextMinute);
+        })();
+
+
+        // ============================
+        // HERO ANIMATION
+        // ============================
+        function animateHero() {
+            const headline = document.getElementById('hero-headline');
+            const text = headline.textContent.trim();
+
+            // Split into words, then measure natural line breaks
+            headline.innerHTML = text.split(/\s+/).map(w => `<span class="hero-word">${w}</span>`).join(' ');
+
+            const words = [...headline.querySelectorAll('.hero-word')];
+            let lines = [];
+            let currentLine = [];
+            let lastTop = null;
+
+            words.forEach(w => {
+                const top = w.getBoundingClientRect().top;
+                if (lastTop !== null && Math.abs(top - lastTop) > 4) {
+                    lines.push(currentLine);
+                    currentLine = [];
+                }
+                currentLine.push(w.textContent);
+                lastTop = top;
+            });
+            if (currentLine.length) lines.push(currentLine);
+
+            // Rebuild with line wrappers for clip reveal
+            headline.innerHTML = lines.map(line =>
+                `<span class="hero-line"><span class="hero-line-inner">${line.join(' ')}</span></span>`
+            ).join('');
+
+            // Lock the lines off-screen first, THEN reveal the headline (no flash)
+            gsap.set('.hero-line-inner', { yPercent: 120, opacity: 0, filter: 'blur(10px)' });
+            headline.style.visibility = 'visible';
+
+            // Phase 1: Headline lines reveal
+            gsap.to('.hero-line-inner', {
+                yPercent: 0,
+                opacity: 1,
+                filter: 'blur(0px)',
+                stagger: 0.06,
+                duration: 0.95,
+                ease: 'power3.out'
+            });
+
+            // Phase 2: All hero-fade elements (nav, philosophy, location, bottom row) — start with headline
+            gsap.to('.hero-fade', {
+                opacity: 1,
+                y: 0,
+                filter: 'blur(0px)',
+                stagger: 0.06,
+                duration: 0.7,
+                delay: 0,
+                ease: 'power3.out',
+                onComplete: function () {
+                    // Clean up inline styles so elements are fully visible
+                    document.querySelectorAll('.hero-fade').forEach(el => {
+                        el.style.removeProperty('filter');
+                        el.style.removeProperty('transform');
+                        el.style.removeProperty('opacity');
+                    });
+                }
+            });
+
+            bindCursorHovers();
+        }
+
+
+        // ============================
+        // LENIS + SCROLLTRIGGER INTEGRATION
+        // ============================
+        const lenis = new Lenis({ lerp: 0.08 });
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+        gsap.registerPlugin(ScrollTrigger);
+
+
+        // ============================
+        // NAV SCROLL EFFECT
+        // ============================
+        const nav = document.getElementById('nav');
+        ScrollTrigger.create({
+            start: 100,
+            onUpdate: (self) => {
+                nav.classList.toggle('scrolled', self.scroll() > 100);
+            }
+        });
+
+        // Contact dropdown
+        const contactBtn = document.getElementById('contact-btn');
+        const contactDrop = document.getElementById('contact-dropdown');
+        if (contactBtn) {
+            contactBtn.addEventListener('click', e => { e.stopPropagation(); contactDrop.classList.toggle('open'); });
+            document.addEventListener('click', () => contactDrop.classList.remove('open'));
+        }
+
+
+        // ============================
+        // ABOUT — WORD REVEAL ON SCROLL
+        // ============================
+        const aboutEl = document.getElementById('about-text');
+        if (aboutEl) {
+            const aboutWords = aboutEl.textContent.trim().split(/\s+/);
+            aboutEl.style.overflow = 'hidden';
+            aboutEl.innerHTML = aboutWords.map(w =>
+                `<span class="about-word" style="display:inline-block;transform:translateX(100vw);opacity:0.2;margin-right:0.22em;">${w}</span>`
+            ).join('');
+
+            gsap.to('.about-word', {
+                x: 0,
+                opacity: 1,
+                stagger: 0.02,
+                ease: 'power4.inOut',
+                scrollTrigger: {
+                    trigger: '#about-pin',
+                    pin: '#about',
+                    start: 'center center',
+                    end: '+=100%',
+                    scrub: true
+                }
+            });
+        }
+
+
+        // ============================
+        // WORKS — STICKY LEFT + SCROLLABLE TITLES
+        // ============================
+        const worksMedia = document.getElementById('works-media');
+        let activeProject = -1;
+
+        // Generate left-side panels
+        if (worksMedia) {
+            projects.forEach((proj, i) => {
+                const panel = document.createElement('div');
+                panel.className = 'works-panel';
+                panel.dataset.idx = i;
+                panel.style.opacity = i === 0 ? '1' : '0';
+                panel.innerHTML = `
+                    <img src="${proj.img}" alt="${proj.name}">
+                    <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,0.85) 0%,rgba(10,10,10,0.2) 50%,transparent 80%)"></div>
+                    <div style="position:absolute;bottom:40px;left:40px;right:40px;">
+                        <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+                            ${proj.tags.map(t => `<span style="font-size: 14px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:100px;">${t}</span>`).join('')}
+                        </div>
+                        <p style="color:rgba(255,255,255,0.5);font-size:14px;line-height:1.5;margin-bottom:14px;max-width:400px;">${proj.overview}</p>
+                        <a href="${proj.link}" class="inline-flex items-center gap-2 text-white/50 text-[17px] font-medium hover:text-white transition-colors duration-200 group works-explore-link">
+                            Explorer le projet
+                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="1" y1="5" x2="9" y2="5"/><polyline points="5.5,1.5 9,5 5.5,8.5"/>
+                            </svg>
+                        </a>
+                    </div>
+                `;
+                worksMedia.appendChild(panel);
+            });
+            bindCursorHovers();
+        }
+
+        // Activate project
+        function setActiveProject(idx) {
+            if (idx === activeProject) return;
+            activeProject = idx;
+
+            // Titles + subtitle visibility
+            document.querySelectorAll('.works-title').forEach((t, i) => {
+                t.classList.toggle('active', i === idx);
+            });
+            document.querySelectorAll('.works-title-block').forEach((b, i) => {
+                b.classList.toggle('is-active', i === idx);
+            });
+
+            // Panels (desktop) — autoAlpha handles visibility for perf
+            document.querySelectorAll('.works-panel').forEach((p, i) => {
+                gsap.to(p, {
+                    autoAlpha: i === idx ? 1 : 0,
+                    duration: i === idx ? 0.4 : 0.25,
+                    ease: 'power2.out'
+                });
+            });
+        }
+
+        // ScrollTrigger + hover for each title block
+        let scrollProject = 0;
+        let isHovering = false;
+
+        document.querySelectorAll('.works-title-block').forEach((block, i) => {
+            // Scroll-driven activation — using "center" so adjacent blocks share an exact boundary
+            // (no overlap → no flicker, no gap → no sticky-old-project)
+            ScrollTrigger.create({
+                trigger: block,
+                start: 'top center',
+                end: 'bottom center',
+                onEnter: () => { scrollProject = i; if (!isHovering) setActiveProject(i); },
+                onEnterBack: () => { scrollProject = i; if (!isHovering) setActiveProject(i); }
+            });
+
+            // Hover override
+            block.addEventListener('mouseenter', () => {
+                isHovering = true;
+                setActiveProject(i);
+            });
+            block.addEventListener('mouseleave', () => {
+                isHovering = false;
+                setActiveProject(scrollProject);
+            });
+        });
+
+        // Click on title → navigate
+        document.querySelectorAll('.works-title').forEach((title, i) => {
+            title.addEventListener('click', () => {
+                window.location.href = projects[i].link;
+            });
+        });
+
+        // Initialize first project
+        setActiveProject(0);
+
+
+        // ============================
+        // MOBILE MENU
+        // ============================
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
+        let menuOpen = false;
+
+        menuToggle.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            mobileMenu.classList.toggle('open', menuOpen);
+            menuIcon.classList.toggle('hidden', menuOpen);
+            closeIcon.classList.toggle('hidden', !menuOpen);
+            if (menuOpen) {
+                lenis.stop();
+            } else {
+                lenis.start();
+            }
+        });
+
+        // Close menu on link click
+        mobileMenu.querySelectorAll('a').forEach(a => {
+            a.addEventListener('click', () => {
+                menuOpen = false;
+                mobileMenu.classList.remove('open');
+                menuIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+                lenis.start();
+            });
+        });
+
+        // Close menu on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && menuOpen) {
+                menuOpen = false;
+                mobileMenu.classList.remove('open');
+                menuIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+                lenis.start();
+            }
+        });
+
+        // Close menu on tap outside the panel (links/contact button)
+        const mobileMenuPanel = document.getElementById('mobile-menu-panel');
+        mobileMenu.addEventListener('click', (e) => {
+            // Ignore clicks on the actual interactive elements inside the panel
+            if (e.target.closest('a, button')) return;
+            if (!menuOpen) return;
+            menuOpen = false;
+            mobileMenu.classList.remove('open');
+            menuIcon.classList.remove('hidden');
+            closeIcon.classList.add('hidden');
+            lenis.start();
+        });
+
+
+        // ============================
+        // SMOOTH ANCHOR SCROLL
+        // ============================
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', (e) => {
+                const target = document.querySelector(anchor.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    lenis.scrollTo(target, { offset: -60 });
+                }
+            });
+        });
+
+
+        // ============================
+        // SCROLL REVEALS
+        // ============================
+        const revealObs = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) e.target.classList.add('visible');
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+
+        // ============================
+        // WORKS MOBILE ACCORDION
+        // ============================
+        const accordionItems = document.querySelectorAll('.works-accordion-item');
+
+        function openAccordion(item) {
+            accordionItems.forEach(other => {
+                other.classList.remove('is-open');
+                other.querySelector('.works-accordion-trigger').setAttribute('aria-expanded', 'false');
+            });
+            item.classList.add('is-open');
+            item.querySelector('.works-accordion-trigger').setAttribute('aria-expanded', 'true');
+        }
+
+        accordionItems.forEach(item => {
+            const trigger = item.querySelector('.works-accordion-trigger');
+            trigger.addEventListener('click', () => {
+                const isOpen = item.classList.contains('is-open');
+                // Close all
+                accordionItems.forEach(other => {
+                    other.classList.remove('is-open');
+                    other.querySelector('.works-accordion-trigger').setAttribute('aria-expanded', 'false');
+                });
+                // Toggle clicked (if it was closed, open it)
+                if (!isOpen) {
+                    item.classList.add('is-open');
+                    trigger.setAttribute('aria-expanded', 'true');
+                }
+            });
+
+            // Auto-open on scroll when item reaches viewport center (mobile only)
+            ScrollTrigger.create({
+                trigger: item,
+                start: 'top center',
+                end: 'bottom center',
+                onEnter: () => { if (window.innerWidth < 768) openAccordion(item); },
+                onEnterBack: () => { if (window.innerWidth < 768) openAccordion(item); }
+            });
+        });
+
+
+        // ============================
+        // PAGE TRANSITIONS
+        // ============================
+        function pageTransitionOut(url) {
+            // Reset preloader so it can fade back in
+            preloader.style.pointerEvents = 'auto';
+            preloader.style.zIndex = '200';
+            // Hide inner content (no brand/counter on exit transition)
+            gsap.set([preloaderBrand, preloaderLabel, preloaderCounter, preloaderBar], { opacity: 0 });
+
+            // Simple fade in to cover the screen, then navigate
+            gsap.fromTo(preloader,
+                { opacity: 0 },
+                {
+                    opacity: 1,
+                    duration: 0.5,
+                    ease: 'power2.inOut',
+                    onComplete: () => { window.location.href = url; }
+                }
+            );
+        }
+
+        // Intercept internal links
+        document.querySelectorAll('a').forEach(link => {
+            const href = link.getAttribute('href');
+            if (!href) return;
+            // Only intercept local HTML pages (not anchors, mailto, external)
+            if (href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('http') || href.startsWith('//')) return;
+
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                pageTransitionOut(href);
+            });
+        });
+    </script>
+    <script src="theme.js"></script>
+</body>
+
+</html>

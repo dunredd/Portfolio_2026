@@ -16,6 +16,7 @@ export default defineConfig({
                 citadelles: resolve(__dirname, 'projectCitadelles.html'),
                 weplan:     resolve(__dirname, 'projectWePlan.html'),
                 aihub:      resolve(__dirname, 'projectAIHub.html'),
+                musique:    resolve(__dirname, 'projectMusique.html'),
             }
         }
     }

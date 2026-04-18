@@ -14,210 +14,372 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml">
     <meta property="og:image" content="/img/citadelles/citadelles_hero.png">
 
+    <script>(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t)})()</script>
+    <link rel="stylesheet" href="theme.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        'sans': ['"Host Grotesk"', 'sans-serif'],
-                    },
-                    colors: {
-                        'brand-orange': '#00E5C8', cyan: '#00E5C8', ink: '#0D0D0D',
-                        'brand-gray': '#E2E1E6',
-                        'text-muted': '#6B6A75',
-                    }
+                    fontFamily: { sans: ['"Host Grotesk"', 'sans-serif'] },
+                    colors: { accent: '#4d65ff', dark: '#0a0a0a' }
                 }
             }
         }
     </script>
+
     <style>
+        * { cursor: none; }
+        html { background: #0a0a0a; }
+        body {
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body::-webkit-scrollbar { display: none; }
+
+        /* ===== CURSOR ===== */
+        #cursor {
+            position: fixed; top: 0; left: 0;
+            width: 8px; height: 8px;
+            background: #fff; border-radius: 50%;
+            pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width .22s cubic-bezier(.16, 1, .3, 1),
+                height .22s cubic-bezier(.16, 1, .3, 1),
+                background .15s, border .15s, opacity .25s;
+        }
+        #cursor.hover {
+            width: 40px; height: 40px;
+            background: transparent;
+            border: 1.5px solid #fff;
+        }
+        #cursor.hidden { opacity: 0; }
+
+        /* ===== NAV ===== */
+        #nav { transition: background .35s, backdrop-filter .35s; }
+        #nav.scrolled { background: rgba(10,10,10,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        /* Contact dropdown */
+        /* Contact dropdown */
+        .contact-dropdown {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 12px);
+            background: rgba(15, 15, 15, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 190px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transform: translateY(-8px);
+            pointer-events: none;
+            transition: all .3s cubic-bezier(.16, 1, .3, 1);
+            z-index: 100;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+
+        /* Pont pour maintenir le hover */
+        .contact-dropdown::before {
+            content: '';
+            position: absolute;
+            top: -14px;
+            left: 0;
+            right: 0;
+            height: 14px;
+            background: transparent;
+        }
+
+        .contact-dropdown.open {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .contact-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.6);
+            border-radius: 10px;
+            transition: all 0.25s cubic-bezier(.16, 1, .3, 1);
+            white-space: nowrap;
+        }
+
+        .contact-dropdown a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            transform: translateX(4px);
+        }
+        .nav-link {
+            font-size: 15px; font-weight: 500;
+            color: rgba(255,255,255,.7);
+            white-space: nowrap;
+            transition: color .25s;
+            display: block;
+            padding: 4px 0;
+        }
+        .nav-link:hover, .nav-link.active { color: #fff; }
+        /* ===== NAV PAGE DROPDOWN ===== */
+        .nav-page-item {
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+        .nav-anchor-dropdown {
+            position: absolute;
+            top: calc(100% + 12px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-6px);
+            background: rgba(15, 15, 15, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 170px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: all .3s cubic-bezier(.16, 1, .3, 1);
+            z-index: 100;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            white-space: nowrap;
+        }
+
+        /* Pont pour maintenir le hover */
+        .nav-anchor-dropdown::before {
+            content: '';
+            position: absolute;
+            top: -14px;
+            left: 0;
+            right: 0;
+            height: 14px;
+            background: transparent;
+        }
+
+        .nav-page-item:hover .nav-anchor-dropdown {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+            transition-delay: 0.3s;
+        }
+
+        .nav-anchor-dropdown a {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Recentrage du contenu */
+            gap: 10px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            transition: all 0.25s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .nav-anchor-dropdown a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            transform: translateY(-1px); /* Animation plus discrète et centrée */
+        }
+
+        /* ===== SECTION LABEL ===== */
+        .section-label {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.3);
+        }
+
         /* ===== SCROLL REVEALS ===== */
         .reveal {
             opacity: 0;
             transform: translateY(28px);
-            transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity .8s cubic-bezier(.16, 1, .3, 1),
+                transform .8s cubic-bezier(.16, 1, .3, 1);
         }
         .reveal-img {
             opacity: 0;
             transform: scale(1.04);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity .9s cubic-bezier(.16, 1, .3, 1),
+                transform .9s cubic-bezier(.16, 1, .3, 1);
         }
         .reveal.visible { opacity: 1; transform: translateY(0); }
         .reveal-img.visible { opacity: 1; transform: scale(1); }
-        .reveal-d1 { transition-delay: 0.1s; }
-        .reveal-d2 { transition-delay: 0.2s; }
-        .reveal-d3 { transition-delay: 0.3s; }
-        .reveal-d4 { transition-delay: 0.4s; }
-
-        /* ===== DYNAMIC ISLAND HEADER ===== */
-        .nav-link {
-            font-size: 13px; font-weight: 500;
-            color: rgba(255,255,255,.5); white-space: nowrap; transition: color .2s;
+        .reveal-d1 { transition-delay: .1s; }
+        .reveal-d2 { transition-delay: .2s; }
+        .reveal-d3 { transition-delay: .3s; }
+        .reveal-d4 { transition-delay: .4s; }
+    
+        /* ===== DISABLE CURSOR ON TOUCH DEVICES ===== */
+        @media (hover: none), (pointer: coarse) {
+            * { cursor: auto !important; }
+            #cursor, #c-cursor { display: none !important; }
         }
-        .nav-link:hover, .nav-link.on { color: white; }
-
-        /* ===== CURSEUR CUSTOM ===== */
-        body { cursor: none; }
-        a, button, [role="button"] { cursor: none; }
-        #c-cursor {
-            position: fixed; top: 0; left: 0; z-index: 9999;
-            width: 10px; height: 10px;
-            background: black; border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            transition: width 0.25s cubic-bezier(0.16,1,0.3,1),
-                        height 0.25s cubic-bezier(0.16,1,0.3,1),
-                        background 0.2s ease,
-                        border 0.2s ease,
-                        opacity 0.3s ease;
-        }
-        #c-cursor.hover   { width: 32px; height: 32px; background: transparent; border: 1.5px solid black; }
-        #c-cursor.hidden  { opacity: 0; }
-
-        /* ===== SECTION LABEL ===== */
-        .section-label {
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: #6B6A75;
-        }
-
-        /* ===== SCROLLBAR ===== */
-        .scroll-area { -ms-overflow-style: none; scrollbar-width: none; }
-        .scroll-area::-webkit-scrollbar { display: none; }
-    </style>
+</style>
 </head>
 
-<body class="bg-white text-black font-sans w-full overflow-x-hidden selection:bg-brand-orange selection:text-black">
-<div id="c-cursor"></div>
+<body class="bg-dark text-white font-sans w-full overflow-x-hidden selection:bg-accent/30 selection:text-white">
 
-    <!-- ==================== HEADER — DYNAMIC ISLAND ==================== -->
-    <header class="fixed top-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
-        <div class="pointer-events-auto flex items-center bg-ink rounded-full px-4 py-[10px] gap-3 shadow-lg">
-            <a href="index.html" class="flex items-center gap-2 shrink-0">
-                <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
+    <!-- ===== CURSOR ===== -->
+    <div id="cursor"></div>
+
+    <!-- ===== NAV ===== -->
+    <nav id="nav" class="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 lg:px-16 py-5">
+        <div class="flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3 shrink-0">
+                <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
                     <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16Z" fill="white"/>
                     <path d="M13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="white"/>
                 </svg>
-                <span class="font-bold text-[13px] tracking-tight text-white">Bruno Tanguy</span>
+                <span class="font-semibold text-[clamp(20px,2vw,28px)] tracking-tight text-white leading-none">Bruno Tanguy</span>
             </a>
-            <div class="w-px h-3 bg-white/20"></div>
-            <nav class="flex gap-4">
-                <a href="index.html" class="nav-link">Home</a>
-                <a href="resume.html" class="nav-link">Mon Profil</a>
-            </nav>
-            <a href="mailto:bruno.tanguy@icloud.com"
-               class="bg-cyan text-ink text-[12px] font-bold rounded-full px-3 py-[5px] hover:opacity-80 transition-opacity shrink-0">
-                Contact <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="8" x2="8" y2="2"/><polyline points="3,2 8,2 8,7"/></svg>
-            </a>
+            <div class="hidden lg:flex items-center gap-8">
+                <div class="nav-page-item">
+                    <a href="index.html" class="nav-link">Portfolio</a>
+                    <div class="nav-anchor-dropdown">
+                        <a href="index.html#works">Projets</a>
+                        <a href="index.html#method">Méthode</a>
+                        <a href="index.html#services">Ce que je fais</a>
+                    </div>
+                </div>
+                <div class="nav-page-item">
+                    <a href="resume.html" class="nav-link">Mon Profil</a>
+                    <div class="nav-anchor-dropdown">
+                        <a href="resume.html#experience">Expérience</a>
+                        <a href="resume.html#competences">Compétences</a>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
+                <div class="relative hidden md:block">
+                    <button id="contact-btn" class="inline-flex items-center gap-2 border border-white/30 text-white text-[15px] font-medium rounded-full px-5 py-[8px] hover:bg-white hover:text-dark transition-all duration-200">Contact</button>
+                    <div id="contact-dropdown" class="contact-dropdown">
+                        <a href="mailto:bruno.tanguy@icloud.com"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Email</a>
+                        <a href="https://www.linkedin.com/in/bruno-tanguy-aa48602a8" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+                    </div>
+                </div>
+            </div>
         </div>
-    </header>
+    </nav>
 
     <!-- ==================== MAIN ==================== -->
     <div class="w-full">
 
         <!-- HERO -->
-        <section class="w-full min-h-screen p-[8px] flex flex-col justify-end pt-[72px] overflow-hidden">
-            <div class="rounded-2xl overflow-hidden w-full mb-12" style="height: calc(100vh - 360px); min-height: 320px;">
-                <img src="img/citadelles/citadelles_hero.png"
-                     alt="Citad'elles — Design de Service"
-                     class="w-full h-full object-cover reveal-img">
-            </div>
-            <div class="grid grid-cols-3 gap-[16px] pb-[40px] px-8 md:px-16 lg:px-24">
-                <div class="col-span-1">
-                    <img src="img/logo.svg" alt="Icône projet" class="w-full max-w-[120px] h-auto">
+        <section class="w-full px-6 md:px-12 lg:px-16 pt-32 md:pt-40 pb-16 md:pb-20 overflow-hidden">
+            <div class="grid grid-cols-12 gap-8 mb-16 md:mb-20">
+                <div class="col-span-12 md:col-span-3">
+                    <span class="section-label reveal">Étude de cas</span>
                 </div>
-                <div class="col-span-1"></div>
-                <div class="col-span-1"></div>
-                <h1 class="col-span-3 text-[clamp(32px,8.5vw,120px)] font-extrabold tracking-[-0.05em] leading-[0.9] text-black pb-2">Citad'elles</h1>
-                <div class="col-span-1 text-base md:text-lg font-medium self-end">Repenser l'accueil en structure associative</div>
-                <div class="col-span-1"></div>
-                <div class="col-span-1 text-sm md:text-base font-medium text-right self-end text-text-muted">Design de Service · Social</div>
+                <div class="col-span-12 md:col-span-9 flex flex-col gap-6">
+                    <h1 class="text-[clamp(48px,8vw,140px)] font-extrabold tracking-[-0.05em] leading-[0.9] reveal reveal-d1">Citad'elles</h1>
+                    <p class="text-[clamp(18px,1.6vw,24px)] text-white/60 max-w-2xl leading-snug reveal reveal-d2">Repenser l'accueil en structure associative — Design de Service · Social</p>
+                </div>
+            </div>
+            <div class="w-full overflow-hidden rounded-2xl border border-white/[0.06] reveal-img" style="aspect-ratio: 16/9; max-height: 75vh;">
+                <img src="img/citadelles/citadelles_hero.png" alt="Citad'elles — Design de Service" class="w-full h-full object-cover">
             </div>
         </section>
 
         <!-- META -->
-        <section class="w-full py-8 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-4 gap-[16px]">
-                <div class="flex flex-col gap-1 reveal reveal-d1">
+        <section class="w-full py-12 md:py-16 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="flex flex-col gap-3 reveal reveal-d1">
                     <span class="section-label">Rôle</span>
-                    <span class="text-[15px] font-medium mt-2">Design de Service</span>
+                    <span class="text-[16px] font-medium text-white/85">Design de Service</span>
                 </div>
-                <div class="flex flex-col gap-1 reveal reveal-d2">
+                <div class="flex flex-col gap-3 reveal reveal-d2">
                     <span class="section-label">Secteur</span>
-                    <span class="text-[15px] font-medium mt-2">Associatif / Social</span>
+                    <span class="text-[16px] font-medium text-white/85">Associatif / Social</span>
                 </div>
-                <div class="flex flex-col gap-1 reveal reveal-d3">
+                <div class="flex flex-col gap-3 reveal reveal-d3">
                     <span class="section-label">Année</span>
-                    <span class="text-[15px] font-medium mt-2">2024 – 2025</span>
+                    <span class="text-[16px] font-medium text-white/85">2024 – 2025</span>
                 </div>
-                <div class="flex flex-col gap-1 reveal reveal-d4">
+                <div class="flex flex-col gap-3 reveal reveal-d4">
                     <span class="section-label">Livrables</span>
-                    <span class="text-[15px] font-medium mt-2">Signalétique, Interface coordination</span>
+                    <span class="text-[16px] font-medium text-white/85">Signalétique, Interface coordination</span>
                 </div>
             </div>
         </section>
 
         <!-- 01 CONTEXTE -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1">
-                    <span class="section-label reveal">01 — Contexte</span>
+                    <span class="section-label reveal">01 Contexte</span>
                 </div>
                 <div class="col-span-2 flex flex-col gap-8">
                     <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Un projet au cœur du secteur associatif</h2>
                     <div class="flex flex-col gap-6">
-                        <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Citad'elles est une association qui intervient auprès de publics vulnérables. Dans le cadre d'un projet de design de service, l'objectif n'était pas de créer une application, mais de repenser entièrement l'expérience d'accueil et d'accompagnement au sein de leurs structures physiques.</p>
-                        <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d3">Le défi principal consistait à aligner les processus internes des bénévoles avec les besoins émotionnels et pratiques des bénéficiaires, pour créer un parcours fluide et rassurant dès le premier contact.</p>
+                        <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d2">Citad'elles est une association qui intervient auprès de publics vulnérables. Dans le cadre d'un projet de design de service, l'objectif n'était pas de créer une application, mais de repenser entièrement l'expérience d'accueil et d'accompagnement au sein de leurs structures physiques.</p>
+                        <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d3">Le défi principal consistait à aligner les processus internes des bénévoles avec les besoins émotionnels et pratiques des bénéficiaires, pour créer un parcours fluide et rassurant dès le premier contact.</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- 02 PROBLÉMATIQUE -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1">
-                    <span class="section-label reveal">02 — Problématique</span>
+                    <span class="section-label reveal">02 Problématique</span>
                 </div>
                 <div class="col-span-2 flex flex-col gap-8">
                     <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">La question centrale</h2>
-                    <blockquote class="text-[clamp(18px,2vw,28px)] font-light italic leading-relaxed text-black reveal reveal-d2">" Comment fluidifier un parcours d'assistance complexe, impliquant de multiples interlocuteurs, pour réduire le stress cognitif des usagers dès leur franchissement de la porte ? "</blockquote>
-                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d3">Les bénéficiaires arrivaient dans un environnement qui leur était inconnu, avec peu de repères visuels et organisationnels. Les bénévoles, de leur côté, manquaient d'outils communs pour synchroniser leurs actions et offrir un accueil cohérent.</p>
+                    <blockquote class="text-[clamp(18px,2vw,28px)] font-light italic leading-relaxed text-white/85 reveal reveal-d2">« Comment fluidifier un parcours d'assistance complexe, impliquant de multiples interlocuteurs, pour réduire le stress cognitif des usagers dès leur franchissement de la porte ? »</blockquote>
+                    <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d3">Les bénéficiaires arrivaient dans un environnement qui leur était inconnu, avec peu de repères visuels et organisationnels. Les bénévoles, de leur côté, manquaient d'outils communs pour synchroniser leurs actions et offrir un accueil cohérent.</p>
                 </div>
             </div>
         </section>
 
         <!-- 03 ENJEUX -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1">
-                    <span class="section-label reveal">03 — Enjeux</span>
+                    <span class="section-label reveal">03 Enjeux</span>
                 </div>
                 <div class="col-span-2 flex flex-col gap-10">
                     <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Les défis à adresser</h2>
                     <div class="grid grid-cols-2 gap-x-8 gap-y-10">
                         <div class="flex flex-col gap-2 reveal reveal-d1">
-                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Enjeu 01</span>
-                            <h3 class="text-[17px] font-bold tracking-tight">Stress cognitif à l'entrée</h3>
-                            <p class="text-[15px] text-text-muted leading-relaxed">Réduire la charge mentale des bénéficiaires dès leur arrivée en rendant les étapes du parcours lisibles et prévisibles.</p>
+                            <span class="text-[14px] font-bold uppercase tracking-widest text-accent mb-1">Enjeu 01</span>
+                            <h3 class="text-[18px] font-bold tracking-tight">Stress cognitif à l'entrée</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">Réduire la charge mentale des bénéficiaires dès leur arrivée en rendant les étapes du parcours lisibles et prévisibles.</p>
                         </div>
                         <div class="flex flex-col gap-2 reveal reveal-d2">
-                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Enjeu 02</span>
-                            <h3 class="text-[17px] font-bold tracking-tight">Coordination des bénévoles</h3>
-                            <p class="text-[15px] text-text-muted leading-relaxed">Synchroniser les actions back-stage (organisation interne) avec le front-stage (accueil visible) pour garantir un service homogène.</p>
+                            <span class="text-[14px] font-bold uppercase tracking-widest text-accent mb-1">Enjeu 02</span>
+                            <h3 class="text-[18px] font-bold tracking-tight">Coordination des bénévoles</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">Synchroniser les actions back-stage (organisation interne) avec le front-stage (accueil visible) pour garantir un service homogène.</p>
                         </div>
                         <div class="flex flex-col gap-2 reveal reveal-d3">
-                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Enjeu 03</span>
-                            <h3 class="text-[17px] font-bold tracking-tight">Signalétique &amp; repères visuels</h3>
-                            <p class="text-[15px] text-text-muted leading-relaxed">Créer un système de communication visuelle qui guide sans infantiliser, respectant la dignité des personnes accompagnées.</p>
+                            <span class="text-[14px] font-bold uppercase tracking-widest text-accent mb-1">Enjeu 03</span>
+                            <h3 class="text-[18px] font-bold tracking-tight">Signalétique &amp; repères visuels</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">Créer un système de communication visuelle qui guide sans infantiliser, respectant la dignité des personnes accompagnées.</p>
                         </div>
                         <div class="flex flex-col gap-2 reveal reveal-d4">
-                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Enjeu 04</span>
-                            <h3 class="text-[17px] font-bold tracking-tight">Pérennité du service</h3>
-                            <p class="text-[15px] text-text-muted leading-relaxed">Proposer des solutions adoptables par une équipe de bénévoles non-formés au design, avec des ressources associatives limitées.</p>
+                            <span class="text-[14px] font-bold uppercase tracking-widest text-accent mb-1">Enjeu 04</span>
+                            <h3 class="text-[18px] font-bold tracking-tight">Pérennité du service</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">Proposer des solutions adoptables par une équipe de bénévoles non-formés au design, avec des ressources associatives limitées.</p>
                         </div>
                     </div>
                 </div>
@@ -225,20 +387,20 @@
         </section>
 
         <!-- KEY INSIGHT -->
-        <section class="w-full py-16 md:py-24 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-16 md:py-24 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1">
                     <span class="section-label reveal">Insight clé</span>
                 </div>
-                <blockquote class="col-span-2 text-[clamp(20px,2.5vw,30px)] font-light leading-relaxed italic text-black reveal reveal-d1">" Ce qui se passe en coulisse détermine entièrement la qualité de l'accueil visible. "</blockquote>
+                <blockquote class="col-span-2 text-[clamp(20px,2.5vw,30px)] font-light leading-relaxed italic text-white/85 reveal reveal-d1">« Ce qui se passe en coulisse détermine entièrement la qualité de l'accueil visible. »</blockquote>
             </div>
         </section>
 
         <!-- 04 MÉTHODOLOGIE -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1">
-                    <span class="section-label reveal">04 — Méthodologie</span>
+                    <span class="section-label reveal">04 Méthodologie</span>
                 </div>
                 <div class="col-span-2 flex flex-col gap-10">
                     <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Comprendre avant de transformer</h2>
@@ -247,10 +409,10 @@
 
                         <!-- Étape 1 -->
                         <div class="flex gap-6 items-start reveal reveal-d1">
-                            <span class="font-extrabold text-[48px] leading-none flex-shrink-0 text-brand-gray">01</span>
+                            <span class="font-extrabold text-[48px] leading-none flex-shrink-0 text-white/15">01</span>
                             <div class="flex flex-col gap-4 pt-2">
-                                <h3 class="text-[18px] font-bold tracking-tight">Immersion &amp; observations terrain</h3>
-                                <p class="text-[16px] text-text-muted leading-relaxed">Des sessions d'observation en situation réelle au sein de la structure pour identifier les frictions visibles et invisibles du parcours d'accueil, du point de vue des bénéficiaires comme des bénévoles.</p>
+                                <h3 class="text-[20px] font-bold tracking-tight">Immersion &amp; observations terrain</h3>
+                                <p class="text-[17px] text-white/50 leading-relaxed">Des sessions d'observation en situation réelle au sein de la structure pour identifier les frictions visibles et invisibles du parcours d'accueil, du point de vue des bénéficiaires comme des bénévoles.</p>
                                 <div class="rounded-[16px] overflow-hidden w-full mt-2">
                                     <img src="img/citadelles/citadelles_userflow1.png"
                                          alt="Cartographie du parcours utilisateur — étape 1"
@@ -261,10 +423,10 @@
 
                         <!-- Étape 2 -->
                         <div class="flex gap-6 items-start reveal reveal-d2">
-                            <span class="font-extrabold text-[48px] leading-none flex-shrink-0 text-brand-gray">02</span>
+                            <span class="font-extrabold text-[48px] leading-none flex-shrink-0 text-white/15">02</span>
                             <div class="flex flex-col gap-4 pt-2">
-                                <h3 class="text-[18px] font-bold tracking-tight">Cartographie du parcours</h3>
-                                <p class="text-[16px] text-text-muted leading-relaxed">Modélisation de l'intégralité du parcours d'accueil via un Service Blueprint : actions visibles (front-stage), processus internes (back-stage), points de contact et moments de tension identifiés.</p>
+                                <h3 class="text-[20px] font-bold tracking-tight">Cartographie du parcours</h3>
+                                <p class="text-[17px] text-white/50 leading-relaxed">Modélisation de l'intégralité du parcours d'accueil via un Service Blueprint : actions visibles (front-stage), processus internes (back-stage), points de contact et moments de tension identifiés.</p>
                                 <div class="rounded-[16px] overflow-hidden w-full mt-2">
                                     <img src="img/citadelles/citadelles_userflow2.png"
                                          alt="Service Blueprint — cartographie complète du parcours"
@@ -275,10 +437,10 @@
 
                         <!-- Étape 3 -->
                         <div class="flex gap-6 items-start reveal reveal-d3">
-                            <span class="font-extrabold text-[48px] leading-none flex-shrink-0 text-brand-gray">03</span>
+                            <span class="font-extrabold text-[48px] leading-none flex-shrink-0 text-white/15">03</span>
                             <div class="flex flex-col gap-3 pt-2">
-                                <h3 class="text-[18px] font-bold tracking-tight">Conception des écrans</h3>
-                                <p class="text-[16px] text-text-muted leading-relaxed">Conception des écrans et des illustrations en reprenant la charte graphique de Citadelles, pour assurer une cohérence visuelle avec l'identité existante de l'association.</p>
+                                <h3 class="text-[20px] font-bold tracking-tight">Conception des écrans</h3>
+                                <p class="text-[17px] text-white/50 leading-relaxed">Conception des écrans et des illustrations en reprenant la charte graphique de Citadelles, pour assurer une cohérence visuelle avec l'identité existante de l'association.</p>
                             </div>
                         </div>
 
@@ -288,21 +450,21 @@
         </section>
 
         <!-- 05 SOLUTION UX -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1">
-                    <span class="section-label reveal">05 — Solution UX</span>
+                    <span class="section-label reveal">05 Solution UX</span>
                 </div>
                 <div class="col-span-2 flex flex-col gap-10">
                     <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Un système visuel pour humaniser l'accueil</h2>
-                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Les solutions ont émergé de l'intersection entre les besoins des bénéficiaires et les capacités opérationnelles de l'association. L'objectif : des réponses concrètes, sobres et implémentables sans budget important.</p>
+                    <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d2">Les solutions ont émergé de l'intersection entre les besoins des bénéficiaires et les capacités opérationnelles de l'association. L'objectif : des réponses concrètes, sobres et implémentables sans budget important.</p>
 
                     <!-- Solution 1 -->
                     <div class="flex flex-col gap-5 reveal reveal-d3">
                         <div class="flex flex-col gap-2">
-                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange">Solution 01</span>
-                            <h3 class="text-[20px] font-bold tracking-tight">Signalétique &amp; affiches d'orientation</h3>
-                            <p class="text-[15px] text-text-muted leading-relaxed">Un système d'affiches conçu pour baliser le parcours dès l'entrée : indiquer les étapes, rassurer sur la suite, et donner des repères visuels clairs à chaque point de contact de la structure.</p>
+                            <span class="text-[14px] font-bold uppercase tracking-widest text-accent">Solution 01</span>
+                            <h3 class="text-[22px] font-bold tracking-tight">Signalétique &amp; affiches d'orientation</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">Un système d'affiches conçu pour baliser le parcours dès l'entrée : indiquer les étapes, rassurer sur la suite, et donner des repères visuels clairs à chaque point de contact de la structure.</p>
                         </div>
                         <div class="rounded-[16px] overflow-hidden w-full">
                             <img src="img/citadelles/citadelles_affiches.png"
@@ -312,11 +474,11 @@
                     </div>
 
                     <!-- Solution 2 -->
-                    <div class="flex flex-col gap-5 pt-10 border-t border-brand-gray reveal reveal-d1">
+                    <div class="flex flex-col gap-5 pt-10 border-t border-white/[0.06] reveal reveal-d1">
                         <div class="flex flex-col gap-2">
-                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange">Solution 02</span>
-                            <h3 class="text-[20px] font-bold tracking-tight">Interface de suivi bénévoles</h3>
-                            <p class="text-[15px] text-text-muted leading-relaxed">Un outil numérique léger pour coordonner les actions des bénévoles en temps réel, synchroniser le back-stage et améliorer la fluidité du service rendu en front-stage.</p>
+                            <span class="text-[14px] font-bold uppercase tracking-widest text-accent">Solution 02</span>
+                            <h3 class="text-[22px] font-bold tracking-tight">Interface de suivi bénévoles</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">Un outil numérique léger pour coordonner les actions des bénévoles en temps réel, synchroniser le back-stage et améliorer la fluidité du service rendu en front-stage.</p>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="rounded-[16px] overflow-hidden">
@@ -337,24 +499,21 @@
         </section>
 
         <!-- APPRENTISSAGES -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1">
                     <span class="section-label reveal">Apprentissages</span>
                 </div>
                 <div class="col-span-2 flex flex-col gap-6">
-                    <h3 class="text-[17px] font-bold tracking-tight reveal reveal-d1">Ce que ce projet m'a appris</h3>
+                    <h3 class="text-[18px] font-bold tracking-tight reveal reveal-d1">Ce que ce projet m'a appris</h3>
                     <ul class="flex flex-col gap-4">
-                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d1">
-                            <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                        <li class="text-[17px] text-white/50 leading-relaxed reveal reveal-d1">
                             Le design de service exige une lecture simultanée du front-stage et du back-stage : ce qui se passe en coulisse détermine la qualité de l'accueil visible.
                         </li>
-                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d2">
-                            <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
-                            Dans un contexte associatif, la co-conception n'est pas une méthode parmi d'autres — c'est la seule façon de produire des solutions réellement adoptées.
+                        <li class="text-[17px] text-white/50 leading-relaxed reveal reveal-d2">
+                            Dans un contexte associatif, la co-conception n'est pas une méthode parmi d'autres : c'est la seule façon de produire des solutions réellement adoptées.
                         </li>
-                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d3">
-                            <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                        <li class="text-[17px] text-white/50 leading-relaxed reveal reveal-d3">
                             Concevoir pour des publics vulnérables demande une attention particulière à la dignité et à l'autonomie : chaque choix graphique et éditorial porte une intention.
                         </li>
                     </ul>
@@ -363,31 +522,49 @@
         </section>
 
         <!-- PROJET SUIVANT -->
-        <section class="w-full border-t border-brand-gray">
-            <a href="projectDecathlon.html" class="group flex items-center justify-between px-8 md:px-16 lg:px-24 py-20 md:py-28">
+        <section class="w-full border-t border-white/[0.06]">
+            <a href="projectDecathlon.html" class="group flex items-center justify-between px-6 md:px-12 lg:px-16 py-20 md:py-28 hover:bg-white/[0.02] transition-colors duration-300">
                 <div class="flex flex-col gap-3">
                     <span class="section-label">Projet suivant</span>
-                    <h2 class="text-[clamp(28px,5vw,80px)] font-extrabold tracking-[-0.05em] leading-none group-hover:text-brand-orange transition-colors duration-300">Decathlon</h2>
-                    <span class="text-[15px] text-text-muted group-hover:text-brand-orange transition-colors duration-300">Recherche UX · Retail</span>
+                    <h2 class="text-[clamp(28px,5vw,80px)] font-extrabold tracking-[-0.05em] leading-none group-hover:text-accent transition-colors duration-300">Decathlon</h2>
+                    <span class="text-[16px] text-white/50 group-hover:text-white/85 transition-colors duration-300">Recherche UX · Retail</span>
                 </div>
-                <span class="text-[clamp(28px,5vw,80px)] font-extrabold leading-none transform group-hover:translate-x-4 group-hover:text-brand-orange transition-all duration-300"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="5.5" x2="10" y2="5.5"/><polyline points="6,1.5 10,5.5 6,9.5"/></svg></span>
+                <span class="text-white/70 group-hover:text-accent transform group-hover:translate-x-2 transition-all duration-300">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+                </span>
             </a>
         </section>
 
         <!-- FOOTER -->
-        <footer class="w-full border-t border-brand-gray overflow-hidden">
-            <div class="px-8 md:px-16 lg:px-24 py-12 md:py-16">
-                <div class="flex items-center justify-between gap-4">
+        <footer class="w-full border-t border-white/[0.06] overflow-hidden">
+            <div class="px-6 md:px-12 lg:px-16 py-16 md:py-20">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-10 mb-16">
+                    <div class="flex flex-col gap-3">
+                        <span class="section-label">Contact</span>
+                        <a href="mailto:bruno.tanguy@icloud.com" class="text-[16px] text-white/70 hover:text-white transition-colors">bruno.tanguy@icloud.com</a>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <span class="section-label">Social</span>
+                        <a href="https://www.linkedin.com/in/bruno-tanguy-aa48602a8" target="_blank" rel="noopener" class="text-[16px] text-white/70 hover:text-white transition-colors">LinkedIn</a>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <span class="section-label">Navigation</span>
+                        <a href="index.html#works" class="text-[16px] text-white/70 hover:text-white transition-colors">Projets</a>
+                        <a href="resume.html" class="text-[16px] text-white/70 hover:text-white transition-colors">Mon Profil</a>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <span class="section-label">Studio</span>
+                        <span class="text-[16px] text-white/70">Nantes, France</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-4 pt-8 border-t border-white/[0.06]">
                     <div class="flex items-center gap-2.5">
                         <svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16ZM13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="#6B6A75"/>
+                            <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16ZM13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="rgba(255,255,255,0.4)"/>
                         </svg>
-                        <span class="text-[12px] text-text-muted tracking-[-0.01em]">Copyright © 2026 Bruno Tanguy.</span>
+                        <span class="text-[15px] text-white/40 tracking-[-0.01em]">© 2026 Bruno Tanguy.</span>
                     </div>
-                    <div class="flex items-center gap-6">
-                        <a href="mailto:bruno.tanguy@icloud.com" class="text-[12px] text-text-muted hover:text-black tracking-[-0.01em] transition-colors duration-200">Mail</a>
-                        <a href="https://www.linkedin.com/in/bruno-tanguy-aa48602a8" target="_blank" rel="noopener" class="text-[12px] text-text-muted hover:text-black tracking-[-0.01em] transition-colors duration-200">LinkedIn</a>
-                    </div>
+                    <span class="text-[15px] text-white/40 tracking-[-0.01em]">Made with care in Nantes</span>
                 </div>
             </div>
         </footer>
@@ -407,18 +584,20 @@
 
         document.querySelectorAll('.reveal, .reveal-img').forEach(el => observer.observe(el));
 
-        // ===== CURSEUR CUSTOM =====
-        const cursor = document.getElementById('c-cursor');
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-        document.addEventListener('mouseenter', () => cursor.classList.remove('hidden'));
-        document.addEventListener('mouseleave', () => cursor.classList.add('hidden'));
-
+        // ===== CURSEUR CUSTOM (RAF lerp) =====
+        const cur = document.getElementById('cursor');
+        let cx = -50, cy = -50, tx = -50, ty = -50;
+        document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+        document.addEventListener('mouseleave', () => cur.classList.add('hidden'));
+        document.addEventListener('mouseenter', () => cur.classList.remove('hidden'));
+        (function curLoop() {
+            cx += (tx - cx) * 0.18; cy += (ty - cy) * 0.18;
+            cur.style.left = cx + 'px'; cur.style.top = cy + 'px';
+            requestAnimationFrame(curLoop);
+        })();
         document.querySelectorAll('a, button, [role="button"]').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+            el.addEventListener('mouseenter', () => cur.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cur.classList.remove('hover'));
         });
     </script>
 
@@ -429,5 +608,6 @@
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
         requestAnimationFrame(raf);
     </script>
+    <script src="theme.js"></script>
 </body>
 </html>

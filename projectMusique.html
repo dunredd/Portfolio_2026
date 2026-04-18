@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recommandations musicales — Bruno Tanguy</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    <meta name="description"
+        content="Recommandations musicales — Repenser la découverte musicale. Projet bachelor de Bruno Tanguy.">
+    <meta property="og:image" content="/img/bachelor/musique_platine.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+
+    <script>(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t)})()</script>
+    <link rel="stylesheet" href="theme.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Host Grotesk"', 'sans-serif'] },
+                    colors: { accent: '#4d65ff', dark: '#0a0a0a' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * { cursor: none; }
+
+        html { background: #0a0a0a; }
+
+        body {
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        body::-webkit-scrollbar { display: none; }
+
+        /* ===== CURSOR ===== */
+        #cursor {
+            position: fixed;
+            top: 0; left: 0;
+            width: 8px; height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width .22s cubic-bezier(.16,1,.3,1),
+                        height .22s cubic-bezier(.16,1,.3,1),
+                        background .15s, border .15s, opacity .25s;
+        }
+        #cursor.hover {
+            width: 40px; height: 40px;
+            background: transparent;
+            border: 1.5px solid #fff;
+        }
+        #cursor.hidden { opacity: 0; }
+
+        /* ===== NAV ===== */
+        #nav { transition: background .35s, backdrop-filter .35s; }
+        #nav.scrolled {
+            background: rgba(10,10,10,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        /* Contact dropdown */
+        .contact-dropdown {
+            position: absolute;
+            right: 0; top: calc(100% + 12px);
+            background: rgba(15,15,15,0.85);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 8px;
+            display: flex; flex-direction: column; gap: 2px;
+            min-width: 190px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            opacity: 0;
+            transform: translateY(-8px);
+            pointer-events: none;
+            transition: all .3s cubic-bezier(.16,1,.3,1);
+            z-index: 100;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        .contact-dropdown::before {
+            content: '';
+            position: absolute;
+            top: -14px; left: 0; right: 0; height: 14px;
+            background: transparent;
+        }
+        .contact-dropdown.open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .contact-dropdown a {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 14px;
+            font-size: 14px; font-weight: 500;
+            color: rgba(255,255,255,0.6);
+            border-radius: 10px;
+            transition: all 0.25s cubic-bezier(.16,1,.3,1);
+            white-space: nowrap;
+        }
+        .contact-dropdown a:hover { background: rgba(255,255,255,0.05); color: #fff; transform: translateX(4px); }
+
+        .nav-link {
+            font-size: 15px; font-weight: 500;
+            color: rgba(255,255,255,.7);
+            white-space: nowrap;
+            transition: color .25s;
+            display: block; padding: 4px 0;
+        }
+        .nav-link:hover, .nav-link.active { color: #fff; }
+
+        /* ===== NAV PAGE DROPDOWN ===== */
+        .nav-page-item { position: relative; display: flex; justify-content: center; }
+        .nav-anchor-dropdown {
+            position: absolute;
+            top: calc(100% + 12px); left: 50%;
+            transform: translateX(-50%) translateY(-6px);
+            background: rgba(15,15,15,0.85);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 8px;
+            display: flex; flex-direction: column; gap: 2px;
+            min-width: 170px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            opacity: 0; pointer-events: none;
+            transition: all .3s cubic-bezier(.16,1,.3,1);
+            z-index: 100;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            white-space: nowrap;
+        }
+        .nav-anchor-dropdown::before {
+            content: '';
+            position: absolute;
+            top: -14px; left: 0; right: 0; height: 14px;
+            background: transparent;
+        }
+        .nav-page-item:hover .nav-anchor-dropdown {
+            opacity: 1; pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+            transition-delay: 0.3s;
+        }
+        .nav-anchor-dropdown a {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 10px 16px;
+            font-size: 14px; font-weight: 500;
+            color: rgba(255,255,255,0.5);
+            border-radius: 10px;
+            transition: all 0.25s cubic-bezier(.16,1,.3,1);
+        }
+        .nav-anchor-dropdown a:hover { background: rgba(255,255,255,0.05); color: #fff; transform: translateY(-1px); }
+
+        /* ===== SECTION LABEL ===== */
+        .section-label {
+            font-size: 14px; font-weight: 600;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: rgba(255,255,255,0.3);
+        }
+
+        /* ===== SCROLL REVEALS ===== */
+        .reveal {
+            opacity: 0; transform: translateY(28px);
+            transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);
+        }
+        .reveal-img {
+            opacity: 0; transform: scale(1.04);
+            transition: opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1);
+        }
+        .reveal.visible  { opacity: 1; transform: translateY(0); }
+        .reveal-img.visible { opacity: 1; transform: scale(1); }
+        .reveal-d1 { transition-delay: .1s; }
+        .reveal-d2 { transition-delay: .2s; }
+        .reveal-d3 { transition-delay: .3s; }
+        .reveal-d4 { transition-delay: .4s; }
+
+        /* ===== DISABLE CURSOR ON TOUCH ===== */
+        @media (hover: none), (pointer: coarse) {
+            * { cursor: auto !important; }
+            #cursor { display: none !important; }
+        }
+    </style>
+</head>
+
+<body class="bg-dark text-white font-sans w-full overflow-x-hidden selection:bg-accent/30 selection:text-white">
+
+    <!-- ===== CURSOR ===== -->
+    <div id="cursor"></div>
+
+    <!-- ===== NAV ===== -->
+    <nav id="nav" class="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 lg:px-16 py-5">
+        <div class="flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3 shrink-0">
+                <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+                    <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16Z" fill="white"/>
+                    <path d="M13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="white"/>
+                </svg>
+                <span class="font-semibold text-[clamp(20px,2vw,28px)] tracking-tight text-white leading-none">Bruno Tanguy</span>
+            </a>
+            <div class="hidden lg:flex items-center gap-8">
+                <div class="nav-page-item">
+                    <a href="index.html" class="nav-link">Portfolio</a>
+                    <div class="nav-anchor-dropdown">
+                        <a href="index.html#works">Projets</a>
+                        <a href="index.html#method">Méthode</a>
+                        <a href="index.html#services">Ce que je fais</a>
+                    </div>
+                </div>
+                <div class="nav-page-item">
+                    <a href="resume.html" class="nav-link">Mon Profil</a>
+                    <div class="nav-anchor-dropdown">
+                        <a href="resume.html#experience">Expérience</a>
+                        <a href="resume.html#competences">Compétences</a>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
+                <div class="relative hidden md:block">
+                    <button id="contact-btn"
+                        class="inline-flex items-center gap-2 border border-white/30 text-white text-[15px] font-medium rounded-full px-5 py-[8px] hover:bg-white hover:text-dark transition-all duration-200">Contact</button>
+                    <div id="contact-dropdown" class="contact-dropdown">
+                        <a href="mailto:bruno.tanguy@icloud.com">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                            Email
+                        </a>
+                        <a href="https://www.linkedin.com/in/bruno-tanguy-aa48602a8" target="_blank" rel="noopener">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                            LinkedIn
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==================== MAIN ==================== -->
+    <div class="w-full">
+
+        <!-- HERO -->
+        <section class="w-full px-6 md:px-12 lg:px-16 pt-32 md:pt-40 pb-16 md:pb-20 overflow-hidden">
+            <div class="grid grid-cols-12 gap-8 mb-16 md:mb-20">
+                <div class="col-span-12 md:col-span-3">
+                    <span class="section-label reveal">Étude de cas</span>
+                </div>
+                <div class="col-span-12 md:col-span-9 flex flex-col gap-6">
+                    <h1 class="text-[clamp(36px,6.5vw,110px)] font-extrabold tracking-[-0.05em] leading-[0.9] reveal reveal-d1">
+                        Recommandations<br>musicales</h1>
+                    <p class="text-[clamp(17px,1.4vw,22px)] text-white/60 max-w-2xl leading-snug reveal reveal-d2">
+                        Repenser la découverte musicale pour passer d'une écoute algorithmique et passive à une expérience choisie et rituelle.</p>
+                </div>
+            </div>
+            <div class="w-full overflow-hidden rounded-2xl border border-white/[0.06] reveal-img" style="aspect-ratio: 16/9; max-height: 75vh;">
+                <img src="img/bachelor/musique_platine.png" alt="Platine vinyle et streaming" class="w-full h-full object-cover">
+            </div>
+        </section>
+
+        <!-- META -->
+        <section class="w-full py-12 md:py-16 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="flex flex-col gap-3 reveal reveal-d1">
+                    <span class="section-label">Rôle</span>
+                    <span class="text-[16px] font-medium text-white/85">Product Designer</span>
+                </div>
+                <div class="flex flex-col gap-3 reveal reveal-d2">
+                    <span class="section-label">Secteur</span>
+                    <span class="text-[16px] font-medium text-white/85">Industrie musicale</span>
+                </div>
+                <div class="flex flex-col gap-3 reveal reveal-d3">
+                    <span class="section-label">Année</span>
+                    <span class="text-[16px] font-medium text-white/85">2025</span>
+                </div>
+                <div class="flex flex-col gap-3 reveal reveal-d4">
+                    <span class="section-label">Livrables</span>
+                    <span class="text-[16px] font-medium text-white/85">En cours</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 01 CONTEXTE -->
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">01 Contexte</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">
+                        Un paradoxe au cœur du streaming</h2>
+                    <div class="flex flex-col gap-6">
+                        <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d2">En tant qu'utilisateur quotidien de plateformes de streaming, j'ai constaté un paradoxe : plus le catalogue est vaste, moins l'écoute semble intentionnelle. Les algorithmes recommandent, l'utilisateur suit. La musique devient un flux de fond plutôt qu'une expérience choisie.</p>
+                        <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d3">La recommandation musicale est un enjeu UX profond qui mêle technique et usages. C'est un sujet que je voulais explorer dans le cadre de mon projet bachelor, et l'occasion de me plonger dans l'industrie musicale, un milieu que je ne connaissais pas encore en profondeur.</p>
+                    </div>
+                    <div class="rounded-[16px] overflow-hidden mt-2 reveal-img">
+                        <img src="img/bachelor/musique_cd.png" alt="Collection de CD — musique physique" class="w-full h-auto">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 02 PROBLÉMATIQUE -->
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">02 Problématique</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">
+                        D'une question large à un angle précis</h2>
+                    <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d2">Trois constats ont guidé la première formulation. Le choix quasi illimité de musiques perd l'utilisateur et laisse les algorithmes décider à sa place. L'industrie musicale fonctionne sur les revenus qu'elle génère et non sur la qualité de ce qu'elle propose. Et l'écoute de la musique est devenue une activité passive et individualisée.</p>
+
+                    <div class="flex flex-col gap-3 reveal reveal-d2">
+                        <span class="text-[13px] font-bold uppercase tracking-widest text-white/30 mb-1">Problématique initiale</span>
+                        <p class="text-[clamp(17px,1.8vw,24px)] font-light italic leading-relaxed text-white/70 border-l-2 border-white/20 pl-6">Comment transformer nos recommandations algorithmiques et publicitaires de musique en une expérience humaine et sociale ?</p>
+                    </div>
+
+                    <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d3">Après une phase de recherche approfondie, la problématique a évolué vers un angle plus centré sur l'auditeur lui-même.</p>
+
+                    <div class="flex flex-col gap-3 reveal reveal-d3">
+                        <span class="text-[13px] font-bold uppercase tracking-widest text-accent mb-1">Problématique reformulée</span>
+                        <p class="text-[clamp(17px,1.8vw,24px)] font-light italic leading-relaxed text-white/85 border-l-2 border-accent pl-6">Comment l'auditeur peut reconsidérer la musique en passant d'une écoute musicale suggérée et virale à une écoute de la musique rituelle et réfléchie ?</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 03 ENJEUX -->
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">03 Enjeux</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-10">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">
+                        Quatre tensions à dénouer</h2>
+                    <div class="grid grid-cols-2 gap-x-8 gap-y-12">
+                        <div class="flex flex-col gap-2 reveal reveal-d1">
+                            <span class="text-[14px] font-bold uppercase tracking-widest text-accent mb-1">Valeur perçue</span>
+                            <h3 class="text-[18px] font-bold tracking-tight">L'accessibilité dévalorise</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">D'immenses catalogues sont disponibles par abonnement. Cette accessibilité totale change la valeur que l'on accorde à ce que l'on écoute.</p>
+                        </div>
+                        <div class="flex flex-col gap-2 reveal reveal-d2">
+                            <span class="text-[14px] font-bold uppercase tracking-widest text-accent mb-1">Viralité</span>
+                            <h3 class="text-[18px] font-bold tracking-tight">La mode éphémère</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">La musique devient un vecteur de modes éphémères qui se propagent rapidement, sans qu'elle soit nécessairement considérée comme un art.</p>
+                        </div>
+                        <div class="flex flex-col gap-2 reveal reveal-d3">
+                            <span class="text-[14px] font-bold uppercase tracking-widest text-accent mb-1">Matérialité</span>
+                            <h3 class="text-[18px] font-bold tracking-tight">Le retour au tangible</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">L'augmentation des achats de vinyle par les nouvelles générations est le signe d'un besoin de rendre l'écoute plus tangible et intentionnelle.</p>
+                        </div>
+                        <div class="flex flex-col gap-2 reveal reveal-d4">
+                            <span class="text-[14px] font-bold uppercase tracking-widest text-accent mb-1">Passivité</span>
+                            <h3 class="text-[18px] font-bold tracking-tight">La bulle acoustique</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">Le paradoxe du choix mène à une écoute passive. L'individualisation au casque fragilise la transmission familiale et crée une bulle solitaire.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 04 MÉTHODOLOGIE -->
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">04 Méthodologie</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-14">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">
+                        Une démarche en quatre étapes</h2>
+
+                    <!-- Étape 1 — Veille -->
+                    <div class="flex gap-6 items-start reveal reveal-d1">
+                        <span class="font-extrabold text-[48px] leading-none flex-shrink-0 text-white/15">01</span>
+                        <div class="flex flex-col gap-4 pt-2 w-full">
+                            <h3 class="text-[20px] font-bold tracking-tight">Veille stratégique</h3>
+                            <p class="text-[17px] text-white/50 leading-relaxed">Veille sur quatre axes pour cadrer le sujet. Sur le plan <strong class="text-white/70">sociologique</strong> : individualisation de l'écoute, paradoxe du choix, néo-tribus (Phonk, K-Pop, Funk). Sur le plan <strong class="text-white/70">économique</strong> : marché de 29,6 Md$ dominé à 69 % par le streaming, Spotify à 640 M d'utilisateurs. Sur le plan <strong class="text-white/70">technologique</strong> : IA (10 000 titres générés par jour sur Deezer), TikTok moteur de découverte pour 68 % de la Gen Z. Sur le plan <strong class="text-white/70">juridique</strong> : opposition "Market Centric" / "Artist-Centric", streams frauduleux estimés entre 10 et 30 %.</p>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
+                                <div class="rounded-[12px] overflow-hidden reveal-img">
+                                    <img src="img/bachelor/veille_sociologique.png" alt="Veille sociologique" class="w-full h-auto">
+                                </div>
+                                <div class="rounded-[12px] overflow-hidden reveal-img">
+                                    <img src="img/bachelor/veille_economique.png" alt="Veille économique" class="w-full h-auto">
+                                </div>
+                                <div class="rounded-[12px] overflow-hidden reveal-img">
+                                    <img src="img/bachelor/veille_technologique.png" alt="Veille technologique" class="w-full h-auto">
+                                </div>
+                                <div class="rounded-[12px] overflow-hidden reveal-img">
+                                    <img src="img/bachelor/veille_concurrentielle.png" alt="Veille concurrentielle" class="w-full h-auto">
+                                </div>
+                                <div class="rounded-[12px] overflow-hidden reveal-img">
+                                    <img src="img/bachelor/veille_juridique.png" alt="Veille juridique" class="w-full h-auto">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 2 — Terrain -->
+                    <div class="flex gap-6 items-start reveal reveal-d2">
+                        <span class="font-extrabold text-[48px] leading-none flex-shrink-0 text-white/15">02</span>
+                        <div class="flex flex-col gap-4 pt-2 w-full">
+                            <h3 class="text-[20px] font-bold tracking-tight">Terrain : 7 interviews</h3>
+                            <p class="text-[17px] text-white/50 leading-relaxed">Entretiens qualitatifs auprès d'utilisateurs Millennials et Gen Z sur leurs habitudes d'écoute. Frustrations récurrentes : le sentiment d'écouter toujours les mêmes musiques, l'impossibilité d'ajuster les suggestions sur Spotify, le rejet de la musique générée par IA, la nostalgie pour l'expérience physique du vinyle.</p>
+                        </div>
+                    </div>
+
+                    <!-- Étape 3 — Personas -->
+                    <div class="flex gap-6 items-start reveal reveal-d3">
+                        <span class="font-extrabold text-[48px] leading-none flex-shrink-0 text-white/15">03</span>
+                        <div class="flex flex-col gap-4 pt-2 w-full">
+                            <h3 class="text-[20px] font-bold tracking-tight">Personas et cibles</h3>
+                            <p class="text-[17px] text-white/50 leading-relaxed">Deux profils cibles ont émergé. La <strong class="text-white/80">Gen Z (15–25 ans)</strong>, qui a besoin d'ancrer son écoute dans la physicalité alors qu'elle n'a connu qu'un monde numérique. Et les <strong class="text-white/80">Millennials (28–42 ans)</strong>, qui ont vécu le passage au numérique et veulent retrouver une expérience de leur jeunesse, loin du tout-digital.</p>
+                            <div class="grid grid-cols-2 gap-3 mt-2">
+                                <div class="rounded-[16px] overflow-hidden reveal-img">
+                                    <img src="img/bachelor/cible.png" alt="Persona Gen Z" class="w-full h-auto">
+                                </div>
+                                <div class="rounded-[16px] overflow-hidden reveal-img">
+                                    <img src="img/bachelor/cible_millenials.png" alt="Persona Millennials" class="w-full h-auto">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 4 — Idéation -->
+                    <div class="flex gap-6 items-start reveal reveal-d4">
+                        <span class="font-extrabold text-[48px] leading-none flex-shrink-0 text-white/15">04</span>
+                        <div class="flex flex-col gap-4 pt-2 w-full">
+                            <h3 class="text-[20px] font-bold tracking-tight">Idéation et axes de concept</h3>
+                            <p class="text-[17px] text-white/50 leading-relaxed">Méthode SCAMPER pour structurer l'idéation : substituer l'algorithme imposé par des choix utilisateurs, adapter les suggestions aux volontés des utilisateurs, éliminer les recommandations commerciales. Trois axes ont émergé.</p>
+                            <div class="flex flex-col gap-6 mt-2">
+                                <div class="flex flex-col gap-2">
+                                    <span class="text-[13px] font-bold uppercase tracking-widest text-accent">Axe 01</span>
+                                    <h4 class="text-[16px] font-bold tracking-tight">Lien numérique / physique</h4>
+                                    <p class="text-[15px] text-white/50 leading-relaxed">Retrouver son activité physique (collection, achats) sur sa plateforme digitale. Référence : Discogs.</p>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <span class="text-[13px] font-bold uppercase tracking-widest text-accent">Axe 02</span>
+                                    <h4 class="text-[16px] font-bold tracking-tight">Friction physique dans le numérique</h4>
+                                    <p class="text-[15px] text-white/50 leading-relaxed">Interface et animations poussées qui simulent la résistance de l'objet physique.</p>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <span class="text-[13px] font-bold uppercase tracking-widest text-accent">Axe 03</span>
+                                    <h4 class="text-[16px] font-bold tracking-tight">Recommandations transparentes et ajustables</h4>
+                                    <p class="text-[15px] text-white/50 leading-relaxed">Permettre de créer une expérience personnalisée dans une plateforme existante : c'est l'axe retenu.</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3 mt-4">
+                                <div class="rounded-[12px] overflow-hidden reveal-img">
+                                    <img src="img/bachelor/discogs.png" alt="Discogs — référence axe 1" class="w-full h-auto">
+                                </div>
+                                <div class="rounded-[12px] overflow-hidden reveal-img">
+                                    <img src="img/bachelor/deezer.png" alt="Deezer — plateforme étudiée" class="w-full h-auto">
+                                </div>
+                                <div class="rounded-[12px] overflow-hidden reveal-img">
+                                    <img src="img/bachelor/apple_musique.png" alt="Apple Music — plateforme étudiée" class="w-full h-auto">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 05 SOLUTION -->
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">05 Solution</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-8">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">
+                        Choisir le fonctionnement de ses recommandations</h2>
+                    <div class="flex flex-col gap-6">
+                        <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d2">L'axe retenu, « choisir le fonctionnement de ses recommandations », combine la meilleure faisabilité et le plus fort impact selon la matrice de classification réalisée. L'idée : rendre les recommandations transparentes et permettre à l'utilisateur d'ajuster son expérience selon ses envies et dans le temps, plutôt que de subir un algorithme opaque piloté par des logiques commerciales.</p>
+                        <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d3">Le modèle économique repose sur un abonnement sans publicité et sans boost commercial des artistes dans l'application. La phase de recherche est achevée. La conception du produit est la prochaine étape.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GALERIE BENTO -->
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Grande image : platine -->
+                <div class="col-span-1 md:col-span-2 rounded-2xl overflow-hidden reveal-img" style="max-height: 62vh;">
+                    <img src="img/bachelor/musique_platine.png" alt="Platine vinyle" class="w-full h-full object-cover">
+                </div>
+                <!-- Petites : Deezer + Apple Music -->
+                <div class="rounded-2xl overflow-hidden reveal-img">
+                    <img src="img/bachelor/deezer.png" alt="Interface Deezer" class="w-full h-full object-cover" style="aspect-ratio: 4/3;">
+                </div>
+                <div class="rounded-2xl overflow-hidden reveal-img">
+                    <img src="img/bachelor/apple_musique.png" alt="Interface Apple Music" class="w-full h-full object-cover" style="aspect-ratio: 4/3;">
+                </div>
+                <!-- Grande image : concert -->
+                <div class="col-span-1 md:col-span-2 rounded-2xl overflow-hidden reveal-img" style="max-height: 62vh;">
+                    <img src="img/bachelor/musique_concert.png" alt="Ambiance concert" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </section>
+
+
+        <!-- APPRENTISSAGES -->
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
+                <div class="col-span-1">
+                    <span class="section-label reveal">Apprentissages</span>
+                </div>
+                <div class="col-span-2 flex flex-col gap-6">
+                    <h3 class="text-[18px] font-bold tracking-tight reveal reveal-d1">Ce que ce projet m'a enseigné</h3>
+                    <ul class="flex flex-col gap-4">
+                        <li class="text-[17px] text-white/50 leading-relaxed reveal reveal-d1">
+                            Mener une veille à 360° (sociologique, économique, technologique, juridique, concurrentielle) permet de poser un cadre solide avant toute phase de design. C'est ce travail de fond qui a permis de reformuler la problématique et de passer d'une question large à un angle précis et actionnable.
+                        </li>
+                        <li class="text-[17px] text-white/50 leading-relaxed reveal reveal-d2">
+                            Les interviews terrain sont irremplaçables pour confronter les hypothèses issues de la veille à la réalité des usages. Les verbatims récoltés auprès des 7 utilisateurs ont directement nourri les axes de concept.
+                        </li>
+                        <li class="text-[17px] text-white/50 leading-relaxed reveal reveal-d3">
+                            Structurer l'idéation avec des méthodes comme le SCAMPER permet de dépasser les premières idées évidentes et de faire émerger des concepts plus différenciants, évalués ensuite sur des critères objectifs de faisabilité et d'impact.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJET SUIVANT -->
+        <section class="w-full border-t border-white/[0.06]">
+            <a href="projectDecathlon.html"
+                class="group flex items-center justify-between px-6 md:px-12 lg:px-16 py-20 md:py-28 hover:bg-white/[0.02] transition-colors duration-300">
+                <div class="flex flex-col gap-3">
+                    <span class="section-label">Projet suivant</span>
+                    <h2 class="text-[clamp(28px,5vw,80px)] font-extrabold tracking-[-0.05em] leading-none group-hover:text-accent transition-colors duration-300">
+                        Decathlon</h2>
+                    <span class="text-[16px] text-white/50 group-hover:text-white/85 transition-colors duration-300">Recherche UX · Retail</span>
+                </div>
+                <span class="text-white/70 group-hover:text-accent transform group-hover:translate-x-2 transition-all duration-300">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12,5 19,12 12,19"/>
+                    </svg>
+                </span>
+            </a>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="w-full border-t border-white/[0.06] overflow-hidden">
+            <div class="px-6 md:px-12 lg:px-16 py-16 md:py-20">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-10 mb-16">
+                    <div class="flex flex-col gap-3">
+                        <span class="section-label">Contact</span>
+                        <a href="mailto:bruno.tanguy@icloud.com" class="text-[16px] text-white/70 hover:text-white transition-colors">bruno.tanguy@icloud.com</a>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <span class="section-label">Social</span>
+                        <a href="https://www.linkedin.com/in/bruno-tanguy-aa48602a8" target="_blank" rel="noopener" class="text-[16px] text-white/70 hover:text-white transition-colors">LinkedIn</a>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <span class="section-label">Navigation</span>
+                        <a href="index.html#works" class="text-[16px] text-white/70 hover:text-white transition-colors">Projets</a>
+                        <a href="resume.html" class="text-[16px] text-white/70 hover:text-white transition-colors">Mon Profil</a>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <span class="section-label">Studio</span>
+                        <span class="text-[16px] text-white/70">Nantes, France</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-4 pt-8 border-t border-white/[0.06]">
+                    <div class="flex items-center gap-2.5">
+                        <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
+                            <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16ZM13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="rgba(255,255,255,0.4)"/>
+                        </svg>
+                        <span class="text-[15px] text-white/40 tracking-[-0.01em]">© 2026 Bruno Tanguy.</span>
+                    </div>
+                    <span class="text-[15px] text-white/40 tracking-[-0.01em]">Made with care in Nantes</span>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        // ===== SCROLL REVEAL =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -80px 0px' });
+        document.querySelectorAll('.reveal, .reveal-img').forEach(el => observer.observe(el));
+
+        // Nav scroll
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 80); }, { passive: true });
+
+        // Contact dropdown
+        const contactBtn = document.getElementById('contact-btn');
+        const contactDrop = document.getElementById('contact-dropdown');
+        if (contactBtn) {
+            contactBtn.addEventListener('click', e => { e.stopPropagation(); contactDrop.classList.toggle('open'); });
+            document.addEventListener('click', () => contactDrop.classList.remove('open'));
+        }
+
+        // ===== CURSEUR CUSTOM (RAF lerp) =====
+        const cur = document.getElementById('cursor');
+        let cx = -50, cy = -50, tx = -50, ty = -50;
+        document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+        document.addEventListener('mouseleave', () => cur.classList.add('hidden'));
+        document.addEventListener('mouseenter', () => cur.classList.remove('hidden'));
+        (function curLoop() {
+            cx += (tx - cx) * 0.18; cy += (ty - cy) * 0.18;
+            cur.style.left = cx + 'px'; cur.style.top = cy + 'px';
+            requestAnimationFrame(curLoop);
+        })();
+        document.querySelectorAll('a, button, [role="button"]').forEach(el => {
+            el.addEventListener('mouseenter', () => cur.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cur.classList.remove('hover'));
+        });
+    </script>
+
+    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+    <script>
+        const lenis = new Lenis({ lerp: 0.08 });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+    </script>
+    <script src="theme.js"></script>
+</body>
+
+</html>

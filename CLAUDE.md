@@ -202,6 +202,19 @@ La section `#motion-zone` dans `index.html` est **vide** — c'est un espace ré
 
 ---
 
+## Skills projet
+
+Le dossier `Skills_portfolio/` contient des skills locaux **toujours actifs** — les lire et les appliquer systématiquement :
+
+| Fichier | Rôle |
+|---|---|
+| `Skills_portfolio/superpowers-workflow.md` | Workflow agentique : brainstorm → plan → implement (TDD) → review → ship. **Hard gate : pas de code sans design approuvé.** |
+| `Skills_portfolio/token-saver.md` | Réponses denses, pas de preamble/postamble, optimisation des tool calls. Toujours actif. |
+
+**À chaque nouvelle tâche :** lire les deux skills et respecter le workflow (brainstorming d'abord, puis plan, puis code).
+
+---
+
 ## Ce qu'il ne faut pas toucher
 
 - `dist/` — généré automatiquement par `npm run build`, ne jamais éditer

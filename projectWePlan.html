@@ -1,104 +1,293 @@
 <!doctype html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WePlan — Bruno Tanguy</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg">
-    <meta name="description" content="Projet WePlan — Design System & Application Mobile. Étude de cas de Bruno Tanguy.">
+    <meta name="description"
+        content="Projet WePlan — Design System & Application Mobile. Étude de cas de Bruno Tanguy.">
+    <meta property="og:image" content="/img/weplan/weplan_hero.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
 
-    <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-    <meta property="og:image" content="/img/weplan/weplan_hero.png">
-
+    <script>(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t)})()</script>
+    <link rel="stylesheet" href="theme.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        'sans': ['"Host Grotesk"', 'sans-serif'],
-                    },
-                    colors: {
-                        'brand-orange': '#00E5C8', cyan: '#00E5C8', ink: '#0D0D0D',
-                        'brand-gray': '#E2E1E6',
-                        'text-muted': '#6B6A75',
-                    }
+                    fontFamily: { sans: ['"Host Grotesk"', 'sans-serif'] },
+                    colors: { accent: '#4d65ff', dark: '#0a0a0a' }
                 }
             }
         }
     </script>
+
     <style>
+        * {
+            cursor: none;
+        }
+
+        html {
+            background: #0a0a0a;
+        }
+
+        body {
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* ===== CURSOR ===== */
+        #cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width .22s cubic-bezier(.16, 1, .3, 1),
+                height .22s cubic-bezier(.16, 1, .3, 1),
+                background .15s, border .15s, opacity .25s;
+        }
+
+        #cursor.hover {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: 1.5px solid #fff;
+        }
+
+        #cursor.hidden {
+            opacity: 0;
+        }
+
+        /* ===== NAV ===== */
+        #nav {
+            transition: background .35s, backdrop-filter .35s;
+        }
+
+        #nav.scrolled {
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        /* Contact dropdown */
+        .contact-dropdown {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 12px);
+            background: rgba(15, 15, 15, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 190px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transform: translateY(-8px);
+            pointer-events: none;
+            transition: all .3s cubic-bezier(.16, 1, .3, 1);
+            z-index: 100;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+
+        /* Pont pour maintenir le hover */
+        .contact-dropdown::before {
+            content: '';
+            position: absolute;
+            top: -14px;
+            left: 0;
+            right: 0;
+            height: 14px;
+            background: transparent;
+        }
+
+        .contact-dropdown.open {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .contact-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.6);
+            border-radius: 10px;
+            transition: all 0.25s cubic-bezier(.16, 1, .3, 1);
+            white-space: nowrap;
+        }
+
+        .contact-dropdown a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            transform: translateX(4px);
+        }
+
+        .nav-link {
+            font-size: 15px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, .7);
+            white-space: nowrap;
+            transition: color .25s;
+            display: block;
+            padding: 4px 0;
+        }
+        .nav-link:hover,
+        .nav-link.active { color: #fff; }
+        /* ===== NAV PAGE DROPDOWN ===== */
+        .nav-page-item {
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+        .nav-anchor-dropdown {
+            position: absolute;
+            top: calc(100% + 12px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-6px);
+            background: rgba(15, 15, 15, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 170px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: all .3s cubic-bezier(.16, 1, .3, 1);
+            z-index: 100;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            white-space: nowrap;
+        }
+
+        /* Pont pour maintenir le hover */
+        .nav-anchor-dropdown::before {
+            content: '';
+            position: absolute;
+            top: -14px;
+            left: 0;
+            right: 0;
+            height: 14px;
+            background: transparent;
+        }
+
+        .nav-page-item:hover .nav-anchor-dropdown {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+            transition-delay: 0.3s;
+        }
+
+        .nav-anchor-dropdown a {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Recentrage du contenu */
+            gap: 10px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            transition: all 0.25s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .nav-anchor-dropdown a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            transform: translateY(-1px); /* Animation centrée */
+        }
+
+        /* ===== SECTION LABEL ===== */
+        .section-label {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
         /* ===== SCROLL REVEALS ===== */
         .reveal {
             opacity: 0;
             transform: translateY(28px);
-            transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity .8s cubic-bezier(.16, 1, .3, 1),
+                transform .8s cubic-bezier(.16, 1, .3, 1);
         }
+
         .reveal-img {
             opacity: 0;
             transform: scale(1.04);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-        .reveal-img.visible { opacity: 1; transform: scale(1); }
-        .reveal-d1 { transition-delay: 0.1s; }
-        .reveal-d2 { transition-delay: 0.2s; }
-        .reveal-d3 { transition-delay: 0.3s; }
-        .reveal-d4 { transition-delay: 0.4s; }
-
-        /* ===== DYNAMIC ISLAND HEADER ===== */
-        .nav-link {
-            font-size: 13px; font-weight: 500;
-            color: rgba(255,255,255,.5); white-space: nowrap; transition: color .2s;
-        }
-        .nav-link:hover, .nav-link.on { color: white; }
-
-        /* ===== CURSEUR CUSTOM ===== */
-        body { cursor: none; }
-        a, button, [role="button"] { cursor: none; }
-        #c-cursor {
-            position: fixed; top: 0; left: 0; z-index: 9999;
-            width: 10px; height: 10px;
-            background: black; border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            transition: width 0.25s cubic-bezier(0.16,1,0.3,1),
-                        height 0.25s cubic-bezier(0.16,1,0.3,1),
-                        background 0.2s ease,
-                        border 0.2s ease,
-                        opacity 0.3s ease;
-        }
-        #c-cursor.hover   { width: 32px; height: 32px; background: transparent; border: 1.5px solid black; }
-        #c-cursor.hidden  { opacity: 0; }
-
-        /* ===== SECTION LABEL ===== */
-        .section-label {
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: #6B6A75;
+            transition: opacity .9s cubic-bezier(.16, 1, .3, 1),
+                transform .9s cubic-bezier(.16, 1, .3, 1);
         }
 
-        /* ===== SCROLLBAR ===== */
-        .scroll-area { -ms-overflow-style: none; scrollbar-width: none; }
-        .scroll-area::-webkit-scrollbar { display: none; }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-img.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .reveal-d1 {
+            transition-delay: .1s;
+        }
+
+        .reveal-d2 {
+            transition-delay: .2s;
+        }
+
+        .reveal-d3 {
+            transition-delay: .3s;
+        }
+
+        .reveal-d4 {
+            transition-delay: .4s;
+        }
 
         /* ===== IMAGE PLACEHOLDER ===== */
         .img-placeholder {
-            background: #F4F4F6;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-direction: column;
             gap: 8px;
-            color: #9E9DA8;
-            font-size: 13px;
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 15px;
             font-weight: 500;
             text-align: center;
             padding: 32px;
@@ -112,186 +301,245 @@
             flex-direction: column;
             justify-content: flex-end;
         }
+
+        /* ===== DISABLE CURSOR ON TOUCH DEVICES ===== */
+        @media (hover: none),
+        (pointer: coarse) {
+            * {
+                cursor: auto !important;
+            }
+
+            #cursor,
+            #c-cursor {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 
-<body class="bg-white text-black font-sans w-full overflow-x-hidden selection:bg-brand-orange selection:text-black">
-<div id="c-cursor"></div>
+<body class="bg-dark text-white font-sans w-full overflow-x-hidden selection:bg-accent/30 selection:text-white">
 
-    <!-- ==================== HEADER — DYNAMIC ISLAND ==================== -->
-    <header class="fixed top-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
-        <div class="pointer-events-auto flex items-center bg-ink rounded-full px-4 py-[10px] gap-3 shadow-lg">
-            <a href="index.html" class="flex items-center gap-2 shrink-0">
-                <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
-                    <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16Z" fill="white"/>
-                    <path d="M13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="white"/>
+    <!-- ===== CURSOR ===== -->
+    <div id="cursor"></div>
+
+    <!-- ===== NAV ===== -->
+    <nav id="nav" class="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 lg:px-16 py-5">
+        <div class="flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3 shrink-0">
+                <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+                    <path
+                        d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16Z"
+                        fill="white" />
+                    <path
+                        d="M13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z"
+                        fill="white" />
                 </svg>
-                <span class="font-bold text-[13px] tracking-tight text-white">Bruno Tanguy</span>
+                <span class="font-semibold text-[clamp(20px,2vw,28px)] tracking-tight text-white leading-none">Bruno
+                    Tanguy</span>
             </a>
-            <div class="w-px h-3 bg-white/20"></div>
-            <nav class="flex gap-4">
-                <a href="index.html" class="nav-link">Home</a>
-                <a href="resume.html" class="nav-link">Mon Profil</a>
-            </nav>
-            <a href="mailto:bruno.tanguy@icloud.com"
-               class="bg-cyan text-ink text-[12px] font-bold rounded-full px-3 py-[5px] hover:opacity-80 transition-opacity shrink-0">
-                Contact <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="8" x2="8" y2="2"/><polyline points="3,2 8,2 8,7"/></svg>
-            </a>
+            <div class="hidden lg:flex items-center gap-8">
+                <div class="nav-page-item">
+                    <a href="index.html" class="nav-link">Portfolio</a>
+                    <div class="nav-anchor-dropdown">
+                        <a href="index.html#works">Projets</a>
+                        <a href="index.html#method">Méthode</a>
+                        <a href="index.html#services">Ce que je fais</a>
+                    </div>
+                </div>
+                <div class="nav-page-item">
+                    <a href="resume.html" class="nav-link">Mon Profil</a>
+                    <div class="nav-anchor-dropdown">
+                        <a href="resume.html#experience">Expérience</a>
+                        <a href="resume.html#competences">Compétences</a>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
+                <div class="relative hidden md:block">
+                    <button id="contact-btn"
+                        class="inline-flex items-center gap-2 border border-white/30 text-white text-[15px] font-medium rounded-full px-5 py-[8px] hover:bg-white hover:text-dark transition-all duration-200">Contact</button>
+                    <div id="contact-dropdown" class="contact-dropdown">
+                        <a href="mailto:bruno.tanguy@icloud.com"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="4" width="20" height="16" rx="2" />
+                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                            </svg>Email</a>
+                        <a href="https://www.linkedin.com/in/bruno-tanguy-aa48602a8" target="_blank" rel="noopener"><svg
+                                width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                                <rect x="2" y="9" width="4" height="12" />
+                                <circle cx="4" cy="4" r="2" />
+                            </svg>LinkedIn</a>
+                    </div>
+                </div>
+            </div>
         </div>
-    </header>
+    </nav>
 
     <!-- ==================== MAIN ==================== -->
     <div class="w-full">
 
         <!-- HERO -->
-        <section class="w-full min-h-screen p-[8px] flex flex-col justify-end pt-[72px] overflow-hidden">
-            <div class="rounded-2xl overflow-hidden w-full mb-12 reveal-img" style="height: calc(100vh - 360px); min-height: 320px;">
-                <img src="img/weplan/weplan_hero.png" alt="Hero WePlan" class="w-full h-full object-cover">
-            </div>
-            <div class="grid grid-cols-3 gap-[16px] pb-[40px] px-8 md:px-16 lg:px-24">
-                <div class="col-span-1">
-                    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full max-w-[120px] h-auto">
-                        <rect width="32" height="32" rx="8" fill="#AD7100"/>
-                        <path d="M16 9C14.067 9 12.5 10.567 12.5 12.5C12.5 14.433 14.067 16 16 16C17.933 16 19.5 14.433 19.5 12.5C19.5 10.567 17.933 9 16 9Z" fill="white"/>
-                        <path d="M16 16C16 16 10 19.5 10 23H22C22 19.5 16 16 16 16Z" fill="white"/>
-                    </svg>
+        <section class="w-full px-6 md:px-12 lg:px-16 pt-32 md:pt-40 pb-16 md:pb-20 overflow-hidden">
+            <div class="grid grid-cols-12 gap-8 mb-16 md:mb-20">
+                <div class="col-span-12 md:col-span-3">
+                    <span class="section-label reveal">Étude de cas</span>
                 </div>
-                <div class="col-span-1"></div>
-                <div class="col-span-1"></div>
-                <h1 class="col-span-3 text-[clamp(32px,8.5vw,120px)] font-extrabold tracking-[-0.05em] leading-[0.9] text-black pb-2">WePlan</h1>
-                <div class="col-span-1 text-base md:text-lg font-medium self-end">Design System & App Mobile</div>
-                <div class="col-span-1"></div>
-                <div class="col-span-1 text-sm md:text-base font-medium text-right self-end text-text-muted">Architecture UI · Social</div>
+                <div class="col-span-12 md:col-span-9 flex flex-col gap-6">
+                    <h1
+                        class="text-[clamp(48px,8vw,140px)] font-extrabold tracking-[-0.05em] leading-[0.9] reveal reveal-d1">
+                        WePlan</h1>
+                    <p class="text-[clamp(18px,1.6vw,24px)] text-white/60 max-w-2xl leading-snug reveal reveal-d2">
+                        Design system et application mobile pour organiser des voyages collaboratifs : Architecture UI /
+                        Social</p>
+                </div>
+            </div>
+            <div class="w-full overflow-hidden rounded-2xl border border-white/[0.06] reveal-img"
+                style="aspect-ratio: 16/9; max-height: 75vh;">
+                <img src="img/weplan/weplan_hero.png" alt="Hero WePlan" class="w-full h-full object-cover">
             </div>
         </section>
 
         <!-- META -->
-        <section class="w-full py-8 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-4 gap-[16px]">
-                <div class="flex flex-col gap-1 reveal reveal-d1">
+        <section class="w-full py-12 md:py-16 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="flex flex-col gap-3 reveal reveal-d1">
                     <span class="section-label">Rôle</span>
-                    <span class="text-[15px] font-medium mt-2">Product Design · Design System</span>
+                    <span class="text-[16px] font-medium text-white/85">Product Design / Design System</span>
                 </div>
-                <div class="flex flex-col gap-1 reveal reveal-d2">
+                <div class="flex flex-col gap-3 reveal reveal-d2">
                     <span class="section-label">Secteur</span>
-                    <span class="text-[15px] font-medium mt-2">Voyage / Social</span>
+                    <span class="text-[16px] font-medium text-white/85">Voyage / Social</span>
                 </div>
-                <div class="flex flex-col gap-1 reveal reveal-d3">
+                <div class="flex flex-col gap-3 reveal reveal-d3">
                     <span class="section-label">Année</span>
-                    <span class="text-[15px] font-medium mt-2">2026</span>
+                    <span class="text-[16px] font-medium text-white/85">2026</span>
                 </div>
-                <div class="flex flex-col gap-1 reveal reveal-d4">
+                <div class="flex flex-col gap-3 reveal reveal-d4">
                     <span class="section-label">Livrables</span>
-                    <span class="text-[15px] font-medium mt-2">Design System, Prototype Figma</span>
+                    <span class="text-[16px] font-medium text-white/85">Design System / Prototype Figma</span>
                 </div>
             </div>
         </section>
 
         <!-- 01 CONTEXTE -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1">
-                    <span class="section-label reveal">01 — Contexte</span>
+                    <span class="section-label reveal">01 Contexte</span>
                 </div>
                 <div class="col-span-2 flex flex-col gap-8">
-                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Créer un service de voyage collaboratif de A à Z</h2>
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">
+                        Créer un service de voyage collaboratif et son Design System</h2>
                     <div class="flex flex-col gap-6">
-                        <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">WePlan est un projet de design system réalisé dans le cadre d'un exercice de création d'un service numérique. L'équipe — Noa Barreau, Paul Barroux et Bruno Tanguy — a pris en charge l'intégralité de la démarche : du cadrage du besoin jusqu'à la livraison d'un prototype interactif et d'un système de design complet.</p>
-                        <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d3">L'enjeu : concevoir une application mobile permettant à des groupes d'amis d'organiser leurs voyages ensemble, en centralisant planning, décisions et communication en un seul endroit.</p>
+                        <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d2">WePlan est un projet de
+                            design system réalisé dans le cadre d'un exercice de création d'un service numérique.</p>
+                        <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d3">L'enjeu : concevoir une
+                            application mobile permettant à des groupes d'amis d'organiser leurs voyages ensemble, en
+                            centralisant planning, décisions et communication en un seul endroit.</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- 02 PROBLÉMATIQUE -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1">
-                    <span class="section-label reveal">02 — Problématique</span>
+                    <span class="section-label reveal">02 Problématique</span>
                 </div>
                 <div class="col-span-2 flex flex-col gap-8">
-                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Comment organiser un voyage à plusieurs sans se perdre dans les outils ?</h2>
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">
+                        Comment organiser un voyage à plusieurs sans se perdre dans les outils ?</h2>
                     <div class="flex flex-col gap-6">
-                        <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Organiser un voyage en groupe, c'est jongler entre WhatsApp, Google Docs, Airbnb, Tripadvisor… Des décisions qui se perdent, des oublis, et une frustration collective qui freine l'enthousiasme.</p>
+                        <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d2">Organiser un voyage en
+                            groupe, c'est jongler entre WhatsApp, Google Docs, Airbnb, Tripadvisor… Des décisions qui se
+                            perdent, des oublis, et une frustration collective qui freine l'enthousiasme.</p>
                     </div>
                     <div class="grid grid-cols-2 gap-x-8 gap-y-10 pt-4">
                         <div class="flex flex-col gap-2 reveal reveal-d1">
-                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Problème 01</span>
-                            <h3 class="text-[17px] font-bold tracking-tight">Trop d'outils dispersés</h3>
-                            <p class="text-[15px] text-text-muted leading-relaxed">Les informations sont éparpillées entre de multiples applications sans cohérence.</p>
+                            <span class="text-[14px] font-bold uppercase tracking-widest text-accent mb-1">Problème
+                                01</span>
+                            <h3 class="text-[18px] font-bold tracking-tight">Trop d'outils dispersés</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">Les informations sont éparpillées entre
+                                de multiples applications sans cohérence.</p>
                         </div>
                         <div class="flex flex-col gap-2 reveal reveal-d2">
-                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Problème 02</span>
-                            <h3 class="text-[17px] font-bold tracking-tight">Décisions difficiles à plusieurs</h3>
-                            <p class="text-[15px] text-text-muted leading-relaxed">Concilier les avis de chacun sans outil dédié génère des conflits et de la confusion.</p>
+                            <span class="text-[14px] font-bold uppercase tracking-widest text-accent mb-1">Problème
+                                02</span>
+                            <h3 class="text-[18px] font-bold tracking-tight">Décisions difficiles à plusieurs</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">Concilier les avis de chacun sans outil
+                                dédié génère des conflits et de la confusion.</p>
                         </div>
                         <div class="flex flex-col gap-2 reveal reveal-d3">
-                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Problème 03</span>
-                            <h3 class="text-[17px] font-bold tracking-tight">Oublis fréquents</h3>
-                            <p class="text-[15px] text-text-muted leading-relaxed">Sans centralisation, les informations importantes se noient dans les fils de discussion.</p>
+                            <span class="text-[14px] font-bold uppercase tracking-widest text-accent mb-1">Problème
+                                03</span>
+                            <h3 class="text-[18px] font-bold tracking-tight">Oublis fréquents</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">Sans centralisation, les informations
+                                importantes se noient dans les fils de discussion.</p>
                         </div>
                         <div class="flex flex-col gap-2 reveal reveal-d4">
-                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Problème 04</span>
-                            <h3 class="text-[17px] font-bold tracking-tight">Groupe WhatsApp désorganisé</h3>
-                            <p class="text-[15px] text-text-muted leading-relaxed">Le canal de communication principal devient rapidement illisible et inefficace.</p>
+                            <span class="text-[14px] font-bold uppercase tracking-widest text-accent mb-1">Problème
+                                04</span>
+                            <h3 class="text-[18px] font-bold tracking-tight">Groupe WhatsApp désorganisé</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">Le canal de communication principal
+                                devient rapidement illisible et inefficace.</p>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- CITATION -->
-        <section class="w-full py-16 md:py-24 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
-                <div class="col-span-1"></div>
-                <blockquote class="col-span-2 text-[clamp(20px,2.5vw,30px)] font-light leading-relaxed italic text-black reveal reveal-d1">" WePlan centralise l'organisation d'un voyage en groupe, du planning aux décisions. "</blockquote>
             </div>
         </section>
 
         <!-- 03 POUR QUI -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1">
-                    <span class="section-label reveal">03 — Pour qui ?</span>
+                    <span class="section-label reveal">03 Pour qui ?</span>
                 </div>
                 <div class="col-span-2 flex flex-col gap-10">
-                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Groupe d'amis</h2>
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">
+                        Groupe d'amis</h2>
 
                     <div class="grid grid-cols-2 gap-x-12 gap-y-10">
                         <div class="flex flex-col gap-4 reveal reveal-d1">
-                            <h3 class="text-[17px] font-bold tracking-tight">Besoins</h3>
+                            <h3 class="text-[18px] font-bold tracking-tight">Besoins</h3>
                             <ul class="flex flex-col gap-3">
-                                <li class="flex gap-3 items-start text-[15px] text-text-muted leading-relaxed">
-                                    <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
-                                    Planifier rapidement un week-end
+                                <li class="flex gap-3 items-start text-[16px] text-white/50 leading-relaxed">
+                                    <span class="text-accent font-bold flex-shrink-0 pt-0.5">—</span>
+                                    Planifier rapidement un week-end ou des vacances
                                 </li>
-                                <li class="flex gap-3 items-start text-[15px] text-text-muted leading-relaxed">
-                                    <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
-                                    Prendre des décisions collectives facilement
+                                <li class="flex gap-3 items-start text-[16px] text-white/50 leading-relaxed">
+                                    <span class="text-accent font-bold flex-shrink-0 pt-0.5">—</span>
+                                    Prendre des décisions collectives
                                 </li>
-                                <li class="flex gap-3 items-start text-[15px] text-text-muted leading-relaxed">
-                                    <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                                <li class="flex gap-3 items-start text-[16px] text-white/50 leading-relaxed">
+                                    <span class="text-accent font-bold flex-shrink-0 pt-0.5">—</span>
                                     Partager toutes les infos dans un seul endroit
                                 </li>
-                                <li class="flex gap-3 items-start text-[15px] text-text-muted leading-relaxed">
-                                    <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
-                                    S'inspirer
+                                <li class="flex gap-3 items-start text-[16px] text-white/50 leading-relaxed">
+                                    <span class="text-accent font-bold flex-shrink-0 pt-0.5">—</span>
+                                    S'inspirer et copier des voyages publics
                                 </li>
                             </ul>
                         </div>
                         <div class="flex flex-col gap-4 reveal reveal-d2">
-                            <h3 class="text-[17px] font-bold tracking-tight">Frustrations</h3>
+                            <h3 class="text-[18px] font-bold tracking-tight">Frustrations</h3>
                             <ul class="flex flex-col gap-3">
-                                <li class="flex gap-3 items-start text-[15px] text-text-muted leading-relaxed">
-                                    <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                                <li class="flex gap-3 items-start text-[16px] text-white/50 leading-relaxed">
+                                    <span class="text-accent font-bold flex-shrink-0 pt-0.5">—</span>
                                     Discussions dispersées sur différentes applications
                                 </li>
-                                <li class="flex gap-3 items-start text-[15px] text-text-muted leading-relaxed">
-                                    <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                                <li class="flex gap-3 items-start text-[16px] text-white/50 leading-relaxed">
+                                    <span class="text-accent font-bold flex-shrink-0 pt-0.5">—</span>
                                     Difficulté à concilier les emplois du temps de chacun
                                 </li>
-                                <li class="flex gap-3 items-start text-[15px] text-text-muted leading-relaxed">
-                                    <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
+                                <li class="flex gap-3 items-start text-[16px] text-white/50 leading-relaxed">
+                                    <span class="text-accent font-bold flex-shrink-0 pt-0.5">—</span>
                                     Conflits ou confusions sur les décisions
                                 </li>
                             </ul>
@@ -299,55 +547,66 @@
                     </div>
 
                     <div class="rounded-2xl overflow-hidden w-full reveal-img">
-                        <img src="img/weplan/weplan_pourqui.png" alt="Pour qui — Persona groupe d'amis" class="w-full h-auto object-cover">
+                        <img src="img/weplan/weplan_pourqui.png" alt="Pour qui — Persona groupe d'amis"
+                            class="w-full max-h-[420px] object-cover">
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- 04 UNIVERS GRAPHIQUE -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1">
-                    <span class="section-label reveal">04 — Univers graphique</span>
+                    <span class="section-label reveal">04 Univers graphique</span>
                 </div>
                 <div class="col-span-2 flex flex-col gap-10">
-                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Des couleurs rassurantes et conviviales</h2>
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Des
+                        couleurs rassurantes et conviviales</h2>
 
                     <!-- Couleurs -->
                     <div class="flex flex-col gap-4 reveal reveal-d2">
-                        <h3 class="text-[15px] font-bold tracking-tight">Couleurs primaires — <span class="font-mono text-text-muted">#AD7100</span></h3>
+                        <h3 class="text-[16px] font-bold tracking-tight">Couleurs primaires <span
+                                class="font-mono text-white/50">#AD7100</span></h3>
                         <div class="grid grid-cols-1 gap-3">
                             <div class="color-swatch" style="background: #AD7100; min-height: 120px;">
-                                <span class="text-white text-[13px] font-bold">Cohésion</span>
-                                <span class="text-white/70 text-[13px] font-medium">Chaleur</span>
-                                <span class="text-white/70 text-[13px] font-medium">Engagement</span>
+                                <span class="text-white text-[17px] font-bold">Cohésion</span>
+                                <span class="text-white/70 text-[17px] font-medium">Chaleur</span>
+                                <span class="text-white/70 text-[17px] font-medium">Engagement</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="flex flex-col gap-4 reveal reveal-d3">
-                        <h3 class="text-[15px] font-bold tracking-tight">Couleurs secondaires — <span class="font-mono text-text-muted">#FFCA66 &nbsp;#EDEFF8</span></h3>
+                        <h3 class="text-[16px] font-bold tracking-tight">Couleurs secondaires <span
+                                class="font-mono text-white/50">#FFCA66 &nbsp;#EDEFF8</span></h3>
                         <div class="grid grid-cols-2 gap-3">
                             <div class="color-swatch" style="background: #FFCA66; min-height: 80px;">
-                                <span class="text-[#7A5A00] text-[13px] font-bold">Convivialité</span>
+                                <span class="text-[#7A5A00] text-[17px] font-bold">Convivialité</span>
                             </div>
                             <div class="color-swatch" style="background: #EDEFF8; min-height: 80px;">
-                                <span class="text-[#6B6A75] text-[13px] font-bold">Clarté</span>
+                                <span class="text-[#6B6A75] text-[17px] font-bold">Clarté</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Typographie -->
-                    <div class="flex flex-col gap-6 pt-4 border-t border-brand-gray reveal reveal-d1">
-                        <h3 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight">Typographies claire et moderne</h3>
+                    <div class="flex flex-col gap-6 pt-4 border-t border-white/[0.06] reveal reveal-d1">
+                        <h3 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight">Typographies
+                            claire et moderne</h3>
                         <div class="flex flex-col gap-3">
-                            <p class="text-[clamp(28px,4vw,60px)] font-bold" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; letter-spacing: -0.03em;">Helvetica Neue</p>
-                            <p class="text-[17px] text-text-muted leading-relaxed max-w-prose">Elle transmet une impression de clarté, de fiabilité et de simplicité, tout en restant moderne et accessible à tous.</p>
-                            <div class="flex flex-col gap-1 mt-4" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
-                                <p class="text-[15px] font-bold tracking-widest uppercase">ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
-                                <p class="text-[15px] font-bold">abcdefghijklmnopqrstuvwxyz</p>
-                                <p class="text-[15px] font-bold">0123456789 !@#$%^&amp;*()</p>
+                            <p class="text-[clamp(28px,4vw,60px)] font-bold"
+                                style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; letter-spacing: -0.03em;">
+                                Helvetica Neue</p>
+                            <p class="text-[18px] text-white/50 leading-relaxed max-w-prose">Elle transmet une
+                                impression de clarté, de fiabilité et de simplicité, tout en restant moderne et
+                                accessible à tous.</p>
+                            <div class="flex flex-col gap-1 mt-4"
+                                style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+                                <p class="text-[16px] font-bold tracking-widest uppercase">ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                                </p>
+                                <p class="text-[16px] font-bold">abcdefghijklmnopqrstuvwxyz</p>
+                                <p class="text-[16px] font-bold">0123456789 !@#$%^&amp;*()</p>
                             </div>
                         </div>
                     </div>
@@ -356,72 +615,80 @@
         </section>
 
         <!-- 05 CHOIX DE DESIGN -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1">
-                    <span class="section-label reveal">05 — Choix de design</span>
+                    <span class="section-label reveal">05 Choix de design</span>
                 </div>
                 <div class="col-span-2 flex flex-col gap-10">
-                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Des partis pris pour une expérience fluide en groupe</h2>
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Des
+                        partis pris pour une expérience fluide en groupe</h2>
 
                     <div class="grid grid-cols-2 gap-x-8 gap-y-10">
                         <div class="flex flex-col gap-2 reveal reveal-d1">
-                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Choix 01</span>
-                            <h3 class="text-[17px] font-bold tracking-tight">Bottom sheets</h3>
-                            <p class="text-[15px] text-text-muted leading-relaxed">Les panneaux contextuels maintiennent l'utilisateur dans son flux sans rupture de navigation.</p>
+                            <h3 class="text-[18px] font-bold tracking-tight">Bottom sheets</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">Les panneaux contextuels maintiennent
+                                l'utilisateur dans son flux sans rupture de navigation.</p>
                         </div>
                         <div class="flex flex-col gap-2 reveal reveal-d2">
-                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Choix 02</span>
-                            <h3 class="text-[17px] font-bold tracking-tight">Voyages communautaires</h3>
-                            <p class="text-[15px] text-text-muted leading-relaxed">Possibilité de récupérer les voyages ou activités de la communauté pour s'en inspirer.</p>
+                            <h3 class="text-[18px] font-bold tracking-tight">Voyages communautaires</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">Possibilité de récupérer les voyages ou
+                                activités de la communauté pour s'en inspirer.</p>
                         </div>
                         <div class="flex flex-col gap-2 reveal reveal-d3">
-                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Choix 03</span>
-                            <h3 class="text-[17px] font-bold tracking-tight">Collaboration entre amis</h3>
-                            <p class="text-[15px] text-text-muted leading-relaxed">Système d'invitation et de co-édition pensé pour la prise de décision collective.</p>
+                            <h3 class="text-[18px] font-bold tracking-tight">Collaboration entre amis</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">Système d'invitation et de co-édition
+                                pensé pour la prise de décision collective.</p>
                         </div>
                         <div class="flex flex-col gap-2 reveal reveal-d4">
-                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Choix 04</span>
-                            <h3 class="text-[17px] font-bold tracking-tight">Hiérarchisation de l'information</h3>
-                            <p class="text-[15px] text-text-muted leading-relaxed">Structure visuelle claire pour que chaque membre du groupe trouve rapidement ce dont il a besoin.</p>
+                            <h3 class="text-[18px] font-bold tracking-tight">Hiérarchisation de l'information</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">Structure visuelle claire pour que
+                                chaque membre du groupe trouve rapidement ce dont il a besoin.</p>
                         </div>
                         <div class="flex flex-col gap-2 reveal reveal-d1">
-                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Choix 05</span>
-                            <h3 class="text-[17px] font-bold tracking-tight">Résultats de sondage</h3>
-                            <p class="text-[15px] text-text-muted leading-relaxed">Visualisation en temps réel des votes pour faciliter la prise de décision collective.</p>
+                            <h3 class="text-[18px] font-bold tracking-tight">Résultats de sondage</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">Visualisation en temps réel des votes
+                                pour faciliter la prise de décision collective.</p>
                         </div>
                         <div class="flex flex-col gap-2 reveal reveal-d2">
-                            <span class="text-[11px] font-bold uppercase tracking-widest text-brand-orange mb-1">Choix 06</span>
-                            <h3 class="text-[17px] font-bold tracking-tight">Arrondis sur les éléments</h3>
-                            <p class="text-[15px] text-text-muted leading-relaxed">Des formes douces qui renforcent la chaleur et la convivialité de l'application.</p>
+                            <h3 class="text-[18px] font-bold tracking-tight">Arrondis sur les éléments</h3>
+                            <p class="text-[16px] text-white/50 leading-relaxed">Des formes douces qui renforcent la
+                                chaleur et la convivialité de l'application.</p>
                         </div>
                     </div>
 
                     <div class="rounded-2xl overflow-hidden w-full reveal-img">
-                        <img src="img/weplan/weplan_design_choices.png" alt="Choix de design — Screenshots app" class="w-full h-auto object-cover">
+                        <img src="img/weplan/weplan_design_choices.png" alt="Choix de design — Screenshots app"
+                            class="w-full h-auto object-cover">
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- 06 FONCTIONNALITÉS — Inspiration -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1">
-                    <span class="section-label reveal">06 — Fonctionnalités</span>
+                    <span class="section-label reveal">06 Fonctionnalités</span>
                 </div>
                 <div class="col-span-2 flex flex-col gap-8">
-                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">S'inspirer de voyages existants pour construire le sien</h2>
-                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">La home centralise les suggestions de voyage de la communauté et les voyages à venir de l'utilisateur. Un feed d'inspiration directement intégré au flux de planification.</p>
-                    <div class="grid grid-cols-3 gap-4 reveal reveal-d3">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">
+                        S'inspirer de voyages existants pour construire le sien</h2>
+                    <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d2">La home centralise les
+                        suggestions de voyage de la communauté et les voyages à venir de l'utilisateur. Un feed
+                        d'inspiration directement intégré au flux de planification.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 reveal reveal-d3">
                         <div class="rounded-2xl overflow-hidden">
-                            <img src="img/weplan/weplan_home.png" alt="Home — Feed et suggestions" class="w-full h-auto object-cover">
+                            <img src="img/weplan/weplan_home.png" alt="Home — Feed et suggestions"
+                                class="w-full h-auto object-cover">
                         </div>
                         <div class="rounded-2xl overflow-hidden">
-                            <img src="img/weplan/weplan_detail.png" alt="Détail voyage — Bottom sheet" class="w-full h-auto object-cover">
+                            <img src="img/weplan/weplan_detail.png" alt="Détail voyage — Bottom sheet"
+                                class="w-full h-auto object-cover">
                         </div>
                         <div class="rounded-2xl overflow-hidden">
-                            <img src="img/weplan/weplan_mesvoyages.png" alt="Mes voyages — À venir" class="w-full h-auto object-cover">
+                            <img src="img/weplan/weplan_mesvoyages.png" alt="Mes voyages — À venir"
+                                class="w-full h-auto object-cover">
                         </div>
                     </div>
                 </div>
@@ -429,21 +696,27 @@
         </section>
 
         <!-- 06B FONCTIONNALITÉS — Création -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1"></div>
                 <div class="col-span-2 flex flex-col gap-8">
-                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Une création de voyage fluide</h2>
-                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">En trois étapes guidées — informations du voyage, invitation des amis, visualisation du planning — l'utilisateur crée son voyage sans friction et embarque immédiatement son groupe.</p>
-                    <div class="grid grid-cols-3 gap-4 reveal reveal-d3">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Une
+                        création de voyage fluide</h2>
+                    <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d2">En trois étapes guidées :
+                        informations du voyage, invitation des amis, visualisation du planning. L'utilisateur crée son
+                        voyage sans friction et embarque immédiatement son groupe.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 reveal reveal-d3">
                         <div class="rounded-2xl overflow-hidden">
-                            <img src="img/weplan/weplan_creation1.png" alt="Créer mon voyage — Formulaire" class="w-full h-auto object-cover">
+                            <img src="img/weplan/weplan_creation1.png" alt="Créer mon voyage — Formulaire"
+                                class="w-full h-auto object-cover">
                         </div>
                         <div class="rounded-2xl overflow-hidden">
-                            <img src="img/weplan/weplan_creation2.png" alt="Ajouter des amis au voyage" class="w-full h-auto object-cover">
+                            <img src="img/weplan/weplan_creation2.png" alt="Ajouter des amis au voyage"
+                                class="w-full h-auto object-cover">
                         </div>
                         <div class="rounded-2xl overflow-hidden">
-                            <img src="img/weplan/weplan_creation3.png" alt="Planning du voyage — Vue carte" class="w-full h-auto object-cover">
+                            <img src="img/weplan/weplan_creation3.png" alt="Planning du voyage — Vue carte"
+                                class="w-full h-auto object-cover">
                         </div>
                     </div>
                 </div>
@@ -451,21 +724,27 @@
         </section>
 
         <!-- 06C FONCTIONNALITÉS — Sondages -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1"></div>
                 <div class="col-span-2 flex flex-col gap-8">
-                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Conçu pour permettre au groupe de décider ensemble</h2>
-                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Les sondages sont intégrés directement dans le voyage. N'importe quel membre peut en créer un, les résultats sont visibles en temps réel et permettent de trancher collectivement.</p>
-                    <div class="grid grid-cols-3 gap-4 reveal reveal-d3">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">
+                        Conçu pour permettre au groupe de décider ensemble</h2>
+                    <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d2">Les sondages sont intégrés
+                        directement dans le voyage. N'importe quel membre peut en créer un, les résultats sont visibles
+                        en temps réel et permettent de trancher collectivement.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 reveal reveal-d3">
                         <div class="rounded-2xl overflow-hidden">
-                            <img src="img/weplan/weplan_sondage1.png" alt="Voyage — Ajout d'un sondage" class="w-full h-auto object-cover">
+                            <img src="img/weplan/weplan_sondage1.png" alt="Voyage — Ajout d'un sondage"
+                                class="w-full h-auto object-cover">
                         </div>
                         <div class="rounded-2xl overflow-hidden">
-                            <img src="img/weplan/weplan_sondage2.png" alt="Créer un sondage — Formulaire" class="w-full h-auto object-cover">
+                            <img src="img/weplan/weplan_sondage2.png" alt="Créer un sondage — Formulaire"
+                                class="w-full h-auto object-cover">
                         </div>
                         <div class="rounded-2xl overflow-hidden">
-                            <img src="img/weplan/weplan_sondage3.png" alt="Sondage en cours — Résultats" class="w-full h-auto object-cover">
+                            <img src="img/weplan/weplan_sondage3.png" alt="Sondage en cours — Résultats"
+                                class="w-full h-auto object-cover">
                         </div>
                     </div>
                 </div>
@@ -473,24 +752,32 @@
         </section>
 
         <!-- 06D FONCTIONNALITÉS — Activités -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1"></div>
                 <div class="col-span-2 flex flex-col gap-8">
-                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Conçu pour structurer les activités en toute simplicité</h2>
-                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">L'ajout d'activités se fait via la base de données communautaire ou en mode personnalisé. Chaque activité — lieux, transport, logement — est organisée jour par jour pour une visualisation claire du programme.</p>
-                    <div class="grid grid-cols-4 gap-4 reveal reveal-d3">
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">
+                        Conçu pour structurer les activités en toute simplicité</h2>
+                    <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d2">L'ajout d'activités se fait
+                        via la base de données communautaire ou en mode personnalisé. Chaque activité est organisée jour
+                        par jour pour une visualisation plus claire.
+                    </p>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 reveal reveal-d3">
                         <div class="rounded-2xl overflow-hidden">
-                            <img src="img/weplan/weplan_activite1.png" alt="Planning Jour 1" class="w-full h-auto object-cover">
+                            <img src="img/weplan/weplan_activite1.png" alt="Planning Jour 1"
+                                class="w-full h-auto object-cover">
                         </div>
                         <div class="rounded-2xl overflow-hidden">
-                            <img src="img/weplan/weplan_activite2.png" alt="Ajouter une activité" class="w-full h-auto object-cover">
+                            <img src="img/weplan/weplan_activite2.png" alt="Ajouter une activité"
+                                class="w-full h-auto object-cover">
                         </div>
                         <div class="rounded-2xl overflow-hidden">
-                            <img src="img/weplan/weplan_activite3.png" alt="Activités ajoutées" class="w-full h-auto object-cover">
+                            <img src="img/weplan/weplan_activite3.png" alt="Activités ajoutées"
+                                class="w-full h-auto object-cover">
                         </div>
                         <div class="rounded-2xl overflow-hidden">
-                            <img src="img/weplan/weplan_activite4.png" alt="Détail activité" class="w-full h-auto object-cover">
+                            <img src="img/weplan/weplan_activite4.png" alt="Détail activité"
+                                class="w-full h-auto object-cover">
                         </div>
                     </div>
                 </div>
@@ -498,44 +785,64 @@
         </section>
 
         <!-- 07 PROTOTYPE -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1">
-                    <span class="section-label reveal">07 — Prototype</span>
+                    <span class="section-label reveal">07 Prototype</span>
                 </div>
                 <div class="col-span-2 flex flex-col gap-8">
-                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Parcours de création d'un voyage</h2>
-                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Le prototype interactif Figma couvre l'intégralité du parcours utilisateur, de l'onboarding jusqu'à la gestion complète d'un voyage collaboratif.</p>
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">
+                        Parcours de création d'un voyage</h2>
+                    <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d2">Le prototype interactif Figma
+                        couvre l'intégralité du parcours utilisateur, de l'onboarding jusqu'à la gestion complète d'un
+                        voyage collaboratif.</p>
                 </div>
             </div>
         </section>
 
         <!-- 08 DESIGN SYSTEM — Typographie -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1">
-                    <span class="section-label reveal">08 — Design System</span>
+                    <span class="section-label reveal">08 Design System</span>
                 </div>
                 <div class="col-span-2 flex flex-col gap-8">
-                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Atoms : Typographie</h2>
-                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Les tokens typographiques définissent l'ensemble des styles de texte — du titre en Bold 20 au corps Regular 14 — pour une cohérence parfaite entre Figma et le code.</p>
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">
+                        Atoms : Typographie</h2>
+                    <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d2">Les tokens typographiques
+                        définissent l'ensemble des styles de texte, du titre en Bold 20 au corps Regular 14, pour une
+                        cohérence parfaite entre Figma et le code.</p>
                     <div class="grid grid-cols-2 gap-x-8 gap-y-6 reveal reveal-d2">
                         <div>
-                            <h3 class="text-[15px] font-bold mb-3">Tailles de police</h3>
-                            <div class="flex flex-col gap-2 text-[14px] text-text-muted">
-                                <div class="flex justify-between border-b border-brand-gray pb-2"><span>Title</span><span class="font-mono">20px</span></div>
-                                <div class="flex justify-between border-b border-brand-gray pb-2"><span>Subtitle</span><span class="font-mono">16px</span></div>
-                                <div class="flex justify-between border-b border-brand-gray pb-2"><span>Body</span><span class="font-mono">14px</span></div>
-                                <div class="flex justify-between pb-2"><span>Small body</span><span class="font-mono">12px</span></div>
+                            <h3 class="text-[16px] font-bold mb-3">Tailles de police</h3>
+                            <div class="flex flex-col gap-2 text-[16px] text-white/50">
+                                <div class="flex justify-between border-b border-white/[0.06] pb-2">
+                                    <span>Title</span><span class="font-mono">20px</span>
+                                </div>
+                                <div class="flex justify-between border-b border-white/[0.06] pb-2">
+                                    <span>Subtitle</span><span class="font-mono">16px</span>
+                                </div>
+                                <div class="flex justify-between border-b border-white/[0.06] pb-2">
+                                    <span>Body</span><span class="font-mono">14px</span>
+                                </div>
+                                <div class="flex justify-between pb-2"><span>Small body</span><span
+                                        class="font-mono">12px</span></div>
                             </div>
                         </div>
                         <div>
-                            <h3 class="text-[15px] font-bold mb-3">Graisses</h3>
-                            <div class="flex flex-col gap-2 text-[14px] text-text-muted">
-                                <div class="flex justify-between border-b border-brand-gray pb-2"><span>Regular</span><span class="font-mono">400</span></div>
-                                <div class="flex justify-between border-b border-brand-gray pb-2"><span>Medium</span><span class="font-mono">500</span></div>
-                                <div class="flex justify-between border-b border-brand-gray pb-2"><span>Bold</span><span class="font-mono">700</span></div>
-                                <div class="flex justify-between pb-2"><span>Italic variants</span><span class="font-mono">×3</span></div>
+                            <h3 class="text-[16px] font-bold mb-3">Graisses</h3>
+                            <div class="flex flex-col gap-2 text-[16px] text-white/50">
+                                <div class="flex justify-between border-b border-white/[0.06] pb-2">
+                                    <span>Regular</span><span class="font-mono">400</span>
+                                </div>
+                                <div class="flex justify-between border-b border-white/[0.06] pb-2">
+                                    <span>Medium</span><span class="font-mono">500</span>
+                                </div>
+                                <div class="flex justify-between border-b border-white/[0.06] pb-2">
+                                    <span>Bold</span><span class="font-mono">700</span>
+                                </div>
+                                <div class="flex justify-between pb-2"><span>Italic variants</span><span
+                                        class="font-mono">×3</span></div>
                             </div>
                         </div>
                     </div>
@@ -544,67 +851,81 @@
         </section>
 
         <!-- 08B DESIGN SYSTEM — Boutons -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1"></div>
                 <div class="col-span-2 flex flex-col gap-8">
-                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Molécules : Boutons</h2>
-                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Une bibliothèque de boutons déclinés en trois tailles, quatre états (default, hover, pressed, disabled) et deux variantes d'icône — sans et avec préfixe.</p>
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">
+                        Molécules : Boutons</h2>
+                    <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d2">Une bibliothèque de boutons
+                        déclinés en trois tailles, quatre états (default, hover, pressed, disabled) et deux variantes
+                        d'icône : sans préfixe et avec préfixe.</p>
                     <div class="rounded-2xl overflow-hidden reveal-img">
-                        <img src="img/weplan/weplan_ds_buttons.png" alt="Design System — Molécules : Boutons" class="w-full h-auto object-cover">
+                        <img src="img/weplan/weplan_ds_buttons.png" alt="Design System — Molécules : Boutons"
+                            class="w-full h-auto object-cover">
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- 08C DESIGN SYSTEM — Cards -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1"></div>
                 <div class="col-span-2 flex flex-col gap-8">
-                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Organismes : Cards</h2>
-                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Les cartes de voyage existent en trois formats — large hero, medium liste, small thumbnail — chacune adaptée à son contexte d'affichage avec ses méta-données (date, participants, action principale).</p>
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">
+                        Organismes : Cards</h2>
+                    <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d2">Les cartes de voyage existent
+                        en trois formats : large hero, medium liste et small thumbnail, chacune adaptée à son contexte
+                        d'affichage avec ses méta-données (date, participants, action principale).</p>
                     <div class="rounded-2xl overflow-hidden reveal-img">
-                        <img src="img/weplan/weplan_ds_cards.png" alt="Design System — Organismes : Cards" class="w-full h-auto object-cover">
+                        <img src="img/weplan/weplan_ds_cards.png" alt="Design System — Organismes : Cards"
+                            class="w-full h-auto object-cover">
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- 08D DESIGN SYSTEM — Bottom Sheet -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1"></div>
                 <div class="col-span-2 flex flex-col gap-8">
-                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">Organismes : Bottom Sheet</h2>
-                    <p class="text-[17px] text-text-muted leading-relaxed reveal reveal-d2">Les bottom sheets constituent le pattern d'interaction central de WePlan. Déclinées en quatre variantes — détail activité, ajout activité, création sondage, vue voyage — elles maintiennent le contexte tout en permettant des actions profondes.</p>
+                    <h2 class="text-[clamp(22px,3vw,48px)] font-bold tracking-tight leading-tight reveal reveal-d1">
+                        Organismes : Bottom Sheet</h2>
+                    <p class="text-[18px] text-white/50 leading-relaxed reveal reveal-d2">Les bottom sheets constituent
+                        le pattern d'interaction central de WePlan. Déclinées en quatre variantes : détail activité,
+                        ajout activité, création sondage et vue voyage, elles maintiennent le contexte tout en permettant
+                        des actions profondes.</p>
                     <div class="rounded-2xl overflow-hidden reveal-img">
-                        <img src="img/weplan/weplan_ds_bottomsheets.png" alt="Design System — Organismes : Bottom Sheet" class="w-full h-auto object-cover">
+                        <img src="img/weplan/weplan_ds_bottomsheets.png" alt="Design System — Organismes : Bottom Sheet"
+                            class="w-full h-auto object-cover">
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- APPRENTISSAGES -->
-        <section class="w-full py-20 md:py-28 px-8 md:px-16 lg:px-24 overflow-hidden border-t border-brand-gray">
-            <div class="grid grid-cols-3 gap-[16px]">
+        <section class="w-full py-20 md:py-28 px-6 md:px-12 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
                 <div class="col-span-1">
                     <span class="section-label reveal">Apprentissages</span>
                 </div>
                 <div class="col-span-2 flex flex-col gap-6">
-                    <h3 class="text-[17px] font-bold tracking-tight reveal reveal-d1">Ce que ce projet m'a enseigné</h3>
+                    <h3 class="text-[18px] font-bold tracking-tight reveal reveal-d1">Ce que ce projet m'a enseigné</h3>
                     <ul class="flex flex-col gap-4">
-                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d1">
-                            <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
-                            Construire un design system de A à Z force à anticiper tous les états et toutes les variations avant de designer la moindre interface.
+                        <li class="text-[17px] text-white/50 leading-relaxed reveal reveal-d1">
+                            Construire un design system de A à Z force à anticiper tous les états et toutes les
+                            variations avant de designer la moindre interface.
                         </li>
-                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d2">
-                            <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
-                            La méthodologie Atomic Design n'est pas seulement un outil de classification — c'est une façon de penser la composition qui change radicalement l'efficacité de l'équipe.
+                        <li class="text-[17px] text-white/50 leading-relaxed reveal reveal-d2">
+                            La méthodologie Atomic Design n'est pas seulement un outil de classification : c'est une
+                            façon de penser la composition qui change radicalement l'efficacité de l'équipe.
                         </li>
-                        <li class="flex gap-3 items-start text-[16px] text-text-muted leading-relaxed reveal reveal-d3">
-                            <span class="text-brand-orange font-bold flex-shrink-0 pt-0.5">—</span>
-                            Les choix de design les plus impactants sont souvent les plus simples : une couleur primaire forte, un radius cohérent, et une typographie lisible suffisent à créer une identité reconnaissable.
+                        <li class="text-[17px] text-white/50 leading-relaxed reveal reveal-d3">
+                            Les choix de design les plus impactants sont souvent les plus simples : une couleur primaire
+                            forte, un radius cohérent, et une typographie lisible suffisent à créer une identité
+                            reconnaissable.
                         </li>
                     </ul>
                 </div>
@@ -612,31 +933,64 @@
         </section>
 
         <!-- PROJET SUIVANT -->
-        <section class="w-full border-t border-brand-gray">
-            <a href="projectCegedim.html" class="group flex items-center justify-between px-8 md:px-16 lg:px-24 py-20 md:py-28">
+        <section class="w-full border-t border-white/[0.06]">
+            <a href="projectMusique.html"
+                class="group flex items-center justify-between px-6 md:px-12 lg:px-16 py-20 md:py-28 hover:bg-white/[0.02] transition-colors duration-300">
                 <div class="flex flex-col gap-3">
                     <span class="section-label">Projet suivant</span>
-                    <h2 class="text-[clamp(28px,5vw,80px)] font-extrabold tracking-[-0.05em] leading-none group-hover:text-brand-orange transition-colors duration-300">Cegedim</h2>
-                    <span class="text-[15px] text-text-muted group-hover:text-brand-orange transition-colors duration-300">Product Design · HealthTech / B2B</span>
+                    <h2
+                        class="text-[clamp(28px,5vw,80px)] font-extrabold tracking-[-0.05em] leading-none group-hover:text-accent transition-colors duration-300">
+                        Musique</h2>
+                    <span
+                        class="text-[16px] text-white/50 group-hover:text-white/85 transition-colors duration-300">Product Design · Industrie musicale</span>
                 </div>
-                <span class="text-[clamp(28px,5vw,80px)] font-extrabold leading-none transform group-hover:translate-x-4 group-hover:text-brand-orange transition-all duration-300"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="5.5" x2="10" y2="5.5"/><polyline points="6,1.5 10,5.5 6,9.5"/></svg></span>
+                <span
+                    class="text-white/70 group-hover:text-accent transform group-hover:translate-x-2 transition-all duration-300">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12,5 19,12 12,19" />
+                    </svg>
+                </span>
             </a>
         </section>
 
         <!-- FOOTER -->
-        <footer class="w-full border-t border-brand-gray overflow-hidden">
-            <div class="px-8 md:px-16 lg:px-24 py-12 md:py-16">
-                <div class="flex items-center justify-between gap-4">
+        <footer class="w-full border-t border-white/[0.06] overflow-hidden">
+            <div class="px-6 md:px-12 lg:px-16 py-16 md:py-20">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-10 mb-16">
+                    <div class="flex flex-col gap-3">
+                        <span class="section-label">Contact</span>
+                        <a href="mailto:bruno.tanguy@icloud.com"
+                            class="text-[16px] text-white/70 hover:text-white transition-colors">bruno.tanguy@icloud.com</a>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <span class="section-label">Social</span>
+                        <a href="https://www.linkedin.com/in/bruno-tanguy-aa48602a8" target="_blank" rel="noopener"
+                            class="text-[16px] text-white/70 hover:text-white transition-colors">LinkedIn</a>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <span class="section-label">Navigation</span>
+                        <a href="index.html#works"
+                            class="text-[16px] text-white/70 hover:text-white transition-colors">Projets</a>
+                        <a href="resume.html" class="text-[16px] text-white/70 hover:text-white transition-colors">Mon
+                            Profil</a>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <span class="section-label">Studio</span>
+                        <span class="text-[16px] text-white/70">Nantes, France</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-4 pt-8 border-t border-white/[0.06]">
                     <div class="flex items-center gap-2.5">
                         <svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16ZM13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z" fill="#6B6A75"/>
+                            <path
+                                d="M16 16C24.8365 16 32 23.1635 32 32H18.9854C18.7265 27.5384 15.0266 24 10.5 24C5.97337 24 2.2735 27.5384 2.01463 32H0C0 23.1635 7.1635 16 16 16ZM13.0146 0C13.2735 4.46175 16.9734 8 21.5 8C26.0266 8 29.7265 4.46175 29.9854 0H32C32 8.8365 24.8365 16 16 16C7.1635 16 0 8.8365 0 0H13.0146Z"
+                                fill="rgba(255,255,255,0.4)" />
                         </svg>
-                        <span class="text-[12px] text-text-muted tracking-[-0.01em]">Copyright © 2026 Bruno Tanguy.</span>
+                        <span class="text-[15px] text-white/40 tracking-[-0.01em]">© 2026 Bruno Tanguy.</span>
                     </div>
-                    <div class="flex items-center gap-6">
-                        <a href="mailto:bruno.tanguy@icloud.com" class="text-[12px] text-text-muted hover:text-black tracking-[-0.01em] transition-colors duration-200">Mail</a>
-                        <a href="https://www.linkedin.com/in/bruno-tanguy-aa48602a8" target="_blank" rel="noopener" class="text-[12px] text-text-muted hover:text-black tracking-[-0.01em] transition-colors duration-200">LinkedIn</a>
-                    </div>
+                    <span class="text-[15px] text-white/40 tracking-[-0.01em]">Made with care in Nantes</span>
                 </div>
             </div>
         </footer>
@@ -656,18 +1010,32 @@
 
         document.querySelectorAll('.reveal, .reveal-img').forEach(el => observer.observe(el));
 
-        // ===== CURSEUR CUSTOM =====
-        const cursor = document.getElementById('c-cursor');
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-        document.addEventListener('mouseenter', () => cursor.classList.remove('hidden'));
-        document.addEventListener('mouseleave', () => cursor.classList.add('hidden'));
+        // Nav background on scroll
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 80); }, { passive: true });
 
+        // Contact dropdown
+        const contactBtn = document.getElementById('contact-btn');
+        const contactDrop = document.getElementById('contact-dropdown');
+        if (contactBtn) {
+            contactBtn.addEventListener('click', e => { e.stopPropagation(); contactDrop.classList.toggle('open'); });
+            document.addEventListener('click', () => contactDrop.classList.remove('open'));
+        }
+
+        // ===== CURSEUR CUSTOM (RAF lerp) =====
+        const cur = document.getElementById('cursor');
+        let cx = -50, cy = -50, tx = -50, ty = -50;
+        document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+        document.addEventListener('mouseleave', () => cur.classList.add('hidden'));
+        document.addEventListener('mouseenter', () => cur.classList.remove('hidden'));
+        (function curLoop() {
+            cx += (tx - cx) * 0.18; cy += (ty - cy) * 0.18;
+            cur.style.left = cx + 'px'; cur.style.top = cy + 'px';
+            requestAnimationFrame(curLoop);
+        })();
         document.querySelectorAll('a, button, [role="button"]').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+            el.addEventListener('mouseenter', () => cur.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cur.classList.remove('hover'));
         });
     </script>
 
@@ -678,5 +1046,7 @@
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
         requestAnimationFrame(raf);
     </script>
+    <script src="theme.js"></script>
 </body>
+
 </html>
